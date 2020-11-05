@@ -16,51 +16,49 @@ import os
 import shutil
 
 
-VENV_DIR_NAME = "venv"
-REQ_FILE = "requirements.txt"
-REPO = "https://github.com/manchenkoff/gu-chatbot-01"
-# PREPARE_VENV_SCRIPT = 'prepare_venv.py'
+VENV_DIR_NAME = 'venv'
+REQ_FILE = 'requirements.txt'
+REPO = 'https://github.com/manchenkoff/gu-chatbot-01'
+PIP = 'pip3'
+if platform.system() == 'Windows':
+    PIP_ENV = f'{VENV_DIR_NAME}/Scripts/pip3.exe'
+    PYTHON = f'{VENV_DIR_NAME}/Scripts/python.exe'
+elif platform.system() in ['Linux', 'Darwin']:
+    PYTHON = f'{VENV_DIR_NAME}/bin/python3'
+    PIP_ENV = f'{VENV_DIR_NAME}/bin/pip3'
+else:
+    print('Unknown OS!\nExiting')
+    sys.exit(1)
 
 
 # todo think about possible errors and rollback?
-def setup_env():
-    if platform.system() == "Windows":
-        pip = "pip"
-        activate_this_file = f"{VENV_DIR_NAME}/Scripts/activate_this.py"
-    elif platform.system() in ["Linux", "Darwin"]:
-        pip = "pip3"
-        activate_this_file = f"{VENV_DIR_NAME}/bin/activate_this.py"
-    else:
-        print("Unknown OS!\nExiting")
-        sys.exit(1)
+def setup_env() -> None:
     # install virtualenv via pip
-    subprocess.run([pip, "install", "virtualenv"], check=True)
+    subprocess.run([PIP, 'install', 'virtualenv'], check=True)
     # delete existing venv
     if os.path.isdir(VENV_DIR_NAME):
-        print("Cleaning existing venv...")
+        print('Cleaning existing venv...')
         shutil.rmtree(VENV_DIR_NAME)
     # create new virtualenv
-    subprocess.run(["virtualenv", VENV_DIR_NAME], check=True)
-    if os.path.isfile(activate_this_file):
-        # switch the running script into venv
-        exec(
-            compile(open(activate_this_file, "rb").read(), activate_this_file, "exec"),
-            dict(__file__=activate_this_file),
-        )
-        # install project requirements
-        subprocess.run([pip, "install", "-r", REQ_FILE], check=True)
-    # venv_python_file = f'{VENV_DIR_NAME}\\Scripts\\python'
-    # if os.path.isfile(venv_python_file):
-    #     subprocess.Popen([venv_python_file, PREPARE_VENV_SCRIPT, REQ_FILE])
+    subprocess.run(['virtualenv', VENV_DIR_NAME], check=True)
+    run_preparations()
+
+
+def run_preparations() -> None:
+    # install project requirements
+    subprocess.run([PIP_ENV, 'install', '-r', REQ_FILE], check=True)
+    # perform migrations
+    subprocess.run([PYTHON, 'manage.py', 'makemigrations'], check=True)
+    subprocess.run([PYTHON, 'manage.py', 'migrate'], check=True)
 
 
 # check python version
 major, minor, patch = platform.python_version_tuple()
 if (int(major) == 3 and int(minor) >= 7) or int(major) > 3:
-    print("Python version check - OK")
+    print('Python version check - OK')
 else:
     print(
-        "You need to upgrade your Python interpreter to version 3.7 at least!\nExiting..."
+        'You need to upgrade your Python interpreter to version 3.7 at least!\nExiting...'
     )
     sys.exit(1)
 
@@ -68,15 +66,15 @@ else:
 if len(sys.argv) > 1:
     WORKING_DIRECTORY = sys.argv[1]
 else:
-    WORKING_DIRECTORY = "."
+    WORKING_DIRECTORY = '.'
 
-print(f"working in {WORKING_DIRECTORY}")
+print(f'working in {WORKING_DIRECTORY}')
 
 if not os.path.isdir(WORKING_DIRECTORY):
     os.mkdir(WORKING_DIRECTORY)
 # if working_directory is empty - git clone the repo into it
 if not os.listdir(WORKING_DIRECTORY):
-    subprocess.run(["git", "clone", REPO, WORKING_DIRECTORY], check=True)
+    subprocess.run(['git', 'clone', REPO, WORKING_DIRECTORY], check=True)
 
 # chdir into the working_directory and proceed to set up the virtualenv
 os.chdir(WORKING_DIRECTORY)
