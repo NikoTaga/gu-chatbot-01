@@ -17,8 +17,10 @@ from django.contrib import admin
 from django.urls import path
 
 from bot.views import jivosite_webhook, ok_webhook
+from shop.views import index_page
 
 urlpatterns = [
+    path('', index_page),
     path('admin/', admin.site.urls),
     path('ok_webhook/', ok_webhook),
     path('jivosite_webhook/', jivosite_webhook),
