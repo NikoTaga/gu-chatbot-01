@@ -1,3 +1,12 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Roboto', sans-serif;
+}
+
 .container {
     width: 1000px;
     margin: 0 auto;
@@ -8,7 +17,8 @@
 }
 
 .chat-view {
-    height: 92%;
+    margin-top: 20px;
+    height: 90%;
     width: 100%;
 }
 

@@ -1,17 +1,13 @@
-from collections import namedtuple
 from datetime import datetime
 
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
+from typing import List, Dict, Any
 
 from clients.jivosite import JivositeClient
 from clients.ok import OkClient
 from entities import EventCommandReceived
 from .handlers import message_handler
-
-
-ChatEntry = namedtuple('ChatEntry', ['number', 'name', 'time'])
-MessageEntry = namedtuple('MessageEntry', ['number', 'content', 'direction', 'time'])
 
 
 def ok_webhook(request: HttpRequest) -> None:
@@ -29,8 +25,14 @@ def jivosite_webhook(request: HttpRequest) -> None:
 
 
 def chat_list(request: HttpRequest) -> HttpResponse:
-    chats = [ChatEntry(i, f'chat number #{i}', datetime.now().date()) for i in range(20)]
-    context = {
+    chats: List[Dict[str, Any]] = [
+        {
+            'number': i,
+            'name': f'chat number #{i}',
+            'time': datetime.now().date()
+        } for i in range(20)
+    ]
+    context: Dict[str, Any] = {
         'title_page': 'Список чатов',
         'objects_list': chats
     }
@@ -39,18 +41,22 @@ def chat_list(request: HttpRequest) -> HttpResponse:
 
 
 def chat_view(request: HttpRequest, pk: int) -> HttpResponse:
-    chats = [ChatEntry(
-                       i,
-                       f'chat number #{i}',
-                       datetime.now().date(),
-                       ) for i in range(20)]
-    messages = [MessageEntry(
-                             j,
-                             f'Test message {pk}#{j}',
-                             bool(j % 2),
-                             datetime.now().date(),
-                            ) for j in range(20)]
-    context = {
+    chats: List[Dict[str, Any]] = [
+        {
+            'number': i,
+            'name': f'chat number #{i}',
+            'time': datetime.now().date()
+         } for i in range(20)
+    ]
+    messages: List[Dict[str, Any]] = [
+        {
+            'number': j,
+            'content': f'Test message {pk}#{j}',
+            'direction': bool(j % 2),
+            'time': datetime.now().strftime('%H:%M %d-%m-%Y'),
+        } for j in range(20)
+    ]
+    context: Dict[str, Any] = {
         'title_page': 'Список чатов',
         'chat_list': chats,
         'message_list': messages,

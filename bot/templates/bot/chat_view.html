@@ -1,8 +1,8 @@
 {% extends 'bot/base.html' %}
 
 {% block content %}
+<h3>Существующие чаты</h3>
 <div class="chat-view clearfix">
-    <h3>Существующие чаты</h3>
     <div class="chat-list">
         {% for chat in chat_list %}
         <a href="/chat/{{chat.number}}/" class="chat-button"><div class="chat-entry {% if chat.number == selected %}highlight{%endif%}">
@@ -14,7 +14,7 @@
     <div class="chat-content">
         {% for message in message_list %}
         <div class="chat-message {% if message.direction %} msg-in {% else %} msg-out {% endif %}">
-            <span class="chat-message-number">{{message.number}}</span>
+<!--            <span class="chat-message-number">{{message.number}}</span>-->
             <span class="chat-message-content">{{message.content}}</span>
             <span class="chat-message-time">{{message.time}}</span>
         </div>
