@@ -1,0 +1,103 @@
+.container {
+    width: 1000px;
+    margin: 0 auto;
+}
+
+.content {
+    height: 600px;
+}
+
+.chat-view {
+    height: 92%;
+    width: 100%;
+}
+
+.chat-list {
+    vertical-align: top;
+    width: 30%;
+    height: 100%;
+    display: inline-block;
+    border: 1px solid black;
+    overflow: auto;
+    padding: 2px;
+}
+
+.chat-button {
+    text-decoration: none;
+    color: inherit;
+}
+
+.chat-entry:hover {
+    box-shadow: 0 0 10px -2px rgba(0, 0, 0, 0.9);
+}
+
+.chat-content {
+    vertical-align: top;
+    width: 60%;
+    height: 100%;
+    display: inline-block;
+    border: 1px solid black;
+    padding: 2px;
+    overflow: auto;
+}
+
+.chat-entry {
+    padding: 2px;
+    margin-bottom: 5px;
+    border: 1px dotted black;
+}
+
+.chat-message {
+    padding: 2px;
+    margin-bottom: 5px;
+    width: 70%;
+    border: 1px solid black;
+    height: 30px;
+}
+
+.chat-name {
+    display: block;
+    font-weight: 700;
+}
+
+.chat-time {
+    display: block;
+    text-align: right;
+}
+
+.chat-message-time {
+    float: right;
+    font-size: small;
+}
+
+.msg-in {
+    float: left;
+    background: #ddd;
+}
+
+.msg-out {
+    float: right;
+    background: #ccc;
+}
+
+.highlight {
+    background: lightgray;
+}
+
+.hidden {
+    display: none;
+}
+
+footer {
+    clear:both;
+}
+
+.clearfix:before {
+}
+
+.clearfix:after {
+    visibility: hidden;
+    display: block;
+    content: "";
+    clear: both;
+}

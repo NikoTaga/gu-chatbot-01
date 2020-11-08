@@ -1,0 +1,17 @@
+{% extends 'bot/base.html' %}
+
+{% block content %}
+<div class="chat-view clearfix">
+    <h3>Существующие чаты</h3>
+    <div class="chat-list">
+        {% for chat in objects_list %}
+        <a href="/chat/{{chat.number}}/" class="chat-button"><div class="chat-entry">
+            <span class="chat-name">{{ chat.name }}</span>
+            <span class="chat-time">{{ chat.time }}</span>
+        </div></a>
+        {% endfor %}
+    </div>
+    <div class="chat-content">
+    </div>
+</div>
+{% endblock %}
