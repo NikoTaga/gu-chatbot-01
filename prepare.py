@@ -15,11 +15,12 @@ import shutil
 
 VENV_DIR_NAME = 'venv'
 REQ_FILE = 'requirements.txt'
-PYTHON = 'python'
 if platform.system() == 'Windows':
+    PYTHON = 'python'
     PIP_ENV = f'{VENV_DIR_NAME}/Scripts/pip3.exe'
     PYTHON_ENV = f'{VENV_DIR_NAME}/Scripts/python.exe'
 elif platform.system() in ['Linux', 'Darwin']:
+    PYTHON = 'python3'
     PYTHON_ENV = f'{VENV_DIR_NAME}/bin/python3'
     PIP_ENV = f'{VENV_DIR_NAME}/bin/pip3'
 else:
