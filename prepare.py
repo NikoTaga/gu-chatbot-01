@@ -15,12 +15,11 @@ import shutil
 
 VENV_DIR_NAME = 'venv'
 REQ_FILE = 'requirements.txt'
+PYTHON = sys.executable
 if platform.system() == 'Windows':
-    PYTHON = 'python'
     PIP_ENV = f'{VENV_DIR_NAME}/Scripts/pip3.exe'
     PYTHON_ENV = f'{VENV_DIR_NAME}/Scripts/python.exe'
 elif platform.system() in ['Linux', 'Darwin']:
-    PYTHON = 'python3'
     PYTHON_ENV = f'{VENV_DIR_NAME}/bin/python3'
     PIP_ENV = f'{VENV_DIR_NAME}/bin/pip3'
 else:
@@ -39,6 +38,8 @@ def setup_env() -> None:
 
 
 def run_preparations() -> None:
+    # upgrade env pip just in case
+    subprocess.run([PYTHON_ENV, '-m', 'pip', 'install', '--upgrade', 'pip'], check=True)
     # install project requirements
     subprocess.run([PIP_ENV, 'install', '-r', REQ_FILE], check=True)
     # perform migrations
