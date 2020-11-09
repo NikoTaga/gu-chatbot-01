@@ -55,6 +55,7 @@ body {
     padding: 2px;
     margin-bottom: 5px;
     border: 1px dotted black;
+    overflow-wrap: break-word;
 }
 
 .chat-message {
@@ -62,22 +63,25 @@ body {
     margin-bottom: 5px;
     width: 70%;
     border: 1px solid black;
-    height: 30px;
 }
 
 .chat-name {
-    display: block;
     font-weight: 700;
 }
 
 .chat-time {
-    display: block;
     text-align: right;
 }
 
 .chat-message-time {
     float: right;
     font-size: small;
+}
+
+.chat-message-content {
+    width: 100%
+    float: left;
+    overflow-wrap: break-word;
 }
 
 .msg-in {

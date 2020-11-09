@@ -6,8 +6,8 @@
     <div class="chat-list">
         {% for chat in chat_list %}
         <a href="/chat/{{chat.number}}/" class="chat-button"><div class="chat-entry {% if chat.number == selected %}highlight{%endif%}">
-            <span class="chat-name">{{ chat.name }}</span>
-            <span class="chat-time">{{ chat.time }}</span>
+            <div class="chat-name">{{ chat.name }}</div>
+            <div class="chat-time">{{ chat.time }}</div>
         </div></a>
         {% endfor %}
     </div>
@@ -15,8 +15,8 @@
         {% for message in message_list %}
         <div class="chat-message {% if message.direction %} msg-in {% else %} msg-out {% endif %}">
 <!--            <span class="chat-message-number">{{message.number}}</span>-->
-            <span class="chat-message-content">{{message.content}}</span>
-            <span class="chat-message-time">{{message.time}}</span>
+            <div class="chat-message-content">{{message.content}}</div>
+            <div class="chat-message-time">{{message.time}}</div>
         </div>
         {% endfor %}
     </div>
