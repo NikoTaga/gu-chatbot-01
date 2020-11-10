@@ -15,7 +15,7 @@ import shutil
 
 VENV_DIR_NAME = 'venv'
 REQ_FILE = 'requirements.txt'
-PIP = 'pip3'
+PYTHON = sys.executable
 if platform.system() == 'Windows':
     PIP_ENV = f'{VENV_DIR_NAME}/Scripts/pip3.exe'
     PYTHON_ENV = f'{VENV_DIR_NAME}/Scripts/python.exe'
@@ -28,18 +28,18 @@ else:
 
 
 def setup_env() -> None:
-    # install virtualenv via pip
-    subprocess.run([PIP, 'install', 'virtualenv'], check=True)
     # delete existing venv
     if os.path.isdir(VENV_DIR_NAME):
         print('Cleaning existing venv...')
         shutil.rmtree(VENV_DIR_NAME)
     # create new virtualenv
-    subprocess.run(['virtualenv', VENV_DIR_NAME], check=True)
+    subprocess.run([PYTHON, '-m', 'venv', VENV_DIR_NAME], check=True)
     run_preparations()
 
 
 def run_preparations() -> None:
+    # upgrade env pip just in case
+    subprocess.run([PYTHON_ENV, '-m', 'pip', 'install', '--upgrade', 'pip'], check=True)
     # install project requirements
     subprocess.run([PIP_ENV, 'install', '-r', REQ_FILE], check=True)
     # perform migrations
@@ -48,11 +48,11 @@ def run_preparations() -> None:
 
 
 # check python version
-if sys.version_info > (3, 7, 0):
+if sys.version_info >= (3, 6, 1):
     print('Python version check - OK')
 else:
     print(
-        'You need to upgrade your Python interpreter to version 3.7 at least!\nExiting...'
+        'You need to upgrade your Python interpreter to version 3.6.1 at least!\nExiting...'
     )
     sys.exit(1)
 
