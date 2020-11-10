@@ -138,3 +138,7 @@ template
 
 tmp*
 Pipfile
+
+# report_linters
+report_linters
+report_linters/
