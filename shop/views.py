@@ -17,6 +17,5 @@ def index_page(request: WSGIRequest)-> HttpResponse:
         'title_page': 'Основная страница',
         'developers': developers,
         }
-    print(type(request))
-    print(type(render(request, 'shop/index.html', context)))
+        
     return render(request, 'shop/index.html', context)
