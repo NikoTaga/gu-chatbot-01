@@ -48,6 +48,9 @@ class Product(TrackableUpdateCreateModel):
     is_active = models.BooleanField('Active', default=True)
     sort_order = models.PositiveIntegerField('Sort order', default=1)
 
+    def get_categories(self) -> str:
+        return ', '.join(self.categories.values_list('name', flat=True))
+
     def __str__(self) -> str:
         return self.name
 
