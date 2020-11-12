@@ -13,8 +13,8 @@ class CategoryAdmin(admin.ModelAdmin):
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     readonly_fields = ('created_at', 'updated_at')
-    list_display = ('name', 'price', 'description', 'image_url', 'is_active', 'sort_order')
-    search_fields = ('name__exact',)
+    list_display = ('name', 'get_categories', 'price', 'description', 'image_url', 'is_active', 'sort_order')
+    search_fields = ('name__exact', 'categories__name__exact')
 
 
 @admin.register(Order)
