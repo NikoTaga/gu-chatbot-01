@@ -2,9 +2,9 @@
 from django.shortcuts import render
 
 
-def index_page(request):
+def index_page(request) -> render:
     context = {
         "title_page": 'Основная страница',
     }
-
+    
     return render(request, 'shop/index.html', context)
