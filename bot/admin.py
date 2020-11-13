@@ -12,7 +12,7 @@ class BotAdmin(admin.ModelAdmin):
 
 @admin.register(Chat)
 class ChatAdmin(admin.ModelAdmin):
-    readonly_fields = ('created_at', 'updated_at', 'bot', 'bot_user', 'id_in_messenger', 'id', 'last_message_time')
+    readonly_fields = ('created_at', 'updated_at')
     list_display = ('id',
                     'bot',
                     'name',
@@ -27,7 +27,7 @@ class ChatAdmin(admin.ModelAdmin):
 
 @admin.register(BotUser)
 class BotUserAdmin(admin.ModelAdmin):
-    readonly_fields = ('created_at', 'updated_at', 'bot')
+    readonly_fields = ('created_at', 'updated_at')
     list_display = ('bot', 'name', 'messenger_user_id', 'created_at', 'updated_at')
     list_filter = ('bot',)
     search_fields = ('id__exact', 'messenger_user_id__exact', 'name')
@@ -36,9 +36,6 @@ class BotUserAdmin(admin.ModelAdmin):
 @admin.register(Message)
 class MessageAdmin(admin.ModelAdmin):
     readonly_fields = (
-        'bot',
-        'chat',
-        'bot_user',
         'created_at',
         'updated_at',
     )
