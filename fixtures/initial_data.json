@@ -1,0 +1,1407 @@
+[
+{
+    "model": "bot.bot",
+    "pk": 1,
+    "fields": {
+        "created_at": "2020-11-13T09:03:57.153Z",
+        "updated_at": "2020-11-13T09:03:57.153Z",
+        "name": "OK_bot_01",
+        "bot_type": 11
+    }
+},
+{
+    "model": "bot.botuser",
+    "pk": 1,
+    "fields": {
+        "created_at": "2020-11-13T09:47:48.394Z",
+        "updated_at": "2020-11-13T09:47:48.394Z",
+        "bot": 1,
+        "messenger_user_id": "user:000000000001",
+        "messenger_user_url": null,
+        "name": "Pavel",
+        "avatar_url": null,
+        "lang_code": "ru"
+    }
+},
+{
+    "model": "bot.botuser",
+    "pk": 2,
+    "fields": {
+        "created_at": "2020-11-13T16:10:04.160Z",
+        "updated_at": "2020-11-13T16:10:04.160Z",
+        "bot": 1,
+        "messenger_user_id": "user:000000000002",
+        "messenger_user_url": null,
+        "name": "Boris",
+        "avatar_url": null,
+        "lang_code": "ru"
+    }
+},
+{
+    "model": "bot.botuser",
+    "pk": 3,
+    "fields": {
+        "created_at": "2020-11-13T16:10:19.937Z",
+        "updated_at": "2020-11-13T16:10:19.937Z",
+        "bot": 1,
+        "messenger_user_id": "user:000000000003",
+        "messenger_user_url": null,
+        "name": "Alex",
+        "avatar_url": null,
+        "lang_code": "ru"
+    }
+},
+{
+    "model": "bot.chat",
+    "pk": 1,
+    "fields": {
+        "created_at": "2020-11-13T09:57:13.248Z",
+        "updated_at": "2020-11-13T13:39:30.448Z",
+        "bot": 1,
+        "type": 1,
+        "bot_user": 1,
+        "id_in_messenger": "chat:C000000000001",
+        "url_in_messenger": null,
+        "name": null,
+        "avatar_url": null,
+        "last_message_time": "2020-11-13T13:35:59Z",
+        "last_message_text": "/command (После каждого нового сообщения будет перезаписываться в бд, как и время)"
+    }
+},
+{
+    "model": "bot.chat",
+    "pk": 2,
+    "fields": {
+        "created_at": "2020-11-13T16:12:47.947Z",
+        "updated_at": "2020-11-13T16:12:47.947Z",
+        "bot": 1,
+        "type": 1,
+        "bot_user": 2,
+        "id_in_messenger": "chat:C000000000002",
+        "url_in_messenger": null,
+        "name": null,
+        "avatar_url": null,
+        "last_message_time": "2020-11-13T16:11:38Z",
+        "last_message_text": "Boris some last message"
+    }
+},
+{
+    "model": "bot.chat",
+    "pk": 3,
+    "fields": {
+        "created_at": "2020-11-13T16:14:07.075Z",
+        "updated_at": "2020-11-13T16:14:07.075Z",
+        "bot": 1,
+        "type": 1,
+        "bot_user": 3,
+        "id_in_messenger": "chat:C000000000003",
+        "url_in_messenger": null,
+        "name": null,
+        "avatar_url": null,
+        "last_message_time": "2020-11-13T16:13:45Z",
+        "last_message_text": "Alex some last message"
+    }
+},
+{
+    "model": "bot.message",
+    "pk": 1,
+    "fields": {
+        "created_at": "2020-11-13T10:04:51.063Z",
+        "updated_at": "2020-11-13T16:26:08.923Z",
+        "bot": 1,
+        "bot_user": 1,
+        "chat": 1,
+        "status": 1,
+        "direction": 1,
+        "content_type": 1,
+        "id_in_messenger": "mid:C000000000001.000000000000001",
+        "reply_id_in_messenger": null,
+        "ts_in_messenger": "2020-11-13T10:04:14Z",
+        "text": "Привет",
+        "image_url": null,
+        "file_url": null,
+        "video_url": null,
+        "language": "ru"
+    }
+},
+{
+    "model": "bot.message",
+    "pk": 5,
+    "fields": {
+        "created_at": "2020-11-13T10:26:13.392Z",
+        "updated_at": "2020-11-13T16:25:56.056Z",
+        "bot": 1,
+        "bot_user": 1,
+        "chat": 1,
+        "status": 1,
+        "direction": 2,
+        "content_type": 9,
+        "id_in_messenger": "mid:C000000000001.000000000000005",
+        "reply_id_in_messenger": null,
+        "ts_in_messenger": "2020-11-13T10:22:57Z",
+        "text": "<Категории>",
+        "image_url": null,
+        "file_url": null,
+        "video_url": null,
+        "language": "ru"
+    }
+},
+{
+    "model": "bot.message",
+    "pk": 6,
+    "fields": {
+        "created_at": "2020-11-13T13:45:09.059Z",
+        "updated_at": "2020-11-13T13:45:09.059Z",
+        "bot": 1,
+        "bot_user": 1,
+        "chat": 1,
+        "status": 1,
+        "direction": 1,
+        "content_type": 1,
+        "id_in_messenger": "mid:С000000000001.000000000000006",
+        "reply_id_in_messenger": null,
+        "ts_in_messenger": "2020-11-13T13:44:34Z",
+        "text": "Как дела?",
+        "image_url": null,
+        "file_url": null,
+        "video_url": null,
+        "language": "ru"
+    }
+},
+{
+    "model": "bot.message",
+    "pk": 7,
+    "fields": {
+        "created_at": "2020-11-13T13:50:59.677Z",
+        "updated_at": "2020-11-13T13:50:59.677Z",
+        "bot": 1,
+        "bot_user": 1,
+        "chat": 1,
+        "status": 1,
+        "direction": 2,
+        "content_type": 9,
+        "id_in_messenger": "mid:С000000000001.000000000000007",
+        "reply_id_in_messenger": null,
+        "ts_in_messenger": "2020-11-13T13:46:48Z",
+        "text": "<Категории>",
+        "image_url": null,
+        "file_url": null,
+        "video_url": null,
+        "language": "ru"
+    }
+},
+{
+    "model": "bot.message",
+    "pk": 8,
+    "fields": {
+        "created_at": "2020-11-13T13:54:26.564Z",
+        "updated_at": "2020-11-13T13:54:26.564Z",
+        "bot": 1,
+        "bot_user": 1,
+        "chat": 1,
+        "status": 1,
+        "direction": 1,
+        "content_type": 6,
+        "id_in_messenger": "mid:С000000000001.000000000000008",
+        "reply_id_in_messenger": null,
+        "ts_in_messenger": "2020-11-13T13:52:18Z",
+        "text": "{\"category\":1}",
+        "image_url": null,
+        "file_url": null,
+        "video_url": null,
+        "language": "ru"
+    }
+},
+{
+    "model": "bot.message",
+    "pk": 9,
+    "fields": {
+        "created_at": "2020-11-13T13:56:23.336Z",
+        "updated_at": "2020-11-13T13:56:23.336Z",
+        "bot": 1,
+        "bot_user": 1,
+        "chat": 1,
+        "status": 1,
+        "direction": 2,
+        "content_type": 9,
+        "id_in_messenger": "mid:С000000000001.000000000000009",
+        "reply_id_in_messenger": null,
+        "ts_in_messenger": "2020-11-13T13:55:18Z",
+        "text": "<Видеокарты>",
+        "image_url": null,
+        "file_url": null,
+        "video_url": null,
+        "language": "ru"
+    }
+},
+{
+    "model": "bot.message",
+    "pk": 10,
+    "fields": {
+        "created_at": "2020-11-13T16:16:36.541Z",
+        "updated_at": "2020-11-13T16:25:11.808Z",
+        "bot": 1,
+        "bot_user": 2,
+        "chat": 2,
+        "status": 1,
+        "direction": 1,
+        "content_type": 1,
+        "id_in_messenger": "mid:C000000000002.000000000000001",
+        "reply_id_in_messenger": null,
+        "ts_in_messenger": "2020-11-13T16:16:11Z",
+        "text": "Хай!",
+        "image_url": null,
+        "file_url": null,
+        "video_url": null,
+        "language": "ru"
+    }
+},
+{
+    "model": "bot.message",
+    "pk": 11,
+    "fields": {
+        "created_at": "2020-11-13T16:18:02.426Z",
+        "updated_at": "2020-11-13T16:18:02.426Z",
+        "bot": 1,
+        "bot_user": 2,
+        "chat": 2,
+        "status": 1,
+        "direction": 2,
+        "content_type": 9,
+        "id_in_messenger": "mid:chat:000000000002.000000000000002",
+        "reply_id_in_messenger": null,
+        "ts_in_messenger": "2020-11-13T16:17:26Z",
+        "text": "<Категории>",
+        "image_url": null,
+        "file_url": null,
+        "video_url": null,
+        "language": "ru"
+    }
+},
+{
+    "model": "bot.message",
+    "pk": 12,
+    "fields": {
+        "created_at": "2020-11-13T16:21:23.010Z",
+        "updated_at": "2020-11-13T16:21:23.010Z",
+        "bot": 1,
+        "bot_user": 3,
+        "chat": 3,
+        "status": 1,
+        "direction": 1,
+        "content_type": 1,
+        "id_in_messenger": "mid:C000000000003.000000000000001",
+        "reply_id_in_messenger": null,
+        "ts_in_messenger": "2020-11-13T16:20:34Z",
+        "text": "Я Alex и я приветствую тебя!",
+        "image_url": null,
+        "file_url": null,
+        "video_url": null,
+        "language": "ru"
+    }
+},
+{
+    "model": "bot.message",
+    "pk": 13,
+    "fields": {
+        "created_at": "2020-11-13T16:24:30.737Z",
+        "updated_at": "2020-11-13T16:24:30.737Z",
+        "bot": 1,
+        "bot_user": 3,
+        "chat": 3,
+        "status": 1,
+        "direction": 2,
+        "content_type": 9,
+        "id_in_messenger": "mid:C000000000003.000000000000002",
+        "reply_id_in_messenger": null,
+        "ts_in_messenger": "2020-11-13T16:24:04Z",
+        "text": "<Категории>",
+        "image_url": null,
+        "file_url": null,
+        "video_url": null,
+        "language": "ru"
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 4,
+    "fields": {
+        "created_at": "2020-11-12T13:07:18.720Z",
+        "updated_at": "2020-11-12T13:07:18.720Z",
+        "parent_category": null,
+        "name": "Процессоры",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 5,
+    "fields": {
+        "created_at": "2020-11-12T13:07:34.136Z",
+        "updated_at": "2020-11-12T13:07:34.136Z",
+        "parent_category": null,
+        "name": "Видеокарты",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 6,
+    "fields": {
+        "created_at": "2020-11-12T13:07:51.045Z",
+        "updated_at": "2020-11-12T13:07:51.045Z",
+        "parent_category": null,
+        "name": "Материнские платы",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 7,
+    "fields": {
+        "created_at": "2020-11-12T13:08:47.217Z",
+        "updated_at": "2020-11-12T13:08:47.217Z",
+        "parent_category": null,
+        "name": "Жёсткие диски (HDD и SSD)",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 8,
+    "fields": {
+        "created_at": "2020-11-12T13:09:13.659Z",
+        "updated_at": "2020-11-12T13:09:13.659Z",
+        "parent_category": null,
+        "name": "Оперативная память",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 9,
+    "fields": {
+        "created_at": "2020-11-12T13:09:45.427Z",
+        "updated_at": "2020-11-12T13:09:45.427Z",
+        "parent_category": null,
+        "name": "Блоки питания",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 10,
+    "fields": {
+        "created_at": "2020-11-12T13:09:57.259Z",
+        "updated_at": "2020-11-12T13:09:57.259Z",
+        "parent_category": null,
+        "name": "Корпуса",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 12,
+    "fields": {
+        "created_at": "2020-11-12T13:10:39.022Z",
+        "updated_at": "2020-11-12T13:10:39.022Z",
+        "parent_category": null,
+        "name": "Сиситемы охлаждения",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 13,
+    "fields": {
+        "created_at": "2020-11-12T13:11:49.357Z",
+        "updated_at": "2020-11-12T13:11:49.357Z",
+        "parent_category": 6,
+        "name": "ASRock",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 14,
+    "fields": {
+        "created_at": "2020-11-12T13:12:36.532Z",
+        "updated_at": "2020-11-12T13:12:36.532Z",
+        "parent_category": 6,
+        "name": "ASUS",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 15,
+    "fields": {
+        "created_at": "2020-11-12T13:13:11.978Z",
+        "updated_at": "2020-11-12T13:13:11.978Z",
+        "parent_category": 6,
+        "name": "GIGABYTE",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 16,
+    "fields": {
+        "created_at": "2020-11-12T13:13:50.643Z",
+        "updated_at": "2020-11-12T13:13:50.643Z",
+        "parent_category": 6,
+        "name": "MSI",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 17,
+    "fields": {
+        "created_at": "2020-11-12T13:14:19.697Z",
+        "updated_at": "2020-11-12T13:14:19.697Z",
+        "parent_category": 4,
+        "name": "AMD",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 18,
+    "fields": {
+        "created_at": "2020-11-12T13:14:36.834Z",
+        "updated_at": "2020-11-12T13:14:36.834Z",
+        "parent_category": 4,
+        "name": "Intel",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 19,
+    "fields": {
+        "created_at": "2020-11-12T13:15:50.930Z",
+        "updated_at": "2020-11-12T13:23:38.206Z",
+        "parent_category": 25,
+        "name": "GIGABYTE",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 20,
+    "fields": {
+        "created_at": "2020-11-12T13:16:02.224Z",
+        "updated_at": "2020-11-12T13:25:18.933Z",
+        "parent_category": 25,
+        "name": "MSI",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 21,
+    "fields": {
+        "created_at": "2020-11-12T13:16:24.567Z",
+        "updated_at": "2020-11-12T13:26:22.769Z",
+        "parent_category": 25,
+        "name": "Palit",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 22,
+    "fields": {
+        "created_at": "2020-11-12T13:16:48.488Z",
+        "updated_at": "2020-11-12T13:22:56.883Z",
+        "parent_category": 24,
+        "name": "ASUS",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 23,
+    "fields": {
+        "created_at": "2020-11-12T13:17:12.478Z",
+        "updated_at": "2020-11-12T13:26:08.215Z",
+        "parent_category": 24,
+        "name": "Sapphire",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 24,
+    "fields": {
+        "created_at": "2020-11-12T13:21:55.550Z",
+        "updated_at": "2020-11-12T13:21:55.550Z",
+        "parent_category": 5,
+        "name": "AMD",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 25,
+    "fields": {
+        "created_at": "2020-11-12T13:22:18.255Z",
+        "updated_at": "2020-11-12T13:22:18.255Z",
+        "parent_category": 5,
+        "name": "NVIDIA",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 26,
+    "fields": {
+        "created_at": "2020-11-12T13:24:26.015Z",
+        "updated_at": "2020-11-12T13:24:26.015Z",
+        "parent_category": 24,
+        "name": "GIGABYTE",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 27,
+    "fields": {
+        "created_at": "2020-11-12T13:25:28.803Z",
+        "updated_at": "2020-11-12T13:25:28.803Z",
+        "parent_category": 24,
+        "name": "MSI",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 28,
+    "fields": {
+        "created_at": "2020-11-12T13:27:44.202Z",
+        "updated_at": "2020-11-12T13:27:44.202Z",
+        "parent_category": 7,
+        "name": "SSD",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 29,
+    "fields": {
+        "created_at": "2020-11-12T13:28:02.810Z",
+        "updated_at": "2020-11-12T13:28:02.810Z",
+        "parent_category": 7,
+        "name": "HDD",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 30,
+    "fields": {
+        "created_at": "2020-11-12T13:28:57.778Z",
+        "updated_at": "2020-11-12T13:29:00.540Z",
+        "parent_category": 29,
+        "name": "WD",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 31,
+    "fields": {
+        "created_at": "2020-11-12T13:29:39.967Z",
+        "updated_at": "2020-11-12T13:29:39.967Z",
+        "parent_category": 29,
+        "name": "Toshiba",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 32,
+    "fields": {
+        "created_at": "2020-11-12T13:30:00.281Z",
+        "updated_at": "2020-11-12T13:30:00.281Z",
+        "parent_category": 28,
+        "name": "ADATA",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 33,
+    "fields": {
+        "created_at": "2020-11-12T13:30:34.275Z",
+        "updated_at": "2020-11-12T13:30:34.275Z",
+        "parent_category": 28,
+        "name": "Kingston",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 34,
+    "fields": {
+        "created_at": "2020-11-12T13:30:51.440Z",
+        "updated_at": "2020-11-12T13:30:51.440Z",
+        "parent_category": 28,
+        "name": "Samsung",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 35,
+    "fields": {
+        "created_at": "2020-11-12T13:31:51.774Z",
+        "updated_at": "2020-11-12T13:31:51.774Z",
+        "parent_category": 8,
+        "name": "Transcend",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 36,
+    "fields": {
+        "created_at": "2020-11-12T13:32:00.317Z",
+        "updated_at": "2020-11-12T13:32:00.317Z",
+        "parent_category": 8,
+        "name": "Kingston",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 37,
+    "fields": {
+        "created_at": "2020-11-12T13:32:15.213Z",
+        "updated_at": "2020-11-12T13:32:15.213Z",
+        "parent_category": 8,
+        "name": "HP",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 38,
+    "fields": {
+        "created_at": "2020-11-12T13:32:29.220Z",
+        "updated_at": "2020-11-12T13:32:29.220Z",
+        "parent_category": 8,
+        "name": "ADATA",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 39,
+    "fields": {
+        "created_at": "2020-11-12T13:32:56.710Z",
+        "updated_at": "2020-11-12T13:32:56.710Z",
+        "parent_category": 9,
+        "name": "HIPER",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 40,
+    "fields": {
+        "created_at": "2020-11-12T13:33:03.617Z",
+        "updated_at": "2020-11-12T13:33:03.618Z",
+        "parent_category": 9,
+        "name": "Chieftec",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 41,
+    "fields": {
+        "created_at": "2020-11-12T13:33:13.633Z",
+        "updated_at": "2020-11-12T13:33:13.633Z",
+        "parent_category": 9,
+        "name": "Cooler Master",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 42,
+    "fields": {
+        "created_at": "2020-11-12T13:33:25.515Z",
+        "updated_at": "2020-11-12T13:33:25.515Z",
+        "parent_category": 9,
+        "name": "Aerocool",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 43,
+    "fields": {
+        "created_at": "2020-11-12T13:34:02.510Z",
+        "updated_at": "2020-11-12T13:34:02.510Z",
+        "parent_category": 10,
+        "name": "Cooler Master",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 44,
+    "fields": {
+        "created_at": "2020-11-12T13:34:13.415Z",
+        "updated_at": "2020-11-12T13:34:13.415Z",
+        "parent_category": 10,
+        "name": "Sharkoon",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 45,
+    "fields": {
+        "created_at": "2020-11-12T13:34:24.218Z",
+        "updated_at": "2020-11-12T13:34:24.218Z",
+        "parent_category": 10,
+        "name": "HIPER",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 46,
+    "fields": {
+        "created_at": "2020-11-12T13:35:24.074Z",
+        "updated_at": "2020-11-12T13:35:24.074Z",
+        "parent_category": 12,
+        "name": "Кулеры для процессоров",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 47,
+    "fields": {
+        "created_at": "2020-11-12T13:35:34.716Z",
+        "updated_at": "2020-11-12T13:35:34.716Z",
+        "parent_category": 12,
+        "name": "Вентиляторы для компьютеров",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.category",
+    "pk": 48,
+    "fields": {
+        "created_at": "2020-11-12T13:35:46.439Z",
+        "updated_at": "2020-11-12T13:35:46.439Z",
+        "parent_category": 12,
+        "name": "Термопасты",
+        "is_active": true,
+        "sort_order": 1
+    }
+},
+{
+    "model": "shop.product",
+    "pk": 19,
+    "fields": {
+        "created_at": "2020-11-12T13:56:00.209Z",
+        "updated_at": "2020-11-12T14:05:31.295Z",
+        "name": "Видеокарта ASUS EX-RX570-O4G",
+        "price_currency": "RUB",
+        "price": "12590.00",
+        "image_url": "https://img-atgplt.mvideo.ru/Pdb/30036783b.jpg",
+        "description": "Asus RX 570 Expedition 4GB OC Edition – графический ускоритель из серии Expedition от компании Asus. Он построен на чипсете AMD Radeon RX 570 с частотой процессора 1266 МГц, оснащён 4 Гб памяти типа GDDR5, которая взаимодействует с ядром на 256-битной шине. На его основе ты сможешь собрать хороший геймерский компьютер и играть во все современные игры с высокими настройками качества и картинкой в разрешении до Ultra HD.\r\n\r\nДАЙТЕ ДВЕ\r\nПару таких видеокарт можно объединить по технологии CrossFire в один мощный вычислительный массив, на годы забыв о нехватке fps даже в новейших играх.\r\n\r\nЗАЩИТА ОТ ПЕРЕГРЕВА\r\nДля стабильной работы адаптер оснащён активной воздушной системой охлаждения из двух 11-лопастных вентиляторов и радиатора из теплоотводящих медных трубок с никелированным покрытием.",
+        "is_active": true,
+        "sort_order": 1,
+        "categories": [
+            24,
+            22,
+            5
+        ]
+    }
+},
+{
+    "model": "shop.product",
+    "pk": 20,
+    "fields": {
+        "created_at": "2020-11-12T14:01:26.756Z",
+        "updated_at": "2020-11-12T14:07:19.476Z",
+        "name": "Видеокарта MSI Radeon RX 550 Aero ITX 2G OC",
+        "price_currency": "RUB",
+        "price": "7890.00",
+        "image_url": "https://img-atgplt.mvideo.ru/Pdb/30031379b.jpg",
+        "description": "Видеокарта MSI Radeon RX 550 Aero ITX 2G OC предназначена для использования в малогабаритных компьютерах. Она значительно повышает их производительность по сравнению с интегрированными чипами, позволяя воспроизводить фильмы с разрешением 4K и запускать новейшие игры, поддерживая при этом стабильную частоту смены кадров.\r\n\r\nИСКЛЮЧИТЕЛЬНАЯ НАДЁЖНОСТЬ\r\nГрафический адаптер собран из качественных компонентов, сертифицированных по стандарту MIL-STD-810G, и снабжён большим вентилятором с оптимизированной формой лопастей. Это делает его устойчивым к механическим повреждениям, сильным перепадам температуры и электрическим перегрузкам.\r\n\r\nТОЛЬКО КАЧЕСТВЕННОЕ ИЗОБРАЖЕНИЕ\r\nФункция AMD FreeSync сглаживает резкие движения в динамичных сценах и минимизирует количество помех. Технология HDR повышает статическую контрастность, улучшая детализацию самых светлых и тёмных участков картинки.\r\n\r\nПРОСТОЕ УПРАВЛЕНИЕ\r\nФирменное приложение MSI Afterburner позволяет контролировать важнейшие показатели, разгонять видеокарту, а также записывать геймплей и устраивать онлайн-трансляции.",
+        "is_active": true,
+        "sort_order": 1,
+        "categories": [
+            24,
+            27,
+            5
+        ]
+    }
+},
+{
+    "model": "shop.product",
+    "pk": 21,
+    "fields": {
+        "created_at": "2020-11-12T14:04:37.805Z",
+        "updated_at": "2020-11-12T14:04:37.805Z",
+        "name": "Видеокарта GIGABYTE GV-N2060WF2OC-6GD V2",
+        "price_currency": "RUB",
+        "price": "29590.00",
+        "image_url": "https://img-atgplt.mvideo.ru/Pdb/30052540b.jpg",
+        "description": "Видеокарта Gigabyte GV-N2060WF2OC-6GD V2 – твоё пропуск в мир современных игр с реалистичной графикой. Она поддерживает технологию трассировки лучей в реальном времени, позволяющую получить правдоподобное динамическое освещение и красочные спецэффекты. Её производительности хватает, чтобы транслировать изображение на VR-гарнитуру или три монитора с разрешением 4K.\r\n\r\nСТАБИЛЬНАЯ РАБОТА\r\nВыбирай высокие или максимальные настройки графики без малейших сомнений. Композитные медные трубки и большие радиаторы будут эффективно отводить избыточное тепло. А вращающиеся в противоположные стороны вентиляторы будут поддерживать умеренную температуру графического процессора в любых условиях.\r\n\r\nИСКЛЮЧИТЕЛЬНАЯ НАДЁЖНОСТЬ\r\nВидеокарта собрана из отборных компонентов, выдерживающих сильные перепады температуры и напряжения. Снизу она защищена металлической плитой, поэтому ты можешь самостоятельно собирать компьютер без риска повреждения мелких деталей.\r\n\r\nУДОБНОЕ УПРАВЛЕНИЕ\r\nЗапусти приложение Aorus Engine, чтобы проверить состояние видеокарты и выбрать подходящий профиль для конкретной игры. Ты можешь вручную регулировать производительность устройства и скорость вращения вентиляторов.",
+        "is_active": true,
+        "sort_order": 1,
+        "categories": [
+            19,
+            25,
+            5
+        ]
+    }
+},
+{
+    "model": "shop.product",
+    "pk": 22,
+    "fields": {
+        "created_at": "2020-11-12T14:14:46.247Z",
+        "updated_at": "2020-11-12T14:14:46.247Z",
+        "name": "Видеокарта GIGABYTE GV-N710D5-2GIL",
+        "price_currency": "RUB",
+        "price": "4190.00",
+        "image_url": "https://img-atgplt.mvideo.ru/Pdb/30052552b.jpg",
+        "description": "Видеокарта Gigabyte GV-N710D5-2GIL идеально подойдёт для офисного компьютера или домашнего мультимедийного центра. Благодаря малым габаритам она поместится в корпус формата mini-ITX – как горизонтально, так и вертикально. Её производительности хватит для 3D-моделирования и воспроизведения 4K-фильмов.\r\n\r\nНАДЁЖНАЯ КОНСТРУКЦИЯ\r\nВидеокарта выдержит долгую работу с максимальными нагрузками. Она собрана из отборных компонентов – в том числе полевых транзисторов с малым переходным сопротивлением и дросселей со стальными сердечниками.\r\n\r\nУДОБНОЕ УПРАВЛЕНИЕ\r\nПриложение Aorus Engine предоставляет вам инструменты для диагностики видеокарты и регулировки производительности.",
+        "is_active": true,
+        "sort_order": 1,
+        "categories": [
+            19,
+            25,
+            5
+        ]
+    }
+},
+{
+    "model": "shop.product",
+    "pk": 23,
+    "fields": {
+        "created_at": "2020-11-12T14:16:02.760Z",
+        "updated_at": "2020-11-12T14:16:02.760Z",
+        "name": "Видеокарта GIGABYTE GeForce GT 1030OC 2G",
+        "price_currency": "RUB",
+        "price": "6690.00",
+        "image_url": "https://img-atgplt.mvideo.ru/Pdb/30031079b.jpg",
+        "description": "GIGABYTE GeForce GT 1030OC 2G – видеокарта, предназначенная для использования в геймерских компьютерах. Она обеспечивает достойную производительность, даёт возможность запускать современные игры и приложения для редактирования графики. Интерфейс HDMI с позолоченными разъёмами позволяет выводить изображение высокого качества на монитор с разрешением 4K.\r\n\r\nЭФФЕКТИВНОЕ ОХЛАЖДЕНИЕ\r\nБлагодаря мощному вентилятору, функционирующему с низким уровнем шума, можно не опасаться перегрева при длительной работе под интенсивной нагрузкой.\r\n\r\nПРОСТОЙ РАЗГОН\r\nУтилита AORUS Graphics Engine позволяет легко настраивать основные параметры, в том числе тактовую частоту.\r\n\r\nНАДЁЖНОСТЬ\r\nПри производстве используются дроссели и конденсаторы высокого качества, поэтому графический ускоритель долго будет служить владельцу, не требуя замены.",
+        "is_active": true,
+        "sort_order": 1,
+        "categories": [
+            19,
+            25,
+            5
+        ]
+    }
+},
+{
+    "model": "shop.product",
+    "pk": 24,
+    "fields": {
+        "created_at": "2020-11-12T14:17:19.786Z",
+        "updated_at": "2020-11-12T14:17:19.786Z",
+        "name": "Видеокарта GIGABYTE GV-N710D5SL-2GL",
+        "price_currency": "RUB",
+        "price": "3990.00",
+        "image_url": "https://img-atgplt.mvideo.ru/Pdb/30052535b.jpg",
+        "description": "Видеокарта Gigabyte GV-N710D5SL-2GL поместится в небольшом компьютерном корпусе формата mini-ITX. Её пассивная система охлаждения бесшумна – она создаёт комфортные условия для работы и развлечений. Производительности графического адаптера хватает для трёхмерного моделирования и просмотра 4K-фильмов.\r\n\r\nИСКЛЮЧИТЕЛЬНАЯ НАДЁЖНОСТЬ\r\nВидеокарта выдерживает сильные перепады температуры и напряжения. Она собрана из высококачественных полевых транзисторов, конденсаторов с малым последовательным сопротивлением и дросселей со стальными сердечниками.\r\n\r\nПРОСТОЕ УПРАВЛЕНИЕ\r\nВ приложении Aourus Engine вы можете выбрать оптимальный уровень производительности и провести диагностику видеокарты.",
+        "is_active": true,
+        "sort_order": 1,
+        "categories": [
+            19,
+            25,
+            5
+        ]
+    }
+},
+{
+    "model": "shop.product",
+    "pk": 25,
+    "fields": {
+        "created_at": "2020-11-13T08:18:11.283Z",
+        "updated_at": "2020-11-13T08:18:11.283Z",
+        "name": "Видеокарта GIGABYTE GV-N730D5-2GL",
+        "price_currency": "RUB",
+        "price": "5690.00",
+        "image_url": "https://img.mvideo.ru/Pdb/30052536b.jpg",
+        "description": "Видеокарта Gigabyte GV-N730D5-2GL идеально подойдёт для офисного компьютера или домашнего мультимедийного центра. Благодаря малым габаритам она поместится в корпус формата mini-ITX – как горизонтально, так и вертикально. Её производительности хватит для 3D-моделирования и воспроизведения 4K-фильмов.\r\n\r\nНАДЁЖНАЯ КОНСТРУКЦИЯ\r\nВидеокарта выдержит долгую работу с максимальными нагрузками. Она собрана из отборных компонентов – в том числе полевых транзисторов с малым переходным сопротивлением и дросселей со стальными сердечниками.\r\n\r\nУДОБНОЕ УПРАВЛЕНИЕ\r\nПриложение Aorus Engine предоставляет вам инструменты для диагностики видеокарты и регулировки производительности.",
+        "is_active": true,
+        "sort_order": 1,
+        "categories": [
+            19,
+            25,
+            5
+        ]
+    }
+},
+{
+    "model": "shop.product",
+    "pk": 26,
+    "fields": {
+        "created_at": "2020-11-13T08:18:56.487Z",
+        "updated_at": "2020-11-13T08:18:56.487Z",
+        "name": "Видеокарта GIGABYTE GeForce GT710 2GB GDDR5",
+        "price_currency": "RUB",
+        "price": "3690.00",
+        "image_url": null,
+        "description": "",
+        "is_active": true,
+        "sort_order": 1,
+        "categories": [
+            19,
+            25,
+            5
+        ]
+    }
+},
+{
+    "model": "shop.product",
+    "pk": 27,
+    "fields": {
+        "created_at": "2020-11-13T08:20:04.619Z",
+        "updated_at": "2020-11-13T08:20:04.619Z",
+        "name": "Видеокарта GIGABYTE GeForce GTX 1050 Ti D5 4G",
+        "price_currency": "RUB",
+        "price": "11990.00",
+        "image_url": "https://img.mvideo.ru/Pdb/30031085b.jpg",
+        "description": "GIGABYTE GeForce GTX 1050 Ti D5 4G – видеокарта, предназначенная для использования в геймерских компьютерах. Она обеспечивает достойную производительность и даёт возможность запускать современные игры.\r\n\r\nРЕАЛИСТИЧНОСТЬ ИЗОБРАЖЕНИЯ\r\nГрафический адаптер позволяет подключать мониторы с ультравысоким разрешением 8K, чтобы выводить на экран детализированную картинку: вы получите максимум удовольствия от погружения в виртуальные миры.\r\n\r\nЭФФЕКТИВНОЕ ОХЛАЖДЕНИЕ\r\nБлагодаря мощному вентилятору, функционирующему с низким уровнем шума, можно не опасаться перегрева при длительной работе под интенсивной нагрузкой.\r\n\r\nПРОСТОЙ РАЗГОН\r\nУтилита XTREME Engine позволяет легко настраивать основные параметры, в том числе тактовую частоту.",
+        "is_active": true,
+        "sort_order": 1,
+        "categories": [
+            19,
+            25,
+            5
+        ]
+    }
+},
+{
+    "model": "shop.product",
+    "pk": 28,
+    "fields": {
+        "created_at": "2020-11-13T08:21:34.590Z",
+        "updated_at": "2020-11-13T08:22:11.965Z",
+        "name": "Видеокарта MSI GeForce GTX 1050 TI 4GT OC",
+        "price_currency": "RUB",
+        "price": "12390.00",
+        "image_url": "https://img.mvideo.ru/Pdb/30031056b.jpg",
+        "description": "Видеокарта MSI GeForce GTX 1050 TI 4GT OC предназначена для установки в геймерский компьютер и позволяет получить максимум удовольствия от современных игр и погружения в виртуальную реальность. Она совместима с дисплеями с разрешением 4K и даёт возможность подключить несколько мониторов одновременно.\r\n\r\nЗАХВАТ ВИДЕО\r\nВы можете сохранить наиболее яркие моменты с углом обзора 360 градусов, чтобы потом пересматривать их и хвастаться ими перед друзьями.\r\n\r\nПОЛНЫЙ КОНТРОЛЬ\r\nУтилита MSI Afterburner даёт возможность мониторить и изменять основные параметры, а также выполнять оверклокинг.\r\n\r\nНАДЁЖНОСТЬ И ДОЛГОВЕЧНОСТЬ\r\nПри производстве используются компоненты, сертифицированные в соответствии со стандартом MIL-STD-810G и способные бесперебойно работать в экстремальных условиях и при длительной интенсивной нагрузке.",
+        "is_active": true,
+        "sort_order": 1,
+        "categories": [
+            20,
+            25,
+            5
+        ]
+    }
+},
+{
+    "model": "shop.product",
+    "pk": 29,
+    "fields": {
+        "created_at": "2020-11-13T08:24:04.554Z",
+        "updated_at": "2020-11-13T08:24:04.554Z",
+        "name": "Видеокарта MSI Geforce GT 1030 AERO ITX 2GD4 OC",
+        "price_currency": "RUB",
+        "price": "6190.00",
+        "image_url": "https://img.mvideo.ru/Pdb/30046373b.jpg",
+        "description": "Устаревшие видеокарты начинают задыхаться даже в инди-хитах, щеголяющих пиксельной графикой, и популярных сетевых играх, которым разработчики сделали косметическую подтяжку. GeForce GT 1030 позволит спокойно запускать классические шутеры и RPG, демонстрировать мастерство в нетребовательных онлайн-боевиках и MMORPG.\r\n\r\nДЕСЯТАЯ СЕРИЯ NVIDIA\r\nКак и старшие модели, Geforce GT 1030 построена на базе архитектуры Pascal и поддерживает DirectX 12. Видеокарта обладает 2 Гб памяти DDR4, а приложение GeForce Experience помогает адаптеру автоматически обновлять драйверы и оптимизировать настройки.\r\n\r\nКОМПАКТНЫЕ ГАБАРИТЫ\r\nОдним из преимуществ видеокарт из серии MSO Aero ITX стали компактные размеры, которые позволяют разместить графический адаптер в миниатюрном корпусе, куда не влезут их габаритные собратья. Отдельного упоминания заслуживает тот факт, что GeForce GT 1030 можно разместить даже в HTPC-компьютерах, предназначенных для домашнего кинотеатра.",
+        "is_active": true,
+        "sort_order": 1,
+        "categories": [
+            20,
+            25,
+            5
+        ]
+    }
+},
+{
+    "model": "shop.product",
+    "pk": 30,
+    "fields": {
+        "created_at": "2020-11-13T08:24:46.354Z",
+        "updated_at": "2020-11-13T08:24:46.354Z",
+        "name": "Видеокарта MSI GeForce GT 710 2GB Silent LP",
+        "price_currency": "RUB",
+        "price": "3490.00",
+        "image_url": "https://img.mvideo.ru/Pdb/30030949b.jpg",
+        "description": "Низкопрофильная видеокарта MSI GeForce GT 710 2GD3H LP хорошо подходит для установки в тонкие и маломерные корпуса. С её помощью можно собрать геймерский компьютер начального уровня. Она оборудована твердотельными конденсаторами, рассчитанными на длительную эксплуатацию.\r\n\r\nПОЛНЫЙ КОНТРОЛЬ\r\nУтилита MSI Afterburner даёт возможность мониторить и изменять основные параметры, а также выполнять оверклокинг. Она поддерживает беспроводное управление с Android- и iOS-устройств и позволяет захватывать видео в реальном времени, поэтому вы можете сохранить наиболее эффектные игровые моменты.\r\n\r\nБЕСШУМНОЕ ОХЛАЖДЕНИЕ\r\nВ этом компоненте используется большой радиатор, который покрывает области GPU и памяти. Он эффективно отводит тепло: производительность систему не упадёт даже после длительной работы под интенсивной нагрузкой.",
+        "is_active": true,
+        "sort_order": 1,
+        "categories": []
+    }
+},
+{
+    "model": "shop.product",
+    "pk": 31,
+    "fields": {
+        "created_at": "2020-11-13T08:26:25.101Z",
+        "updated_at": "2020-11-13T08:26:25.101Z",
+        "name": "Видеокарта Palit GeForce GT1030 2G",
+        "price_currency": "RUB",
+        "price": "6290.00",
+        "image_url": "https://img.mvideo.ru/Pdb/30031387b.jpg",
+        "description": "Видеокарта Palit NE5103000646-1080F – низкопрофильная модель, созданная специально для установки в компактные мультимедийные компьютеры. Она занимает всего один слот расширения и не требует подключения к мощному блоку питания.\r\n\r\nВЫСОКАЯ ПРОИЗВОДИТЕЛЬНОСТЬ\r\nГрафический адаптер снабжён процессором NVIDIA Pascal и памятью GDDR5. Благодаря этому он может воспроизводить 4K-видео и трёхмерную графику в современных играх без каких-либо задержек.\r\n\r\nИСКЛЮЧИТЕЛЬНАЯ НАДЁЖНОСТЬ\r\nУстройство собрано из качественных компонентов и оснащено активной системой охлаждения. Такая конструкция делает его устойчивым к механическим повреждениям, перегрузкам и перегреву.\r\n\r\nПРОСТОЕ УПРАВЛЕНИЕ\r\nФирменное приложение Palit ThunderMaster позволяет разгонять видеокарту и вести мониторинг её технического состояния.",
+        "is_active": true,
+        "sort_order": 1,
+        "categories": [
+            25,
+            21,
+            5
+        ]
+    }
+},
+{
+    "model": "shop.product",
+    "pk": 32,
+    "fields": {
+        "created_at": "2020-11-13T08:28:04.377Z",
+        "updated_at": "2020-11-13T08:28:04.377Z",
+        "name": "Видеокарта ASUS ROG STRIX GeForce GTX 1080 TI 11GB",
+        "price_currency": "RUB",
+        "price": "73590.00",
+        "image_url": "https://img.mvideo.ru/Pdb/30030780b.jpg",
+        "description": "Видеокарта ASUS ROG STRIX GeForce GTX 1080 TI 11GB снабжена высокоскоростной памятью и предварительно настроенным графическим процессором. Она позволяет получить на 35 % большую производительность по сравнению с референсной моделью. За счёт этого удаётся сохранять высокую частоту смены кадров при обработке игровой графики с разрешением 4K. Если этого мало, пользователь может разогнать устройство – цифровая система управления питанием с дополнительными фазами делает этот процесс быстрым и безопасным.\r\n\r\nМАКСИМАЛЬНАЯ НАДЁЖНОСТЬ\r\nСистема охлаждения с тремя вентиляторами, большим алюминиевым радиатором и медными тепловыми трубками поддерживает низкую температуру видеокарты, обеспечивая её стабильную работу. При малых нагрузках кулеры отключаются, снижая шумность и сокращая энергопотребление. При производстве графического адаптера используются только качественные компоненты, устойчивые к перегреву и колебаниям напряжения.\r\n\r\nПОЛНОЕ ПОГРУЖЕНИЕ\r\nГрафический адаптер поддерживает одновременное подключение трёх мониторов с разрешением до 4K. Создав многоэкранную конфигурацию, геймер может контролировать большее пространство, чем его противники. А для того чтобы сделать игру по-настоящему реалистичной, достаточно воспользоваться 3D-очками. Видеокарта поддерживает комфортную частоту смены кадров даже при выборе высокого уровня детализации.\r\n\r\nПРОФЕССИОНАЛЬНЫЙ МОДДИНГ\r\nСтильный корпус и настраиваемая RGB-подсветка делают устройство настоящим украшением высококлассного компьютера. Для выбора различных оттенков и динамических эффектов используется приложение GPU Tweak II.\r\n\r\nТОЛЬКО КАЧЕСТВЕННОЕ ИЗОБРАЖЕНИЕ\r\nПоддержка технологии G-SYNC позволяет синхронизировать частоту обновления видеокарты и мониторов. Благодаря этому самые быстрые движения становятся плавными, а с экранов исчезают разрывы, артефакты, чёрные полосы и другие помехи.",
+        "is_active": true,
+        "sort_order": 1,
+        "categories": []
+    }
+},
+{
+    "model": "shop.product",
+    "pk": 33,
+    "fields": {
+        "created_at": "2020-11-13T08:30:36.430Z",
+        "updated_at": "2020-11-13T08:30:36.430Z",
+        "name": "Процессор Intel Core i7-7740X",
+        "price_currency": "RUB",
+        "price": "27190.00",
+        "image_url": "https://img.mvideo.ru/Pdb/30031466b.jpg",
+        "description": "Intel Core i7-7740X – мощный процессор, разработанный для использования в компьютерах, предназначенных для решения сложных задач. Его возможностей достаточно для воспроизведения и редактирования графики с разрешением 4K, обработки панорамных видео, взаимодействия с виртуальной реальностью или рендеринга 3D-эффектов.\r\n\r\nЭФФЕКТИВНЫЙ ОВЕРКЛОКИНГ\r\nБлагодаря разблокированному множителю вы можете обеспечить дополнительную производительность. При этом предусмотрена возможность управлять разгоном каждого ядра по отдельности.\r\n\r\nМАКСИМАЛЬНАЯ ЭФФЕКТИВНОСТЬ\r\nТехнология Intel Turbo Boost Max Technology 3.0 определяет два самых быстрых ядра и направляет на них наиболее критически важные рабочие нагрузки. Это существенно увеличивает быстродействие и результативность при выполнении однопоточных вычислений.",
+        "is_active": true,
+        "sort_order": 1,
+        "categories": [
+            18,
+            4
+        ]
+    }
+},
+{
+    "model": "shop.product",
+    "pk": 34,
+    "fields": {
+        "created_at": "2020-11-13T08:31:29.470Z",
+        "updated_at": "2020-11-13T08:31:29.470Z",
+        "name": "Процессор Intel Core i7-7700K",
+        "price_currency": "RUB",
+        "price": "27990.00",
+        "image_url": "https://img.mvideo.ru/Pdb/30030668b.jpg",
+        "description": "Процессор Intel Core i7-7700K отлично подходит для использования в геймерских компьютерах. Разблокированный множитель частоты позволяет выполнять его безопасный разгон. При этом не нужно вносить изменений в конструкцию самой микросхемы, материнской платы и других комплектующих – достаточно выполнить правильную настройку и подобрать соответствующую систему охлаждения.\r\n\r\nМНОГОЗАДАЧНОСТЬ\r\nПроцессор поддерживает стабильную работу компьютера при запуске ресурсоёмких приложений и новейших игр. Система Hyper-Threading позволяет его четырём ядрам пропускать через себя до восьми потоков информации, что особенно важно для одновременного выполнения нескольких задач.\r\n\r\nМУЛЬТИМЕДИЙНЫЕ ВОЗМОЖНОСТИ\r\nГрафическое ядро HD Graphics 630 способно воспроизводить трёхмерное видео и обрабатывать изображение высокого разрешения.\r\n\r\nСОВМЕСТИМОСТЬ С СОВРЕМЕННЫМИ КОМПЛЕКТУЮЩИМИ\r\nПроцессор можно устанавливать в мощные компьютеры с двумя видеокартами, оперативной памятью DDR4 (до 64 Гб) и высокоскоростными накопителями информации, включая Intel Optane.",
+        "is_active": true,
+        "sort_order": 1,
+        "categories": [
+            18,
+            4
+        ]
+    }
+},
+{
+    "model": "shop.product",
+    "pk": 35,
+    "fields": {
+        "created_at": "2020-11-13T08:32:16.404Z",
+        "updated_at": "2020-11-13T08:32:16.404Z",
+        "name": "Процессор Intel Core i5-7600K",
+        "price_currency": "RUB",
+        "price": "20890.00",
+        "image_url": "https://img.mvideo.ru/Pdb/30030666b.jpg",
+        "description": "Процессор Intel Core i5-7600K отлично подходит для геймерских компьютеров и рабочих станций с высоким уровнем нагрузок. Разблокированный множитель частоты позволяет выполнять его безопасный разгон, не внося никаких изменений в конструкцию самой микросхемы, материнской платы или других комплектующих.\r\n\r\nМНОГОЗАДАЧНОСТЬ\r\nПроцессор обеспечивает стабильную работу современных игр и приложений, предполагающих одновременное использование нескольких потоков информации. Он снабжён четырьмя физическими ядрами и 6 Мб смарт-кэша третьего уровня.\r\n\r\nМУЛЬТИМЕДИЙНЫЕ ВОЗМОЖНОСТИ\r\nИнтегрированная графическая подсистема HD Graphics 630 способна воспроизводить трёхмерное видео и транслировать изображение на 3 дисплея с общим разрешением 4096х2304.\r\n\r\nСОВМЕСТИМОСТЬ С НОВЕЙШИМИ КОМПЛЕКТУЮЩИМИ\r\nПроцессор можно устанавливать в компьютеры с массивами из двух видеокарт, высокоскоростными SSD-накопителями и памятью Intel Optane, ускоряющей работу системы.",
+        "is_active": true,
+        "sort_order": 1,
+        "categories": [
+            18,
+            4
+        ]
+    }
+},
+{
+    "model": "shop.product",
+    "pk": 36,
+    "fields": {
+        "created_at": "2020-11-13T08:32:59.600Z",
+        "updated_at": "2020-11-13T08:33:21.346Z",
+        "name": "Процессор Intel Core i5-8600K 3.6GHz",
+        "price_currency": "RUB",
+        "price": "19790.00",
+        "image_url": "https://img.mvideo.ru/Pdb/30036874b.jpg",
+        "description": "Процессор Intel Core i5-8600K – мощный чип восьмого поколения от компании-лидера в своей области. Он работает на тактовой частоте 3600 МГц (4300 МГц в режиме Turbo), плюс у него разблокирован множитель, а значит, он отлично подойдёт для разгона.\r\n\r\nНАЧИНКА НА УРОВНЕ\r\nВ едином корпусе находятся шесть вычислительных ядер и кэш-память третьего уровня объёмом 9 Мб. Этот новый ЦП разработан для установки в игровые и домашние компьютеры и справится «на ура» со всеми задачами, которые вы перед ним поставите: просмотр фильма в 4К, требовательное приложение или самая последняя игра.\r\n\r\nВСЁ В ОДНОМ\r\nВстроенный контроллер Intel UHD Graphics 630 не требует использования дополнительной видеокарты. Он возмёт на себя обработку графики и выдаст картинку в разрешении Ultra HD на большие современные мониторы.",
+        "is_active": true,
+        "sort_order": 1,
+        "categories": [
+            18,
+            4
+        ]
+    }
+},
+{
+    "model": "shop.product",
+    "pk": 37,
+    "fields": {
+        "created_at": "2020-11-13T08:34:04.925Z",
+        "updated_at": "2020-11-13T08:34:04.925Z",
+        "name": "Процессор Intel Core i5-6400",
+        "price_currency": "RUB",
+        "price": "16390.00",
+        "image_url": "https://img.mvideo.ru/Pdb/30030662b.jpg",
+        "description": "Процессор Intel Core i5-6400 оснащён четырьмя физическими ядрами и 6 Мб кэш-памяти третьего уровня, что позволяет ему легко справляться с одновременным выполнением нескольких сложных задач. Он поддерживает стабильную работу системы при запуске ресурсоёмких приложений и помогает получить высокий показатель FPS в играх (при сборке соответствующей конфигурации).\r\n\r\nКУЛЕР В КОМПЛЕКТЕ\r\nВместе с процессором покупатель получает систему охлаждения, поддерживающую низкую температуру микросхемы при любых нагрузках.\r\n\r\nМОЩНОЕ ГРАФИЧЕСКОЕ ЯДРО\r\nПодсистема HD Graphics способна воспроизводить качественное видео и трёхмерное мультимедиа. Она поддерживает одновременную трансляцию изображения на 3 дисплея с общим разрешением до 4096х2304.\r\n\r\nВЫСОКОПРОИЗВОДИТЕЛЬНАЯ КОНФИГУРАЦИЯ\r\nПроцессор может устанавливаться в компьютерах с двумя видеокартами. Он совместим с оперативной памятью DDR4 и твердотельными накопителями информации.",
+        "is_active": true,
+        "sort_order": 1,
+        "categories": [
+            18,
+            4
+        ]
+    }
+},
+{
+    "model": "shop.product",
+    "pk": 38,
+    "fields": {
+        "created_at": "2020-11-13T08:35:41.687Z",
+        "updated_at": "2020-11-13T08:35:41.687Z",
+        "name": "Процессор Intel Core i5-7400",
+        "price_currency": "RUB",
+        "price": "13990.00",
+        "image_url": "https://img.mvideo.ru/Pdb/30030663b.jpg",
+        "description": "Процессор Intel Core i5-7400 отлично подходит для использования в высокопроизводительных конфигурациях – в том числе рабочих станциях и игровых компьютерах. Четыре физических ядра и 6 Мб смарт-кэша третьего уровня позволяют ему легко справляться с одновременным выполнением нескольких задач. Благодаря этому удаётся добиться стабильного быстродействия системы и получить высокий показатель FPS в играх.\r\n\r\nСОВМЕСТИМОСТЬ С НОВЕЙШИМИ КОМПЛЕКТУЮЩИМИ\r\nПроцессор поддерживает работу с памятью Intel Optane и высокоскоростными SSD-накопителями. Его можно устанавливать в компьютеры, оснащённые двумя видеокартами.\r\n\r\nИНТЕГРИРОВАННАЯ ГРАФИКА\r\nПодсистема HD Graphics 630 способна транслировать изображение на три дисплея с общим разрешением 4096х2304. Поддержка технологии DirectX 12 делает её совместимой с новейшими играми и приложениями для трёхмерного моделирования.\r\n\r\nСТАБИЛЬНАЯ ТЕМПЕРАТУРА\r\nПроцессор автоматически выбирает оптимальную производительность в соответствии с нагрузками и уровнем нагрева. В комплект поставки включена высокоэффективная система охлаждения.",
+        "is_active": true,
+        "sort_order": 1,
+        "categories": [
+            18,
+            4
+        ]
+    }
+},
+{
+    "model": "shop.product",
+    "pk": 39,
+    "fields": {
+        "created_at": "2020-11-13T08:36:33.371Z",
+        "updated_at": "2020-11-13T08:36:33.371Z",
+        "name": "Процессор Intel Core i3-7320",
+        "price_currency": "RUB",
+        "price": "10990.00",
+        "image_url": "https://img.mvideo.ru/Pdb/30031462b.jpg",
+        "description": "Intel Core i3-7320 – энергоэффективный процессор, который можно использовать как в компьютерах, предназначенных для решения несложных повседневных задач, так и в геймерских устройствах начального уровня. Его возможностей достаточно для редактирования фотографий и видео, запуска многих игр, воспроизведения фильмов и сериалов в высоком разрешении или  стабильной работы специальных бизнес-приложений.\r\n\r\nНАДЁЖНОСТЬ И БЕЗОПАСНОСТЬ\r\nЭта модель поддерживает устройства и сервисы, использующиеся для распознавания лица, голоса или отпечатков пальцев. Благодаря этому вы можете защитить конфиденциальную информацию, легко входить в учётные записи и осуществлять онлайн-платежи.\r\n\r\nБЕЗ ПЕРЕГРЕВА\r\nВ комплект входит кулер, обеспечивающий эффективное охлаждение. Благодаря этому при длительном функционировании под интенсивной нагрузкой производительность не снизится.",
+        "is_active": true,
+        "sort_order": 1,
+        "categories": [
+            18,
+            4
+        ]
+    }
+},
+{
+    "model": "shop.product",
+    "pk": 40,
+    "fields": {
+        "created_at": "2020-11-13T08:37:58.799Z",
+        "updated_at": "2020-11-13T08:37:58.799Z",
+        "name": "Процессор AMD Ryzen 9 3950X AM4 BOX W/O Cooler",
+        "price_currency": "RUB",
+        "price": "71190.00",
+        "image_url": "https://img.mvideo.ru/Pdb/30048724b.jpg",
+        "description": "Процессор AMD Ryzen 9 3950X предназначен для сборки компьютеров топового уровня – в том числе высокопроизводительных рабочих станций и геймерских «машин», совместимых с гарнитурами виртуальной реальности. Он состоит из 16 физических ядер, способных обрабатывать до 32 потоков информации одновременно.\r\n\r\nЭФФЕКТИВЕН И ЭКОНОМИЧЕН\r\nВпечатляющая производительность сочетается с разумным энергопотреблением и умеренным нагревом. Процессор построен по инновационному 7-нанометровому техпроцессу и поддерживает функцию интеллектуального регулирования тактовой частоты.\r\n\r\nИДЕАЛЕН ДЛЯ ОВЕРКЛОКИНГА\r\nХотите раскрыть потенциал 16-ядерного чипа на сто процентов? Воспользуйтесь программой AMD Ryzen Master, чтобы повысить его производительность. В этом случае рекомендуется установка жидкостной системы охлаждения.",
+        "is_active": true,
+        "sort_order": 1,
+        "categories": [
+            17,
+            4
+        ]
+    }
+},
+{
+    "model": "shop.product",
+    "pk": 41,
+    "fields": {
+        "created_at": "2020-11-13T08:38:36.833Z",
+        "updated_at": "2020-11-13T08:38:36.833Z",
+        "name": "Процессор AMD Ryzen 5 1500X (YD150XBBAEBOX)",
+        "price_currency": "RUB",
+        "price": "11690.00",
+        "image_url": "https://img.mvideo.ru/Pdb/30032557b.jpg",
+        "description": "Четырёхъядерный процессор AMD Ryzen 5 1500Х обеспечивает высокую производительность при работе в режиме многозадачности и современных компьютерных играх. В нём реализованы «умные» технологии, позволяющие устройству эффективно выполнять пользовательские команды.\r\n\r\nPure Power\r\nМикрочипы оптимизируют мощность, контролируют температуру и энергопотребление.\r\n\r\nNeural Net Prediction\r\nИскусственный интеллект способен предугадывать каждое ваше последующее действие, чтобы быстро распределять ресурсы для повышения производительности",
+        "is_active": true,
+        "sort_order": 1,
+        "categories": [
+            17,
+            4
+        ]
+    }
+},
+{
+    "model": "shop.product",
+    "pk": 42,
+    "fields": {
+        "created_at": "2020-11-13T08:39:30.528Z",
+        "updated_at": "2020-11-13T08:39:30.528Z",
+        "name": "Процессор AMD Ryzen 7 1700 (YD1700BBAEBOX)",
+        "price_currency": "RUB",
+        "price": "15190.00",
+        "image_url": "https://img.mvideo.ru/Pdb/30030673b.jpg",
+        "description": "Процессор AMD Ryzen 7 1700 – модель топовой серии с восемью ядрами, поддерживающими одновременную обработку 16 потоков информации. Он создан на основе инновационной архитектуры Zen x86, позволяющей выполнять на 52 % больше команд за цикл по сравнению с микросхемами предыдущего поколения. Это делает его подходящим для использования в игровых компьютерах, а также мощных рабочих станциях, выполняющих распределённые вычисления.\r\n\r\nПРОСТОЙ РАЗГОН\r\nРазблокированный множитель позволяет увеличивать тактовую частоту процессора выше указанного производителем максимального значения (при соответствующей подготовке компьютера и эффективном охлаждении). Для настройки системы, диагностики, а также контроля температуры и напряжения можно воспользоваться приложением Ryzen Master.\r\n\r\nПОДДЕРЖКА ВИРТУАЛЬНОЙ РЕАЛЬНОСТИ\r\nПроцессор получил статус VR-Ready Premium. Он превосходит системные требования 3D-очков HTC Vive и Oculus Rift, а также готов к работе с перспективным игровым оборудованием.\r\n\r\nИНТЕЛЛЕКТУАЛЬНЫЕ ТЕХНОЛОГИИ\r\nПредварительным анализом поступающей в процессор информации занимается искусственная нейронная сеть. Она находит кратчайшие пути для команд приложений, повышая производительность компьютера и уменьшая энергопотребление. Функция Smart Prefetch минимизирует задержки при выполнении различных действий за счёт постоянной актуализации содержимого кэша.",
+        "is_active": true,
+        "sort_order": 1,
+        "categories": [
+            17,
+            4
+        ]
+    }
+},
+{
+    "model": "shop.product",
+    "pk": 43,
+    "fields": {
+        "created_at": "2020-11-13T08:39:59.176Z",
+        "updated_at": "2020-11-13T08:39:59.176Z",
+        "name": "Процессор AMD Ryzen 5 1600X (YD160XBCAEWOF)",
+        "price_currency": "RUB",
+        "price": "12590.00",
+        "image_url": "https://img.mvideo.ru/Pdb/30030670b.jpg",
+        "description": "Процессор AMD Ryzen 5 1600X поддерживает обработку двух потоков информации одним физическим ядром. За счёт этого он превосходно справляется с одновременным выполнением нескольких задач, поддерживая стабильное быстродействие системы. Разблокированный множитель позволяет разгонять микросхемы выше максимальной частоты, указанной производителем (при соответствующем охлаждении). С помощью приложения Ryzen Master пользователь может выбирать оптимальный уровень производительности, контролировать температуру и напряжение, а также вести мониторинг технического состояния системы.\r\n\r\nИННОВАЦИОННАЯ АРХИТЕКТУРА\r\nПроцессор создан на основе ядер Zen x86, способных выполнять на 52 % больше команд за один цикл по сравнению с чипами прошлого поколения, но сохраняющих при этом сопоставимое энергопотребление. Он идеально подходит для обработки трёхмерной графики, построения сложных моделей, распределённых вычислений и анализа больших массивов информации.\r\n\r\nСОВМЕСТИМОСТЬ С ВИРТУАЛЬНОЙ РЕАЛЬНОСТЬЮ\r\nПроцессору присвоен статус VR-Ready Premium. Это означает, что он превосходит системные требования существующих 3D-очков и готов к работе с перспективным игровым оборудованием.\r\n\r\nИНТЕЛЛЕКТУАЛЬНЫЕ ТЕХНОЛОГИИ\r\nИскусственная нейронная сеть анализирует поступающую в процессор информацию и выбирает кратчайшие пути для команд приложений. Она ускоряет работу компьютера и снижает энергопотребление. Функция Smart Prefetch минимизирует задержки при выполнении самых разных действий, предварительно загружая в кэш требуемые данные.",
+        "is_active": true,
+        "sort_order": 1,
+        "categories": [
+            17,
+            4
+        ]
+    }
+},
+{
+    "model": "shop.product",
+    "pk": 44,
+    "fields": {
+        "created_at": "2020-11-13T08:40:41.418Z",
+        "updated_at": "2020-11-13T08:40:41.418Z",
+        "name": "Процессор AMD Ryzen 5 2400G (YD2400C5FBBOX)",
+        "price_currency": "RUB",
+        "price": "9990.00",
+        "image_url": "https://img.mvideo.ru/Pdb/30032565b.jpg",
+        "description": "Четырёхъядерный процессор AMD Ryzen 5 2400G обеспечивает высокую производительность при работе в режиме многозадачности и современных компьютерных играх. В нём реализованы «умные» технологии, позволяющие устройству эффективно выполнять пользовательские команды.\r\n\r\nPure Power\r\nМикрочипы оптимизируют мощность, контролируют температуру и энергопотребление.\r\n\r\nNeural Net Prediction\r\nИскусственный интеллект способен предугадывать каждое ваше последующее действие, чтобы быстро распределять ресурсы для повышения производительности.",
+        "is_active": true,
+        "sort_order": 1,
+        "categories": [
+            17,
+            4
+        ]
+    }
+},
+{
+    "model": "shop.product",
+    "pk": 45,
+    "fields": {
+        "created_at": "2020-11-13T08:43:09.214Z",
+        "updated_at": "2020-11-13T08:43:40.645Z",
+        "name": "Материнская плата ASUS H110M-A/M.2",
+        "price_currency": "RUB",
+        "price": "4890.00",
+        "image_url": "https://img.mvideo.ru/Pdb/30032256b.jpg",
+        "description": "Материнская плата Asus H110M-A/M.2 совместима с процессорами Intel шестого поколения и оперативной памятью DDR4. Она поддерживает подключение компактных SSD-накопителей к четырёхканальной шине PCIe 2.0. Такое решение многократно ускоряет работу компьютера по сравнению с интерфейсом SATA.\r\n\r\nИСКЛЮЧИТЕЛЬНАЯ НАДЁЖНОСТЬ\r\nПятиступенчатая система безопасности защищает плату от перегрева, статических разрядов, перегрузок, перепадов напряжения и коррозии.\r\n\r\nПРОСТАЯ НАСТРОЙКА\r\nГрафический интерфейс UEFI BIOS позволяет регулировать скорость вращения вентиляторов, выбирать профили разгона оперативной памяти и выполнять диагностику накопителей несколькими щелчками мыши. В режиме Advanced Mode вы можете переименовывать линии SATA и сохранять логи на флешку.\r\n\r\nСОВРЕМЕННАЯ АУДИОСИСТЕМА\r\nЯпонские конденсаторы высокой ёмкости делают звук чётким и насыщенным, а качественная изоляция дорожек уменьшает количество помех.\r\n\r\nБЕЗОПАСНАЯ СБОРКА\r\nЗащёлки Q-Slot позволяют менять видеокарту и планки оперативной памяти без специальной технической подготовки.",
+        "is_active": true,
+        "sort_order": 1,
+        "categories": [
+            14,
+            6
+        ]
+    }
+},
+{
+    "model": "shop.product",
+    "pk": 46,
+    "fields": {
+        "created_at": "2020-11-13T08:47:04.901Z",
+        "updated_at": "2020-11-13T08:47:04.901Z",
+        "name": "Материнская плата GIGABYTE GA-H110M-S2PV",
+        "price_currency": "RUB",
+        "price": "3790.00",
+        "image_url": "https://img.mvideo.ru/Pdb/30032116b.jpg",
+        "description": "Материнские платы семейства Ultra Durable от Gigabyte совместимы с процессорами шестого поколения Intel Core на сокете LGA1151. Они отличаются быстродействием и эффективностью, а в сочетании с оперативной памятью DDR4 обеспечивают высокую производительность. Транзисторы Low RDS(on) MOSFET позволяют значительно уменьшить энергопотребление и сократить нагрев элементов.\r\n\r\nНИКАКИХ СБОЕВ\r\nУсовершенствованный дизайн платы с уплотнённым переплетением узлов стекловолокна не позволяет сырости проникать вглубь слоёв, защищая от коротких замыканий. Это продлевает срок службы вашего компьютера даже в помещениях с повышенной влажностью.\r\n\r\nЯРКАЯ ВИЗУАЛИЗАЦИЯ\r\nМультимедийный HDMI-интерфейс в тандеме с интегрированным графическим контроллером HD Graphics от Intel поддерживает воспроизведение чёткого изображения в 4K-разрешении. Насладитесь качественной и реалистичной картинкой, просматривая фильмы в форматах Blu-Ray и DVD.\r\n\r\nБЕСПЕРЕБОЙНЫЕ ВОЗМОЖНОСТИ\r\nУтилита cFosSpeed Internet Accelerator для управления трафиком сокращает задержки и обеспечивает высокий сигнал при больших сетевых нагрузках: веб-сёрфинг без подвисаний гарантирован.",
+        "is_active": true,
+        "sort_order": 1,
+        "categories": [
+            15,
+            6
+        ]
+    }
+},
+{
+    "model": "shop.order",
+    "pk": 2,
+    "fields": {
+        "created_at": "2020-11-13T14:13:17.363Z",
+        "updated_at": "2020-11-13T14:13:17.363Z",
+        "chat": 1,
+        "description": "Адресс: ул. Пушкина д. 5\r\nПозвонить по домофону в 5 квартиру.",
+        "product": 19,
+        "total_currency": "RUB",
+        "total": "12590.00",
+        "status": 1,
+        "paid_date": null,
+        "cancel_date": null
+    }
+}
+]
