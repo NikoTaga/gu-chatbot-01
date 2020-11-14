@@ -50,6 +50,7 @@ def ok_test_webhook(request: HttpRequest) -> HttpResponse:
     result: EventCommandToSend = test_handler(event)
     client.send_test_message(result)
 
+    # скрипт обязательно должен подтверждать получение с помощью отправки 200 ОК
     return HttpResponse('OK')
 
 

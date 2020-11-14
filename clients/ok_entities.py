@@ -9,6 +9,7 @@ from clients.ok_constants import *
 
 
 # заставляет отбрасывать все значения None при дампе
+# имеет смысл промаркировать все классы, данные из которых планируются к передаче НА удалённый сервер
 class SkipNoneSchema(marshmallow.Schema):
     @marshmallow.post_dump
     def remove_none_values(self, data, **kwargs):

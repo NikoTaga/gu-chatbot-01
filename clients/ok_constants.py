@@ -14,11 +14,13 @@ class ButtonIntent(Enum):
     NEGATIVE = 'NEGATIVE'
 
 
+# unused
 class PayloadCallType(Enum):
     AUDIO = 'AUDIO'
     VIDEO = 'VIDEO'
 
 
+# unused
 class PayloadCallHangupType(Enum):
     CANCELED = 'CANCELED'
     REJECTED = 'REJECTED'
@@ -41,6 +43,7 @@ class AttachmentType(Enum):
     STICKER = 'STICKER'
 
 
+# unused
 class PrivacyWarningType(Enum):
     SCREENSHOT = 'SCREENSHOT'
     SCREENCAST = 'SCREENCAST'
