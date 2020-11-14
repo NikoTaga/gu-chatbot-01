@@ -17,6 +17,7 @@ from clients.ok_constants import *
 
 
 def ok_webhook_to_ECR(wh: IncomingWebhook) -> EventCommandReceived:
+    # формирование объекта с данными для ECR
     ecr_data = {
         'bot_id': 0,
         'chat_id_in_messenger': wh.recipient.chat_id,

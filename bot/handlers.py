@@ -12,7 +12,7 @@ def message_handler(event: EventCommandReceived) -> EventCommandToSend:
 
 
 def test_handler(event: EventCommandReceived) -> EventCommandToSend:
-    # начало формирования объекта с данными для ECR
+    # начало формирования объекта с данными для ECTS
     result_data: Dict[str, Any] = {
         'bot_id': event.bot_id,
         'chat_id_in_messenger': event.chat_id_in_messenger,
