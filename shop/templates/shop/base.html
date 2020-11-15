@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+{% load static %}
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>
+    {{ title_page|default:"Магазин"|title }}
+  </title>
+  {% block css %}
+    <link rel="stylesheet" type="text/css" href="{% static 'styles/style.css' %}">
+  {% endblock %}
+  {% block js %}
+  {% endblock %}
+</head>
+  <body>
+    <div class="container">
+      {% include 'shop/includes/inc__main_menu.html' %}
+      <div class="content">
+      {% block content %}
+      {% endblock %}
+      </div>
+      <div class="footer">
+        <p class="copyright">Все права защищены {% now "Y" %} &copy;</p>
+      </div>
+    </div>
+  </body>
+</html>
