@@ -3,6 +3,7 @@ from djmoney.models.fields import MoneyField
 
 from bot.models import TrackableUpdateCreateModel
 from constants import OrderStatus
+from .managers import CategoryManager, ProductManager, OrderManager
 
 
 class Category(TrackableUpdateCreateModel):
@@ -19,6 +20,7 @@ class Category(TrackableUpdateCreateModel):
     name = models.CharField('Name', max_length=100)
     is_active = models.BooleanField('Active', default=True)
     sort_order = models.PositiveIntegerField('Sort order', default=1)
+    objects = CategoryManager()
 
     def __str__(self) -> str:
         if self.parent_category_id is not None:
@@ -47,6 +49,7 @@ class Product(TrackableUpdateCreateModel):
     description = models.TextField('Description', blank=True, default='')
     is_active = models.BooleanField('Active', default=True)
     sort_order = models.PositiveIntegerField('Sort order', default=1)
+    objects = ProductManager()
 
     def get_categories(self) -> str:
         return ', '.join(self.categories.values_list('name', flat=True))
@@ -77,6 +80,7 @@ class Order(TrackableUpdateCreateModel):
     status = models.IntegerField('Status', choices=OrderStatus.choices(), default=OrderStatus.NEW.value)
     paid_date = models.DateTimeField('Paid date', null=True, blank=True)
     cancel_date = models.DateTimeField('Cancel date', null=True, blank=True)
+    objects = OrderManager()
 
     class Meta:
         verbose_name = 'Order'
