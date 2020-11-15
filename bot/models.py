@@ -35,7 +35,7 @@ class BotUser(TrackableUpdateCreateModel):
     name = models.CharField('Name', max_length=255, null=True, blank=True)
     avatar_url = models.URLField('Avatar', max_length=2047, null=True, blank=True)
 
-    lang_code = models.CharField('User language', choices=LANGUAGES, max_length=2)
+    lang_code = models.CharField('User language', choices=LANGUAGES, max_length=2, default='ru')
 
     def __str__(self) -> str:
         return f'#{self.id} <{self.bot}> {self.name}'
@@ -99,7 +99,10 @@ class Message(TrackableUpdateCreateModel):
         default=MessageStatus.NEW.value,
     )
     direction = models.PositiveSmallIntegerField('Direction', choices=MessageDirection.choices())
-    content_type = models.PositiveSmallIntegerField('Content type', choices=MessageContentType.choices())
+    content_type = models.PositiveSmallIntegerField(
+        'Content type',
+        choices=MessageContentType.choices(),
+        default=MessageContentType.TEXT.value)
 
     id_in_messenger = models.CharField('ID in messenger', max_length=64, db_index=True, blank=True, null=True)
     reply_id_in_messenger = models.CharField(
