@@ -1,21 +1,20 @@
 import requests
+from typing import Dict, Any
 
-from entities import EventCommandToSend
+from constants import ContentType, MessageDirection, ChatType
+from entities import EventCommandToSend, EventCommandReceived
 from .ok_constants import *
-from .ok_entities import OutgoingMessage
+from .ok_entities import OutgoingMessage, IncomingWebhook
 
 
 class OkClient:
     """Класс для работы с Однокласниками"""
-    token = 'tkn1wILRxmauO2rhrdYCdw41cqv2aLtebSzXqTHbv6SrRzQuZ7u8hz0ZOJMc9NmRESevE2:CLOKPPJGDIHBABABA'
-    headers = {'Content-Type': 'application/json;charset=utf-8'}
+    token: str = 'tkn1wILRxmauO2rhrdYCdw41cqv2aLtebSzXqTHbv6SrRzQuZ7u8hz0ZOJMc9NmRESevE2:CLOKPPJGDIHBABABA'
+    headers: Dict[str, Any] = {'Content-Type': 'application/json;charset=utf-8'}
 
-    def send_message(self, payload: EventCommandToSend):
-        """Отпрвка сообщения"""
-        pass
-
-    def send_test_message(self, payload: EventCommandToSend):
-        msg_data = {
+    @staticmethod
+    def form_ok_message(payload: EventCommandToSend) -> OutgoingMessage:
+        msg_data: Dict[str, Any] = {
             'recipient': {
                 'chat_id': payload.chat_id_in_messenger,
             },
@@ -24,7 +23,7 @@ class OkClient:
             }
         }
         if payload.inline_buttons:
-            msg_data['message']['attachment'] = {
+            msg_data['message']['attachment']: Dict[str, Any] = {
                 'type': AttachmentType.INLINE_KEYBOARD,
                 'payload': {
                     'keyboard': {
@@ -43,6 +42,33 @@ class OkClient:
             }
 
         msg = OutgoingMessage.Schema().load(msg_data)
+
+        return msg
+
+    @staticmethod
+    def parse_ok_webhook(wh: IncomingWebhook) -> EventCommandReceived:
+        # формирование объекта с данными для ECR
+        ecr_data: Dict[str, Any] = {
+            'bot_id': 0,
+            'chat_id_in_messenger': wh.recipient.chat_id,
+            'content_type': ContentType.COMMAND,
+            'payload': {
+                'direction': MessageDirection.RECEIVED,
+                'command': wh.payload,
+            },
+            'chat_type': ChatType.PRIVATE,
+            'user_id_in_messenger': wh.sender.user_id
+        }
+        ecr = EventCommandReceived.Schema().load(ecr_data)
+        print(ecr)
+        return ecr
+
+    def send_message(self, payload: EventCommandToSend):
+        """Отпрвка сообщения"""
+        pass
+
+    def send_test_message(self, payload: EventCommandToSend) -> None:
+        msg = self.form_ok_message(payload)
 
         send_link = f'https://api.ok.ru/graph/me/messages/{payload.chat_id_in_messenger}?access_token={self.token}'
         r = requests.post(send_link, headers=self.headers, data=msg.Schema().dumps(msg))
