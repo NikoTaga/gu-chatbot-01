@@ -1,14 +1,14 @@
 from enum import Enum
 
 
-class ButtonType(Enum):
+class OkButtonType(Enum):
     CALLBACK = 'CALLBACK'
     LINK = 'LINK'
     REQUEST_CONTACT = 'REQUEST_CONTACT'
     REQUEST_GEO_LOCATION = 'REQUEST_GEO_LOCATION'
 
 
-class ButtonIntent(Enum):
+class OkButtonIntent(Enum):
     DEFAULT = 'DEFAULT'
     POSITIVE = 'POSITIVE'
     NEGATIVE = 'NEGATIVE'
@@ -49,11 +49,11 @@ class PrivacyWarningType(Enum):
     SCREENCAST = 'SCREENCAST'
 
 
-class WebhookType(Enum):
+class OkWebhookType(Enum):
     MESSAGE_CREATED = 'MESSAGE_CREATED'
     MESSAGE_CALLBACK = 'MESSAGE_CALLBACK'
     CHAT_SYSTEM = 'CHAT_SYSTEM'
 
 
-class SystemWebhookType(Enum):
+class OkSystemWebhookType(Enum):
     CHAT_STARTED = 'CHAT_STARTED'

@@ -20,7 +20,7 @@ class SkipNoneSchema(marshmallow.Schema):
 
 
 @dataclass(order=True, base_schema=SkipNoneSchema)
-class Sender:
+class OkSender:
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
     user_id: str
@@ -28,25 +28,25 @@ class Sender:
 
 
 @dataclass(order=True)
-class Recipient:
+class OkRecipient:
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
     chat_id: str
 
 
 @dataclass(order=True, base_schema=SkipNoneSchema)
-class Button:
+class OkButton:
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
-    type: ButtonType = field(
+    type: OkButtonType = field(
         metadata={
-            "marshmallow_field": marshmallow_enum.EnumField(ButtonType, by_value=True)
+            "marshmallow_field": marshmallow_enum.EnumField(OkButtonType, by_value=True)
         }
     )
     text: str
-    intent: ButtonIntent = field(
+    intent: OkButtonIntent = field(
         metadata={
-            "marshmallow_field": marshmallow_enum.EnumField(ButtonIntent, by_value=True)
+            "marshmallow_field": marshmallow_enum.EnumField(OkButtonIntent, by_value=True)
         }
     )
     payload: Optional[str] = None
@@ -63,11 +63,11 @@ class Button:
 class OkButtons:
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
-    buttons: List[List[Button]] = field(
+    buttons: List[List[OkButton]] = field(
         default=None,
         metadata={
             "marshmallow_field": marshmallow.fields.List(marshmallow.fields.List(
-                marshmallow.fields.Nested(Button.Schema())),
+                marshmallow.fields.Nested(OkButton.Schema())),
                 allow_none=True,
                 # validate=marshmallow.validate.Length(max=3),
             )
@@ -76,7 +76,7 @@ class OkButtons:
 
 
 @dataclass(order=True, base_schema=SkipNoneSchema)
-class Payload:
+class OkPayload:
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
     id: Optional[str] = None
@@ -116,7 +116,7 @@ class Payload:
 
 
 @dataclass(order=True)
-class Attachment:
+class OkAttachment:
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
     type: AttachmentType = field(
@@ -124,21 +124,21 @@ class Attachment:
             "marshmallow_field": marshmallow_enum.EnumField(AttachmentType, by_value=True)
         }
     )
-    payload: Payload
+    payload: OkPayload
 
 
 @dataclass(order=True, base_schema=SkipNoneSchema)
-class Message:
+class OkMessage:
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
     text: Optional[str] = None
     seq: Optional[int] = None
-    attachment: Optional[Attachment] = None
-    attachments: Optional[List[Attachment]] = field(
+    attachment: Optional[OkAttachment] = None
+    attachments: Optional[List[OkAttachment]] = field(
         default=None,
         metadata={
             "marshmallow_field": marshmallow.fields.List(
-                marshmallow.fields.Nested(Attachment.Schema()),
+                marshmallow.fields.Nested(OkAttachment.Schema()),
                 allow_none=True,
                 # validate=marshmallow.validate.Length(max=3),
             )
@@ -155,32 +155,32 @@ class Message:
 
 
 @dataclass(order=True)
-class IncomingWebhook:
+class OkIncomingWebhook:
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
-    webhookType: WebhookType = field(
+    webhookType: OkWebhookType = field(
         metadata={
-            "marshmallow_field": marshmallow_enum.EnumField(WebhookType, by_value=True)
+            "marshmallow_field": marshmallow_enum.EnumField(OkWebhookType, by_value=True)
         }
     )
-    sender: Sender
-    recipient: Recipient
+    sender: OkSender
+    recipient: OkRecipient
     timestamp: int
     mid: Optional[str]
     callbackId: Optional[str]
-    message: Optional[Message] = None
-    type: Optional[SystemWebhookType] = field(
+    message: Optional[OkMessage] = None
+    type: Optional[OkSystemWebhookType] = field(
         default=None,
         metadata={
-            "marshmallow_field": marshmallow_enum.EnumField(SystemWebhookType, by_value=True)
+            "marshmallow_field": marshmallow_enum.EnumField(OkSystemWebhookType, by_value=True)
         }
     )
     payload: Optional[str] = None
 
 
 @dataclass(order=True)
-class OutgoingMessage:
+class OkOutgoingMessage:
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
-    recipient: Recipient
-    message: Message
+    recipient: OkRecipient
+    message: OkMessage
