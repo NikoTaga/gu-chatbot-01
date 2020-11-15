@@ -16,9 +16,12 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 
+from shop.views import index_page
 from bot.views import jivosite_webhook, ok_test_webhook, ok_webhook, chat_list, chat_view
 
+
 urlpatterns = [
+    path('', index_page),
     path('admin/', admin.site.urls),
     path('ok_webhook/', ok_webhook),
     path('ok_test/', ok_test_webhook),

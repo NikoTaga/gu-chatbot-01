@@ -1,0 +1,15 @@
+{% extends 'shop/base.html' %}
+
+{% block content %}
+
+  <p>Chat Project</p>
+  <br>
+  <p>Состав участников:</p>
+
+  <ul>
+    {% for developer in developers %}
+    <li>{{ developer }}</li>
+    {% endfor %}
+  </ul>
+
+{% endblock %}
