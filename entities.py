@@ -7,7 +7,7 @@ import marshmallow
 import marshmallow_enum
 from marshmallow_dataclass import dataclass
 
-from constants import (ChatType, ContentType, GenericTemplateActionType, MessageDirection)
+from constants import (ChatType, ContentType, GenericTemplateActionType, MessageDirection, CallbackType)
 
 
 @dataclass(order=True)
@@ -183,3 +183,19 @@ class EventCommandToSend(AbstractCommand):
 
     inline_buttons: Optional[List[InlineButton]] = None
     inline_buttons_cols: Optional[int] = None
+
+
+#####
+
+@dataclass(order=True)
+class Callback:
+    Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
+
+    type: CallbackType = field(
+        metadata={
+            "marshmallow_field": marshmallow_enum.EnumField(CallbackType, by_value=True)
+        }
+    )
+    product: Optional[int]
+    category: Optional[int]
+    order: Optional[bool]

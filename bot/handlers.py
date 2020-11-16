@@ -1,7 +1,10 @@
 from typing import Dict, Any, List
 
-from entities import EventCommandReceived, EventCommandToSend
+from marshmallow import ValidationError
+
+from entities import EventCommandReceived, EventCommandToSend, Callback
 from constants import *
+from .dialog import Dialog
 
 
 def message_handler(event: EventCommandReceived) -> EventCommandToSend:
@@ -12,44 +15,11 @@ def message_handler(event: EventCommandReceived) -> EventCommandToSend:
 
 
 def test_handler(event: EventCommandReceived) -> EventCommandToSend:
-    # начало формирования объекта с данными для ECTS
-    result_data: Dict[str, Any] = {
-        'bot_id': event.bot_id,
-        'chat_id_in_messenger': event.chat_id_in_messenger,
-        'payload': {
-            'direction': MessageDirection.SENT,
-            'text': None,
-        },
-    }
-    # в случае запроса номера категории
-    if event.payload.command == '{"category": 1}':
-        result_data['content_type'] = ContentType.TEXT
-        result_data['payload']['text'] = 'Нажата кнопка "Category"!'
-    # в случае запроса номера продукта
-    elif event.payload.command == '{"product": 1}':
-        result_data['content_type'] = ContentType.TEXT
-        result_data['payload']['text'] = 'Нажата кнопка "Product"!'
-    # в случае прихода текстового сообщения
-    else:
-        result_data['content_type'] = ContentType.INLINE
-        result_data['payload']['text'] = 'Нажмите на кнопку!'
-        buttons_data: List[Dict[str, Any]] = [
-            {
-                'text': 'Category',
-                'action': {
-                    'type': 'postback',
-                    'payload': '{"category": 1}',
-                }
-            },
-            {
-                'text': 'Product',
-                'action': {
-                    'type': 'postback',
-                    'payload': '{"product": 1}',
-                }
-            }
-        ]
-        result_data['inline_buttons'] = buttons_data
+    # -> сохранение сообщения и работа с юзером (Алекс)
+    result_data: Dict[str, Any] = Dialog()(event)
 
-    result = EventCommandToSend.Schema().load(result_data)
+    try:
+        result = EventCommandToSend.Schema().load(result_data)
+    except ValidationError as err:
+        print(err.args)
     return result

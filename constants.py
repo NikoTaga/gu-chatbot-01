@@ -66,6 +66,13 @@ class MessageContentType(Choice):
     INLINE = 9
 
 
+class CallbackType(Enum):
+    CATEGORY = 'category'
+    PRODUCT = 'product'
+    ORDER = 'order'
+    CONFIRM = 'confirm'
+
+
 # ----------------------------
 # Shop
 # ----------------------------
