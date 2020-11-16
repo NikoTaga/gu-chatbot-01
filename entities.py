@@ -1,7 +1,7 @@
 from abc import ABC
 from dataclasses import field
 from datetime import datetime
-from typing import (ClassVar, List, Optional, Type)
+from typing import (ClassVar, List, Optional, Type, Dict, Any)
 
 import marshmallow
 import marshmallow_enum
@@ -14,7 +14,7 @@ from constants import (ChatType, ContentType, GenericTemplateActionType, Message
 # имеет смысл промаркировать все классы, данные из которых планируются к передаче НА удалённый сервер
 class SkipNoneSchema(marshmallow.Schema):
     @marshmallow.post_dump
-    def remove_none_values(self, data, **kwargs):
+    def remove_none_values(self, data, **kwargs) -> Dict[Any, Any]:
         return {
             key: value for key, value in data.items()
             if value is not None

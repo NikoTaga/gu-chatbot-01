@@ -3,7 +3,6 @@ from typing import Dict, Any, List
 from marshmallow import ValidationError
 
 from entities import EventCommandReceived, EventCommandToSend, Callback
-from constants import *
 from .dialog import Dialog
 
 
