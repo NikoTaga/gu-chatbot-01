@@ -20,30 +20,31 @@ class JivositeClient:
 
     @staticmethod
     def form_jivo_event(payload: EventCommandToSend) -> JivoEvent:
-        msg_data: Dict[str, Any] = {
+        event_data: Dict[str, Any] = {
             'event': JivoEventType.BOT_MESSAGE,
             # todo think about how to work this around
             'id': payload.message_id,
             'client_id': payload.chat_id_in_messenger,
-            'message': {
-                'text': payload.payload.text,
-                'timestamp': datetime.now().timestamp()
-            }
+        }
+        msg_data: Dict[str, Any] = {
+            'text': payload.payload.text,
+            'timestamp': datetime.now().timestamp()
         }
         if payload.inline_buttons:
-            msg_data['message']['title'] = payload.payload.text
-            msg_data['message']['type'] = JivoMessageType.BUTTONS
-            msg_data['message']['buttons'] = [
+            msg_data['title'] = payload.payload.text
+            msg_data['type'] = JivoMessageType.BUTTONS
+            msg_data['buttons'] = [
                 {
                     'text': payload.inline_buttons[i].text,
                     'id': i,
                 } for i in range(len(payload.inline_buttons))]
         else:
-            msg_data['message']['type'] = JivoMessageType.TEXT
+            msg_data['type'] = JivoMessageType.TEXT
+        event_data['message'] = msg_data
 
-        msg = JivoEvent.Schema().load(msg_data)
+        event = JivoEvent.Schema().load(event_data)
 
-        return msg
+        return event
 
     @staticmethod
     def parse_jivo_webhook(wh: JivoEvent) -> EventCommandReceived:
