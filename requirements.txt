@@ -1,0 +1,32 @@
+# Django
+Django==3.1.2
+
+# Django models
+django-money==1.1
+
+# API & validation
+requests==2.24.0
+djangorestframework==3.12.1
+django-rest-swagger==2.2.0
+django-filter==2.4.0
+marshmallow==3.8.0
+marshmallow_enum==1.5.1
+marshmallow-dataclass==8.1.0
+
+# Error reporting
+sentry-sdk==0.18.0
+
+
+# --------------------------------------------------
+# Development
+# --------------------------------------------------
+mypy==0.790
+flake8==3.8.4
+black==18.9b0
+
+# Test
+pytest==6.1.1
+pytest-django==3.10.0
+pytest-cov==2.10.1
+factory-boy==3.1.0
+faker==4.9.0
