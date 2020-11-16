@@ -10,6 +10,17 @@ from marshmallow_dataclass import dataclass
 from constants import (ChatType, ContentType, GenericTemplateActionType, MessageDirection, CallbackType)
 
 
+# заставляет отбрасывать все значения None при дампе
+# имеет смысл промаркировать все классы, данные из которых планируются к передаче НА удалённый сервер
+class SkipNoneSchema(marshmallow.Schema):
+    @marshmallow.post_dump
+    def remove_none_values(self, data, **kwargs):
+        return {
+            key: value for key, value in data.items()
+            if value is not None
+        }
+
+
 @dataclass(order=True)
 class Contact:
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
@@ -187,7 +198,7 @@ class EventCommandToSend(AbstractCommand):
 
 #####
 
-@dataclass(order=True)
+@dataclass(order=True, base_schema=SkipNoneSchema)
 class Callback:
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 

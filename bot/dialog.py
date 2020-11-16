@@ -49,7 +49,11 @@ class Dialog:
                 'text': category['name'],
                 'action': {
                     'type': 'postback',
-                    'payload': '{"type": "%s", "category": %s}' % (CallbackType.CATEGORY.value, category["id"]),
+                    'payload': Callback.Schema().dumps({
+                        'type': CallbackType.CATEGORY,
+                        'category': category['id']
+                    }),
+                    # 'payload': '{"type": "%s", "category": %s}' % (CallbackType.CATEGORY.value, category["id"]),
                 }
             } for category in Category.objects.get_categories()][:10]
         print(buttons_data)
@@ -64,7 +68,11 @@ class Dialog:
                  'text': product['name'],
                  'action': {
                      'type': 'postback',
-                     'payload': '{"type": "%s", "product": %s}' % (CallbackType.PRODUCT.value, product["id"]),
+                     'payload': Callback.Schema().dumps({
+                         'type': CallbackType.PRODUCT,
+                         'product': product['id']
+                     }),
+                     # 'payload': '{"type": "%s", "product": %s}' % (CallbackType.PRODUCT.value, product["id"]),
                  }
              } for product in Product.objects.get_products(self.callback.category)][:10]
         print(buttons_data)
@@ -82,7 +90,11 @@ class Dialog:
                 'text': 'Заказать',
                 'action': {
                     'type': 'postback',
-                    'payload': '{"type": "%s", "product": %s}' % (CallbackType.ORDER.value, self.callback.product),
+                    'payload': Callback.Schema().dumps({
+                        'type': CallbackType.ORDER,
+                        'product': self.callback.product,
+                    }),
+                    # 'payload': '{"type": "%s", "product": %s}' % (CallbackType.ORDER.value, self.callback.product),
                 }
             }]
         print(buttons_data)
@@ -99,7 +111,11 @@ class Dialog:
                 'text': 'Подтвердить',
                 'action': {
                     'type': 'postback',
-                    'payload': '{"type": "%s", "product": %s}' % (CallbackType.CONFIRM.value, self.callback.product),
+                    'payload': Callback.Schema().dumps({
+                        'type': CallbackType.CONFIRM,
+                        'product': self.callback.product,
+                    }),
+                    # 'payload': '{"type": "%s", "product": %s}' % (CallbackType.CONFIRM.value, self.callback.product),
                 }
             }]
         print(buttons_data)
