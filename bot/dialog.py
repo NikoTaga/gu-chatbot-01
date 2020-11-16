@@ -53,7 +53,6 @@ class Dialog:
                         'type': CallbackType.CATEGORY,
                         'category': category['id']
                     }),
-                    # 'payload': '{"type": "%s", "category": %s}' % (CallbackType.CATEGORY.value, category["id"]),
                 }
             } for category in Category.objects.get_categories()][:10]
         print(buttons_data)
@@ -72,7 +71,6 @@ class Dialog:
                          'type': CallbackType.PRODUCT,
                          'product': product['id']
                      }),
-                     # 'payload': '{"type": "%s", "product": %s}' % (CallbackType.PRODUCT.value, product["id"]),
                  }
              } for product in Product.objects.get_products(self.callback.category)][:10]
         print(buttons_data)
@@ -94,7 +92,6 @@ class Dialog:
                         'type': CallbackType.ORDER,
                         'product': self.callback.product,
                     }),
-                    # 'payload': '{"type": "%s", "product": %s}' % (CallbackType.ORDER.value, self.callback.product),
                 }
             }]
         print(buttons_data)
@@ -115,7 +112,6 @@ class Dialog:
                         'type': CallbackType.CONFIRM,
                         'product': self.callback.product,
                     }),
-                    # 'payload': '{"type": "%s", "product": %s}' % (CallbackType.CONFIRM.value, self.callback.product),
                 }
             }]
         print(buttons_data)
@@ -123,5 +119,6 @@ class Dialog:
 
     def make_order(self) -> None:
         self.data['content_type'] = ContentType.TEXT
+        # todo need user information
         # Order.objects.make_order()
         self.data['payload']['text'] = 'Спасибо за покупку!'
