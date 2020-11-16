@@ -1,0 +1,34 @@
+{% extends "base/base.html" %}
+{% block title %}{{object_list.title}}{% endblock %}
+{% block body %}
+{% include "base/inc-menu.html" %}
+<h1>Выбран пользователь:</h1>
+{{object_list.user.name}} ,статус "{{object_list.user.user_type}}", скидка {{object_list.user.discount_percent}}
+<h3>Прикреплённые к пользователю курсы: всего курсов {{object_list.quantity}}</h3>
+    <ul>
+        {% for elem in object_list.personal_courses %}
+           <li>
+               {{elem.name}}
+               <span>
+                  <a href="/remove-course/?personal_course_id={{elem.id}}&user_id={{object_list.user.id}}">
+                      открепить курс
+                  </a>
+               </span>
+           </li>
+        {% endfor %}
+    </ul>
+<h3>Доступные для прикрепления курсы:</h3>
+    <ul>
+        {% for elem in object_list.courses %}
+           <li>
+               Курс "{{elem.name}}"
+               <span>
+                   <a
+                           href="/attach-course/?course_id={{elem.id}}&course_name={{elem.name}}&user_id={{object_list.user.id}}">
+                       прикрепить курс
+                   </a>
+               </span>
+           </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

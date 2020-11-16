@@ -1,0 +1,26 @@
+{% extends "base/base.html" %}
+{% block title %}{{object_list.title}}{% endblock %}
+{% block body %}
+{% include "base/inc-menu.html" %}
+<h1>Создание курсов</h1>
+<form method="post">
+    <input type="text" name="name" placeholder="Название">
+    <select size="6" name="category_id">
+        {% for item in object_list.categories %}
+        <option value="{{item.id}}">{{item.name}}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">Сохранить</button>
+</form>
+<h1>Созданы Курсы</h1>
+    <ul>
+        {% for elem in object_list.courses %}
+           <li>{{elem.name}}
+               <span>
+                   <a href="/copy-course/?course_id={{elem.id}}">скопировать</a>
+               </span>
+
+           </li>
+        {% endfor %}
+    </ul>
+{% endblock %}

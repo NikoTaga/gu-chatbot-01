@@ -1,0 +1,21 @@
+{% extends "base/base.html" %}
+{% block title %}{{object_list.title}}{% endblock %}
+{% block body %}
+{% include "base/inc-menu.html" %}
+<h1>Создание пользователя</h1>
+<form method="post">
+    <input type="text" name="name" placeholder="Имя пользователя">
+    <select size="4" name="user_type">
+        {% for item in object_list.user_types %}
+        <option value="{{item}}">{{item}}</option>
+        {% endfor %}
+    </select>
+    <button type="submit">Сохранить</button>
+</form>
+<h1>Созданы пользователи</h1>
+    <ul>
+        {% for elem in object_list.users %}
+           <li>создан {{elem.name}} со статусом "{{elem.user_type}}" и скидкой {{elem.discount_percent}}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}

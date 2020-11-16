@@ -1,0 +1,3 @@
+''' команда для запуска '''
+
+uwsgi --http :8000 --wsgi-file app.py

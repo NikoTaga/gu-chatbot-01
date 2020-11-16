@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}{% endblock %}</title>
+    <style type="text/css">{% block form_style %}{% endblock %}</style>
+</head>
+<body>
+    <div>
+        <h1>интернет магазин</h1>
+        <h2>меню магазина</h2>
+    </div>
+    <div>
+    {% block body %}
+    {% endblock %}
+    </div>
+    <div>
+        <h2>footer</h2>
+    </div>
+</body>
+</html>

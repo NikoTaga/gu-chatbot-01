@@ -1,0 +1,17 @@
+{% extends "base/base.html" %}
+{% block title %}{{object_list.title}}{% endblock %}
+{% block body %}
+{% include "base/inc-menu.html" %}
+<h1>Создание категорий курсов</h1>
+<form method="post">
+    <input type="text" name="name" placeholder="Название">
+
+    <button type="submit">Сохранить</button>
+</form>
+<h1>Созданы категории</h1>
+    <ul>
+        {% for elem in object_list.categories %}
+           <li>{{elem.name}}</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
