@@ -6,6 +6,7 @@ from django.db import models
 from django.forms.models import model_to_dict
 from django.db.models.query import QuerySet
 
+from bot.models import Chat
 from constants import OrderStatus
 
 
@@ -46,8 +47,15 @@ class OrderManager(models.Manager):
     def get_order(self, order_id: int) -> QuerySet:
         return self.filter(id=order_id)
 
-    def make_order(self, chat_id: int, product_id: int, price: Decimal, description: Optional[str] = '') -> None:
-        self.create(chat_id=chat_id, product_id=product_id, total=price, description=description)
+    def make_order(self,
+                   chat_id_in_messenger: str,
+                   bot_id: int,
+                   product_id: int,
+                   price: Decimal,
+                   description: Optional[str] = '') -> None:
+
+        chat = Chat.objects.get(bot_id=bot_id, id_in_messenger=chat_id_in_messenger)
+        self.create(chat=chat, product_id=product_id, total=price, description=description)
 
     def update_order(self, order_id: int, status: int) -> None:
         order = self.get_order(order_id)
