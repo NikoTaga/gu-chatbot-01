@@ -1,7 +1,8 @@
 """Used to add new webhook subs to the testing OK group.
 
 Also clears outdated subscriptions.
-usage: python ok_subscribe.py <link>"""
+usage: python ok_subscribe.py <link>
+<link> is usually an ngrok (https://ngrok.com/download) tunnel link"""
 
 import requests
 import json
