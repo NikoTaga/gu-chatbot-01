@@ -1,8 +1,8 @@
-from typing import Dict, Any, List
+from typing import Dict, Any
 
 from marshmallow import ValidationError
 
-from entities import EventCommandReceived, EventCommandToSend, Callback
+from entities import EventCommandReceived, EventCommandToSend
 from .dialog import Dialog
 
 

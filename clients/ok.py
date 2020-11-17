@@ -4,8 +4,7 @@ from datetime import datetime
 
 from constants import ContentType, MessageDirection, ChatType
 from entities import EventCommandToSend, EventCommandReceived
-from .ok_constants import *
-from .ok_entities import OutgoingMessage, IncomingWebhook
+from .ok_entities import OutgoingMessage, IncomingWebhook, AttachmentType, ButtonType, ButtonIntent
 
 
 class OkClient:

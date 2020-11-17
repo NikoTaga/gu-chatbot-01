@@ -14,7 +14,7 @@ from .handlers import message_handler, test_handler
 from clients.ok_entities import IncomingWebhook
 
 
-@csrf_exempt
+@csrf_exempt  # type: ignore
 def ok_test_webhook(request: HttpRequest) -> HttpResponse:
     client = OkClient()
 

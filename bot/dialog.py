@@ -1,8 +1,9 @@
 from typing import Dict, Any, List, Callable
 from json.decoder import JSONDecodeError
 
+from constants import MessageDirection, ContentType, CallbackType
 from entities import EventCommandReceived, Callback
-from constants import *
+
 
 from shop.models import Category, Product
 
