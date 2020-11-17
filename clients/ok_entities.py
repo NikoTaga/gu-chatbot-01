@@ -7,16 +7,7 @@ from marshmallow_dataclass import dataclass
 
 from clients.ok_constants import *
 
-
-# заставляет отбрасывать все значения None при дампе
-# имеет смысл промаркировать все классы, данные из которых планируются к передаче НА удалённый сервер
-class SkipNoneSchema(marshmallow.Schema):
-    @marshmallow.post_dump
-    def remove_none_values(self, data, **kwargs):
-        return {
-            key: value for key, value in data.items()
-            if value is not None
-        }
+from entities import SkipNoneSchema
 
 
 @dataclass(order=True, base_schema=SkipNoneSchema)

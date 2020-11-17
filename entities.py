@@ -1,13 +1,24 @@
 from abc import ABC
 from dataclasses import field
 from datetime import datetime
-from typing import (ClassVar, List, Optional, Type)
+from typing import (ClassVar, List, Optional, Type, Dict, Any)
 
 import marshmallow
 import marshmallow_enum
 from marshmallow_dataclass import dataclass
 
-from constants import (ChatType, ContentType, GenericTemplateActionType, MessageDirection)
+from constants import (ChatType, ContentType, GenericTemplateActionType, MessageDirection, CallbackType)
+
+
+# заставляет отбрасывать все значения None при дампе
+# имеет смысл промаркировать все классы, данные из которых планируются к передаче НА удалённый сервер
+class SkipNoneSchema(marshmallow.Schema):
+    @marshmallow.post_dump
+    def remove_none_values(self, data, **kwargs) -> Dict[Any, Any]:
+        return {
+            key: value for key, value in data.items()
+            if value is not None
+        }
 
 
 @dataclass(order=True)
@@ -183,3 +194,19 @@ class EventCommandToSend(AbstractCommand):
 
     inline_buttons: Optional[List[InlineButton]] = None
     inline_buttons_cols: Optional[int] = None
+
+
+#####
+
+@dataclass(order=True, base_schema=SkipNoneSchema)
+class Callback:
+    Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
+
+    type: CallbackType = field(
+        metadata={
+            "marshmallow_field": marshmallow_enum.EnumField(CallbackType, by_value=True)
+        }
+    )
+    product: Optional[int]
+    category: Optional[int]
+    order: Optional[bool]
