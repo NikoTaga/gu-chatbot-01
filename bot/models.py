@@ -1,3 +1,5 @@
+from typing import List
+
 from django.db import models
 
 from constants import (BotType, ChatType, MessageContentType, MessageDirection, MessageStatus)
@@ -71,6 +73,10 @@ class Chat(TrackableUpdateCreateModel):
     def __str__(self) -> str:
         return f'#{self.id} <{self.bot}> {self.id_in_messenger}'
 
+    @staticmethod
+    def get_all_chats() -> List['Chat']:
+        return Chat.objects.all()
+
     class Meta:
         verbose_name = 'Chat'
         verbose_name_plural = 'Chats'
@@ -124,6 +130,12 @@ class Message(TrackableUpdateCreateModel):
     @property
     def short_text(self) -> str:
         return f'{self.text[:50]}...' if self.text and len(self.text) > 50 else self.text
+
+    @staticmethod
+    def get_chat_messages(chat_id: int) -> List['Message']:
+        return Message.objects\
+            .filter(chat_id=chat_id)\
+            .order_by('ts_in_messenger').all()
 
     def __str__(self) -> str:
         return f'<{self.bot}> {self.content_type} {self.direction}'
