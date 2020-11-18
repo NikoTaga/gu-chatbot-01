@@ -10,7 +10,7 @@ from .ok_entities import SkipNoneSchema
 
 
 @dataclass(order=True)
-class Error:
+class JivoError:
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
     code: ResponseType = field(
@@ -22,10 +22,10 @@ class Error:
 
 
 @dataclass(order=True, base_schema=SkipNoneSchema)
-class ErrorMessage:
+class JivoErrorMessage:
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
-    error: Error
+    error: JivoError
 
 
 @dataclass(order=True)
@@ -74,4 +74,4 @@ class JivoEvent:
     id: str
     client_id: str
     chat_id: Optional[str]
-    message: JivoMessage
+    message: Optional[JivoMessage]
