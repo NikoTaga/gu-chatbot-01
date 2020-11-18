@@ -24,8 +24,8 @@ def test_handler(event: EventCommandReceived) -> EventCommandToSend:
         event.chat_type,
         event.payload.direction,
         event.content_type,
-        event.message_id_in_messenger,
-        str(event.payload.command)
+        str(event.payload.command),
+        event.message_id_in_messenger
     )
     result_data: Dict[str, Any] = Dialog()(event)
     if result_data:
