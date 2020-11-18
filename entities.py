@@ -13,8 +13,8 @@ from constants import (ChatType, ContentType, GenericTemplateActionType, Message
 # заставляет отбрасывать все значения None при дампе
 # имеет смысл промаркировать все классы, данные из которых планируются к передаче НА удалённый сервер
 class SkipNoneSchema(marshmallow.Schema):
-    @marshmallow.post_dump
-    def remove_none_values(self, data, **kwargs) -> Dict[Any, Any]:
+    @marshmallow.post_dump  # type: ignore
+    def remove_none_values(self, data: Dict[Any, Any], **kwargs: Dict[str, Any]) -> Dict[Any, Any]:
         return {
             key: value for key, value in data.items()
             if value is not None
