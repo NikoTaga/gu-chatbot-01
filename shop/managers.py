@@ -17,6 +17,13 @@ class CategoryManager(models.Manager):
         # ToDo: optimize existence check
         return categories
 
+    def get_category_by_id(self, category_id: int) -> Dict[str, Any]:
+        category = self.filter(pk=category_id).first()
+        result = {'id': category.id, 'name': category.name, 'parent_category_id': category.parent_category_id,
+                  'child_category_exists': category.child_categories.exists()}
+
+        return result
+
 
 class ProductManager(models.Manager):
     def get_products(self, category_id: int) -> List[Dict[str, Any]]:

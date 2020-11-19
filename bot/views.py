@@ -8,7 +8,6 @@ from typing import List, Dict, Any
 
 from clients.jivosite import JivositeClient
 from clients.ok import OkClient
-from constants import *
 from entities import EventCommandReceived, EventCommandToSend
 from .handlers import message_handler, test_handler
 

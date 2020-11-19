@@ -1,5 +1,6 @@
 import requests
 from typing import Dict, Any
+from datetime import datetime
 
 from constants import ContentType, MessageDirection, ChatType
 from entities import EventCommandToSend, EventCommandReceived
@@ -35,8 +36,8 @@ class OkClient:
                                 'text': entry.text,
                                 'intent': OkButtonIntent.POSITIVE,
                                 'payload': entry.action.payload,
-                            } for entry in payload.inline_buttons
-                        ]]
+                            }
+                        ] for entry in payload.inline_buttons]
                     }
                 }
             }
@@ -49,7 +50,7 @@ class OkClient:
     def parse_ok_webhook(wh: OkIncomingWebhook) -> EventCommandReceived:
         # формирование объекта с данными для ECR
         ecr_data: Dict[str, Any] = {
-            'bot_id': 0,
+            'bot_id': 1,  # todo BotManager.get_bot_by_type(BotType.TYPE_OK)
             'chat_id_in_messenger': wh.recipient.chat_id,
             'content_type': ContentType.COMMAND,
             'payload': {
@@ -57,7 +58,11 @@ class OkClient:
                 'command': wh.payload,
             },
             'chat_type': ChatType.PRIVATE,
-            'user_id_in_messenger': wh.sender.user_id
+            'user_id_in_messenger': wh.sender.user_id,
+            'user_name_in_messenger': wh.sender.name,
+            'message_id_in_messenger': wh.mid if wh.mid else wh.message.mid,
+            'reply_id_in_messenger': wh.message.reply_to if wh.message else None,
+            'ts_in_messenger': str(datetime.fromtimestamp(wh.timestamp // 1000)),
         }
         ecr = EventCommandReceived.Schema().load(ecr_data)
         print(ecr)
