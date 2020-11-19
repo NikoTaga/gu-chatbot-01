@@ -54,7 +54,7 @@ body {
 .chat-entry {
     padding: 2px;
     margin-bottom: 5px;
-    border: 1px dotted black;
+    border: 1px dotted #000000;
     overflow-wrap: break-word;
 }
 
@@ -69,6 +69,14 @@ body {
     font-weight: 700;
 }
 
+.chat-last-message {
+    float: left;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 50%;
+}
+
 .chat-time {
     text-align: right;
 }
@@ -79,7 +87,7 @@ body {
 }
 
 .chat-message-content {
-    width: 100%
+    width: 100%;
     float: left;
     overflow-wrap: break-word;
 }

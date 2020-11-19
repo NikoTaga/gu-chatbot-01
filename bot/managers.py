@@ -1,8 +1,11 @@
-from typing import Optional, Any
+from typing import Optional, TYPE_CHECKING
 
 from django.db import models
+from django.db.models.query import QuerySet
 
 from constants import (ChatType, ContentType, MessageDirection)
+if TYPE_CHECKING:
+    from bot.models import (BotUser, Chat, Message)
 
 
 class BotManager(models.Manager):
@@ -11,8 +14,7 @@ class BotManager(models.Manager):
 
 
 class BotUserManager(models.Manager):
-    def get_or_create_user(self, bot_id: int, messenger_user_id: str, user_name: str) -> Any:
-        # Todo: Any type replaced by model type
+    def get_or_create_user(self, bot_id: int, messenger_user_id: Optional[str], user_name: Optional[str]) -> 'BotUser':
         user, created = self.get_or_create(bot_id=bot_id, messenger_user_id=messenger_user_id)
         if created:
             user.name = user_name
@@ -21,8 +23,12 @@ class BotUserManager(models.Manager):
 
 
 class ChatManager(models.Manager):
-    def get_or_create_chat(self, bot_id: int, chat_id_in_messenger: str, chat_type: ChatType, user: Any) -> Any:
-        # Todo: Any type replaced by model type
+    def get_or_create_chat(self,
+                           bot_id: int,
+                           chat_id_in_messenger: str,
+                           chat_type: ChatType,
+                           user: 'BotUser') -> 'Chat':
+
         chat, created = self.get_or_create(
             bot_id=bot_id,
             id_in_messenger=chat_id_in_messenger,
@@ -35,8 +41,8 @@ class ChatManager(models.Manager):
 class MessageManager(models.Manager):
     def save_message(self,
                      bot_id: int,
-                     messenger_user_id: str,
-                     user_name: str,
+                     messenger_user_id: Optional[str],
+                     user_name: Optional[str],
                      chat_id_in_messenger: str,
                      chat_type: ChatType,
                      message_direction: MessageDirection,
@@ -58,3 +64,10 @@ class MessageManager(models.Manager):
             text=message_text
         )
         message.save()
+        # save message in chat last message
+        chat.last_message_time = message.created_at
+        chat.last_message_text = message.text
+        chat.save()
+
+    def get_chat_messages(self, chat_id: int) -> 'QuerySet[Message]':
+        return self.filter(chat_id=chat_id).order_by('created_at').all()

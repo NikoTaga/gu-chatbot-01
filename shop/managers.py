@@ -18,7 +18,7 @@ class CategoryManager(models.Manager):
         # ToDo: optimize existence check
         return categories
 
-    def get_category_by_id(self, category_id: int) -> Dict[str, Any]:
+    def get_category_by_id(self, category_id: Optional[int]) -> Dict[str, Any]:
         category = self.filter(pk=category_id).first()
         result = {'id': category.id, 'name': category.name, 'parent_category_id': category.parent_category_id,
                   'child_category_exists': category.child_categories.exists()}
@@ -27,12 +27,12 @@ class CategoryManager(models.Manager):
 
 
 class ProductManager(models.Manager):
-    def get_products(self, category_id: int) -> List[Dict[str, Any]]:
+    def get_products(self, category_id: Optional[int]) -> List[Dict[str, Any]]:
         products = list(self.filter(categories__id=category_id).values('id', 'name', 'categories', 'price',
                                                                        'image_url', 'description', 'is_active'))
         return products
 
-    def get_product_by_id(self, product_id: int) -> Dict[str, Any]:
+    def get_product_by_id(self, product_id: Optional[int]) -> Dict[str, Any]:
         product = model_to_dict(self.get(id=product_id), fields=(('id', 'name', 'categories', 'price',
                                                                   'image_url', 'description', 'is_active')))
         return product
