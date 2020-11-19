@@ -4,8 +4,7 @@ from json.decoder import JSONDecodeError
 from constants import MessageDirection, MessageContentType, CallbackType
 from entities import EventCommandReceived, Callback
 
-
-from shop.models import Category, Product
+from shop.models import Category, Product, Order
 
 
 class Dialog:
@@ -119,7 +118,7 @@ class Dialog:
         self.data['inline_buttons'] = buttons_data
 
     def make_order(self) -> None:
+        Order.objects.make_order(self.data['chat_id_in_messenger'], self.data['bot_id'], self.callback.product)
+
         self.data['content_type'] = MessageContentType.TEXT
-        # todo need user information
-        # Order.objects.make_order()
         self.data['payload']['text'] = 'Спасибо за покупку!'
