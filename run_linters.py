@@ -25,22 +25,21 @@ if not os.path.exists(PATH_LINT):
     os.mkdir(PATH_LINT, access_rights)
 
 
-
 files_in_directory = glob.glob(os.path.join(PATH_LINT, '*.*'))
 for file in files_in_directory:
     os.remove(file)
 
 if mode_type == 'Y':
-    print(f'Проверка линтером MYPY: \n')
+    print('Проверка линтером MYPY: \n')
     for directory in DIRS:
         print(f'Проверяем папку {directory}:')
         subprocess.run(['mypy', directory])
-    print(f'Проверка линтером FLAKE8: \n')
+    print('Проверка линтером FLAKE8: \n')
     subprocess.run(['flake8', './'])
 else:
-    print(f'Проверка линтером MYPY: \n')
+    print('Проверка линтером MYPY: \n')
     for directory in DIRS:
         print(f'Проверяем папку {directory}:')
         subprocess.run(['mypy', directory])
-    print(f'Проверка линтером FLAKE8: \n')
+    print('Проверка линтером FLAKE8: \n')
     subprocess.run(['flake8', '--output-file=report_linters/flake8.log', './'])

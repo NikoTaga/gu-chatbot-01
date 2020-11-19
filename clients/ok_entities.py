@@ -5,8 +5,9 @@ import marshmallow
 import marshmallow_enum
 from marshmallow_dataclass import dataclass
 
-from clients.ok_constants import *
-
+# from clients.ok_constants import *
+from clients.ok_constants import ButtonType, ButtonIntent, PayloadCallType, PayloadCallHangupType, AttachmentType, \
+    PrivacyWarningType, WebhookType, SystemWebhookType
 from entities import SkipNoneSchema
 
 

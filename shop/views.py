@@ -12,10 +12,11 @@ developers = (
     'Чекунов Владислав Юрьевич',
     )
 
-def index_page(request: WSGIRequest)-> HttpResponse:
+
+def index_page(request: WSGIRequest) -> HttpResponse:
     context = {
         'title_page': 'Основная страница',
         'developers': developers,
-        }
-        
+    }
+
     return render(request, 'shop/index.html', context)
