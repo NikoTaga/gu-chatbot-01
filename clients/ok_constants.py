@@ -15,20 +15,20 @@ class OkButtonIntent(Enum):
 
 
 # unused
-class PayloadCallType(Enum):
+class OkPayloadCallType(Enum):
     AUDIO = 'AUDIO'
     VIDEO = 'VIDEO'
 
 
 # unused
-class PayloadCallHangupType(Enum):
+class OkPayloadCallHangupType(Enum):
     CANCELED = 'CANCELED'
     REJECTED = 'REJECTED'
     HUNGUP = 'HUNGUP'
     MISSED = 'MISSED'
 
 
-class AttachmentType(Enum):
+class OkAttachmentType(Enum):
     IMAGE = 'IMAGE'
     VIDEO = 'VIDEO'
     AUDIO = 'AUDIO'
@@ -44,7 +44,7 @@ class AttachmentType(Enum):
 
 
 # unused
-class PrivacyWarningType(Enum):
+class OkPrivacyWarningType(Enum):
     SCREENSHOT = 'SCREENSHOT'
     SCREENCAST = 'SCREENCAST'
 

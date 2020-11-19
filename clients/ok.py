@@ -4,7 +4,7 @@ from datetime import datetime
 
 from constants import ContentType, MessageDirection, ChatType
 from entities import EventCommandToSend, EventCommandReceived
-from .ok_entities import OkOutgoingMessage, OkIncomingWebhook, AttachmentType, OkButtonType, OkButtonIntent
+from .ok_entities import OkOutgoingMessage, OkIncomingWebhook, OkAttachmentType, OkButtonType, OkButtonIntent
 
 
 class OkClient:
@@ -24,7 +24,7 @@ class OkClient:
         }
         if payload.inline_buttons:
             msg_data['message']['attachment']: Dict[str, Any] = {
-                'type': AttachmentType.INLINE_KEYBOARD,
+                'type': OkAttachmentType.INLINE_KEYBOARD,
                 'payload': {
                     'keyboard': {
                         # это должно быть списком списков

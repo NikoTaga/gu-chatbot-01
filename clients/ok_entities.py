@@ -6,8 +6,8 @@ import marshmallow_enum
 from marshmallow_dataclass import dataclass
 
 # from clients.ok_constants import *
-from clients.ok_constants import ButtonType, ButtonIntent, PayloadCallType, PayloadCallHangupType, AttachmentType, \
-    PrivacyWarningType, WebhookType, SystemWebhookType
+from clients.ok_constants import OkButtonType, OkButtonIntent, OkWebhookType, OkSystemWebhookType, OkPayloadCallType, \
+    OkPayloadCallHangupType, OkAttachmentType, OkPrivacyWarningType
 from entities import SkipNoneSchema
 
 
@@ -90,16 +90,16 @@ class OkPayload:
     latitude: Optional[float] = None
     longitude: Optional[float] = None
     zoom: Optional[int] = None
-    type: Optional[PayloadCallType] = field(
+    type: Optional[OkPayloadCallType] = field(
         default=None,
         metadata={
-            "marshmallow_field": marshmallow_enum.EnumField(PayloadCallType, by_value=True)
+            "marshmallow_field": marshmallow_enum.EnumField(OkPayloadCallType, by_value=True)
         }
     )
-    hangupType: Optional[PayloadCallHangupType] = field(
+    hangupType: Optional[OkPayloadCallHangupType] = field(
         default=None,
         metadata={
-            "marshmallow_field": marshmallow_enum.EnumField(PayloadCallHangupType, by_value=True)
+            "marshmallow_field": marshmallow_enum.EnumField(OkPayloadCallHangupType, by_value=True)
         }
     )
     duration: Optional[int] = None
@@ -111,9 +111,9 @@ class OkPayload:
 class OkAttachment:
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
-    type: AttachmentType = field(
+    type: OkAttachmentType = field(
         metadata={
-            "marshmallow_field": marshmallow_enum.EnumField(AttachmentType, by_value=True)
+            "marshmallow_field": marshmallow_enum.EnumField(OkAttachmentType, by_value=True)
         }
     )
     payload: OkPayload
@@ -137,10 +137,10 @@ class OkMessage:
         }
     )
     mid: Optional[str] = None
-    privacyWarning: Optional[PrivacyWarningType] = field(
+    privacyWarning: Optional[OkPrivacyWarningType] = field(
         default=None,
         metadata={
-            "marshmallow_field": marshmallow_enum.EnumField(PrivacyWarningType, by_value=True)
+            "marshmallow_field": marshmallow_enum.EnumField(OkPrivacyWarningType, by_value=True)
         }
     )
     reply_to: Optional[str] = None

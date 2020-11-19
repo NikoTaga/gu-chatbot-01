@@ -13,9 +13,9 @@ from .ok_entities import SkipNoneSchema
 class JivoError:
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
-    code: ResponseType = field(
+    code: JivoResponseType = field(
         metadata={
-            "marshmallow_field": marshmallow_enum.EnumField(ResponseType, by_value=True)
+            "marshmallow_field": marshmallow_enum.EnumField(JivoResponseType, by_value=True)
         }
     )
     message: Optional[str]
