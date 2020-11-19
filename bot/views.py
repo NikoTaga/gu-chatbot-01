@@ -1,5 +1,3 @@
-from datetime import datetime
-
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 # чтобы разрешить кросс-сайт POST запросы
@@ -54,8 +52,9 @@ def chat_list(request: HttpRequest) -> HttpResponse:
         {
             'number': chat.pk,
             'name': chat.bot_user.name,
+            'chat_last_message': chat.last_message_text,
             'time': chat.last_message_time,
-        } for chat in Chat.get_all_chats()
+        } for chat in Chat.objects.all()
     ]
     context: Dict[str, Any] = {
         'title_page': 'Список чатов',
@@ -70,16 +69,17 @@ def chat_view(request: HttpRequest, pk: int) -> HttpResponse:
         {
             'number': chat.pk,
             'name': chat.bot_user.name,
-            'time': chat.last_message_time,
-        } for chat in Chat.get_all_chats()
+            'chat_last_message': chat.last_message_text,
+            'time': chat.last_message_time
+        } for chat in Chat.objects.all()
     ]
     messages: List[Dict[str, Any]] = [
         {
             'number': message.pk,
             'content': message.text,
             'direction': bool(message.direction % 2),
-            'time': message.ts_in_messenger,
-        } for message in Message.get_chat_messages(pk)
+            'time': message.created_at,
+        } for message in Message.objects.get_chat_messages(pk)
     ]
     context: Dict[str, Any] = {
         'title_page': 'Список чатов',
