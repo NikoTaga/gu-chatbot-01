@@ -2,8 +2,9 @@ from typing import List
 
 from django.db import models
 
-from constants import (BotType, ChatType, MessageContentType, MessageDirection, MessageStatus)
+from constants import (BotType, ChatType, MessageContentType, MessageDirection, MessageStatus, CallbackType)
 from ecom_chatbot.settings import LANGUAGES
+from .managers import BotManager, ChatManager, MessageManager, BotUserManager
 
 
 class TrackableUpdateCreateModel(models.Model):
@@ -17,6 +18,7 @@ class TrackableUpdateCreateModel(models.Model):
 class Bot(TrackableUpdateCreateModel):
     name = models.CharField('Name', max_length=255, blank=True)
     bot_type = models.PositiveSmallIntegerField('Bot Type', choices=BotType.choices())
+    objects = BotManager()
 
     def __str__(self) -> str:
         return self.name
@@ -38,6 +40,7 @@ class BotUser(TrackableUpdateCreateModel):
     avatar_url = models.URLField('Avatar', max_length=2047, null=True, blank=True)
 
     lang_code = models.CharField('User language', choices=LANGUAGES, max_length=2, default='ru')
+    objects = BotUserManager()
 
     def __str__(self) -> str:
         return f'#{self.id} <{self.bot}> {self.name}'
@@ -69,6 +72,7 @@ class Chat(TrackableUpdateCreateModel):
 
     last_message_time = models.DateTimeField(blank=True, null=True)
     last_message_text = models.CharField(max_length=100, blank=True, null=True)
+    objects = ChatManager()
 
     def __str__(self) -> str:
         return f'#{self.id} <{self.bot}> {self.id_in_messenger}'
@@ -126,6 +130,7 @@ class Message(TrackableUpdateCreateModel):
     video_url = models.URLField('Video', max_length=2047, blank=True, null=True)
 
     language = models.CharField('Language code', max_length=11, default='ru')
+    objects = MessageManager()
 
     @property
     def short_text(self) -> str:
