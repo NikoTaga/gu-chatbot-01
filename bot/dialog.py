@@ -1,7 +1,7 @@
 from typing import Dict, Any, List, Callable
 from json.decoder import JSONDecodeError
 
-from constants import MessageDirection, ContentType, CallbackType
+from constants import MessageDirection, MessageContentType, CallbackType
 from entities import EventCommandReceived, Callback
 
 
@@ -43,7 +43,7 @@ class Dialog:
         }
 
     def form_category_list(self) -> None:
-        self.data['content_type'] = ContentType.INLINE
+        self.data['content_type'] = MessageContentType.INLINE
         self.data['payload']['text'] = 'Выберите категорию товара:'
         buttons_data: List[Dict[str, Any]] = [
             {
@@ -60,7 +60,7 @@ class Dialog:
         self.data['inline_buttons'] = buttons_data
 
     def form_product_list(self) -> None:
-        self.data['content_type'] = ContentType.INLINE
+        self.data['content_type'] = MessageContentType.INLINE
         category = Category.objects.get_category_by_id(self.callback.category)
         self.data['payload']['text'] = f'Выберите товар категории \"{category["name"]}\"'
         buttons_data: List[Dict[str, Any]] = [
@@ -78,7 +78,7 @@ class Dialog:
         self.data['inline_buttons'] = buttons_data
 
     def form_product_desc(self) -> None:
-        self.data['content_type'] = ContentType.INLINE
+        self.data['content_type'] = MessageContentType.INLINE
         product = Product.objects.get_product_by_id(self.callback.product)
         self.data['payload']['text'] = \
             f'Выбран товар \"{product["name"]}\"' \
@@ -99,7 +99,7 @@ class Dialog:
         self.data['inline_buttons'] = buttons_data
 
     def form_order_confirmation(self) -> None:
-        self.data['content_type'] = ContentType.INLINE
+        self.data['content_type'] = MessageContentType.INLINE
         product = Product.objects.get_product_by_id(self.callback.product)
         self.data['payload']['text'] = \
             f'Выбран товар \"{product["name"]}\"' \
@@ -119,7 +119,7 @@ class Dialog:
         self.data['inline_buttons'] = buttons_data
 
     def make_order(self) -> None:
-        self.data['content_type'] = ContentType.TEXT
+        self.data['content_type'] = MessageContentType.TEXT
         # todo need user information
         # Order.objects.make_order()
         self.data['payload']['text'] = 'Спасибо за покупку!'

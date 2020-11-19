@@ -7,7 +7,8 @@ import marshmallow
 import marshmallow_enum
 from marshmallow_dataclass import dataclass
 
-from constants import (ChatType, ContentType, GenericTemplateActionType, MessageDirection, CallbackType)
+from constants import (ChatType, GenericTemplateActionType, MessageDirection, CallbackType,
+                       MessageContentType)
 
 
 # заставляет отбрасывать все значения None при дампе
@@ -133,9 +134,9 @@ class AbstractCommand(ABC):
 
     bot_id: int
     chat_id_in_messenger: str
-    content_type: ContentType = field(
+    content_type: MessageContentType = field(
         metadata={
-            "marshmallow_field": marshmallow_enum.EnumField(ContentType, by_value=True)
+            "marshmallow_field": marshmallow_enum.EnumField(MessageContentType, by_value=True)
         }
     )
     payload: Payload

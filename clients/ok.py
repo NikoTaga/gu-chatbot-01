@@ -2,7 +2,7 @@ import requests
 from typing import Dict, Any
 from datetime import datetime
 
-from constants import ContentType, MessageDirection, ChatType
+from constants import MessageDirection, ChatType, MessageContentType
 from entities import EventCommandToSend, EventCommandReceived
 from .ok_entities import OutgoingMessage, IncomingWebhook, AttachmentType, ButtonType, ButtonIntent
 
@@ -51,7 +51,7 @@ class OkClient:
         ecr_data: Dict[str, Any] = {
             'bot_id': 1,  # todo BotManager.get_bot_by_type(BotType.TYPE_OK)
             'chat_id_in_messenger': wh.recipient.chat_id,
-            'content_type': ContentType.COMMAND,
+            'content_type': MessageContentType.COMMAND,
             'payload': {
                 'direction': MessageDirection.RECEIVED,
                 'command': wh.payload,
