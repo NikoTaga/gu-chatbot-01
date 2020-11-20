@@ -4,7 +4,7 @@ from datetime import datetime
 
 from constants import ContentType, MessageDirection, ChatType
 from entities import EventCommandToSend, EventCommandReceived
-from .ok_entities import OutgoingMessage, IncomingWebhook, AttachmentType, ButtonType, ButtonIntent
+from .ok_entities import OkOutgoingMessage, OkIncomingWebhook, OkAttachmentType, OkButtonType, OkButtonIntent
 
 
 class OkClient:
@@ -13,7 +13,7 @@ class OkClient:
     headers: Dict[str, Any] = {'Content-Type': 'application/json;charset=utf-8'}
 
     @staticmethod
-    def form_ok_message(payload: EventCommandToSend) -> OutgoingMessage:
+    def form_ok_message(payload: EventCommandToSend) -> OkOutgoingMessage:
         msg_data: Dict[str, Any] = {
             'recipient': {
                 'chat_id': payload.chat_id_in_messenger,
@@ -24,16 +24,16 @@ class OkClient:
         }
         if payload.inline_buttons:
             msg_data['message']['attachment']: Dict[str, Any] = {
-                'type': AttachmentType.INLINE_KEYBOARD,
+                'type': OkAttachmentType.INLINE_KEYBOARD,
                 'payload': {
                     'keyboard': {
                         # это должно быть списком списков
                         # каждый список означает одну строку кнопок
                         'buttons': [[
                             {
-                                'type': ButtonType.CALLBACK,
+                                'type': OkButtonType.CALLBACK,
                                 'text': entry.text,
-                                'intent': ButtonIntent.POSITIVE,
+                                'intent': OkButtonIntent.POSITIVE,
                                 'payload': entry.action.payload,
                             }
                         ] for entry in payload.inline_buttons]
@@ -41,12 +41,12 @@ class OkClient:
                 }
             }
 
-        msg = OutgoingMessage.Schema().load(msg_data)
+        msg = OkOutgoingMessage.Schema().load(msg_data)
 
         return msg
 
     @staticmethod
-    def parse_ok_webhook(wh: IncomingWebhook) -> EventCommandReceived:
+    def parse_ok_webhook(wh: OkIncomingWebhook) -> EventCommandReceived:
         # формирование объекта с данными для ECR
         ecr_data: Dict[str, Any] = {
             'bot_id': 1,  # todo BotManager.get_bot_by_type(BotType.TYPE_OK)

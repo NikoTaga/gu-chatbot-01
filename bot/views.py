@@ -8,7 +8,8 @@ from clients.jivosite import JivositeClient
 from clients.ok import OkClient
 from entities import EventCommandReceived, EventCommandToSend
 from .handlers import message_handler, test_handler
-from clients.ok_entities import IncomingWebhook
+
+from clients.ok_entities import OkIncomingWebhook
 from .models import Chat, Message
 
 
@@ -23,7 +24,7 @@ def ok_test_webhook(request: HttpRequest) -> HttpResponse:
     # 217.20.153.48/28
     # но с ngrok хосты расшифровываются как его удалённый хост
     print('host: ', request.get_host())
-    wh = IncomingWebhook.Schema().loads(request.body)
+    wh = OkIncomingWebhook.Schema().loads(request.body)
     print(wh)
     event: EventCommandReceived = client.parse_ok_webhook(wh)
     result: EventCommandToSend = test_handler(event)

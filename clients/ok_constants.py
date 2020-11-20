@@ -1,34 +1,34 @@
 from enum import Enum
 
 
-class ButtonType(Enum):
+class OkButtonType(Enum):
     CALLBACK = 'CALLBACK'
     LINK = 'LINK'
     REQUEST_CONTACT = 'REQUEST_CONTACT'
     REQUEST_GEO_LOCATION = 'REQUEST_GEO_LOCATION'
 
 
-class ButtonIntent(Enum):
+class OkButtonIntent(Enum):
     DEFAULT = 'DEFAULT'
     POSITIVE = 'POSITIVE'
     NEGATIVE = 'NEGATIVE'
 
 
 # unused
-class PayloadCallType(Enum):
+class OkPayloadCallType(Enum):
     AUDIO = 'AUDIO'
     VIDEO = 'VIDEO'
 
 
 # unused
-class PayloadCallHangupType(Enum):
+class OkPayloadCallHangupType(Enum):
     CANCELED = 'CANCELED'
     REJECTED = 'REJECTED'
     HUNGUP = 'HUNGUP'
     MISSED = 'MISSED'
 
 
-class AttachmentType(Enum):
+class OkAttachmentType(Enum):
     IMAGE = 'IMAGE'
     VIDEO = 'VIDEO'
     AUDIO = 'AUDIO'
@@ -44,16 +44,16 @@ class AttachmentType(Enum):
 
 
 # unused
-class PrivacyWarningType(Enum):
+class OkPrivacyWarningType(Enum):
     SCREENSHOT = 'SCREENSHOT'
     SCREENCAST = 'SCREENCAST'
 
 
-class WebhookType(Enum):
+class OkWebhookType(Enum):
     MESSAGE_CREATED = 'MESSAGE_CREATED'
     MESSAGE_CALLBACK = 'MESSAGE_CALLBACK'
     CHAT_SYSTEM = 'CHAT_SYSTEM'
 
 
-class SystemWebhookType(Enum):
+class OkSystemWebhookType(Enum):
     CHAT_STARTED = 'CHAT_STARTED'
