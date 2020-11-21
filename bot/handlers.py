@@ -15,7 +15,6 @@ def message_handler(event: EventCommandReceived) -> EventCommandToSend:
 
 
 def test_handler(event: EventCommandReceived) -> EventCommandToSend:
-    # -> сохранение сообщения и работа с юзером (Алекс)
     Message.objects.save_message(
         event.bot_id,
         event.user_id_in_messenger,
@@ -25,8 +24,7 @@ def test_handler(event: EventCommandReceived) -> EventCommandToSend:
         event.payload.direction,
         event.content_type,
         str(event.payload.command),
-        event.message_id_in_messenger
-    )
+        event.message_id_in_messenger)
     result_data: Dict[str, Any] = Dialog()(event)
     if result_data:
         Message.objects.save_message(
