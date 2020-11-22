@@ -80,11 +80,11 @@ class JivoIncomingWebhook:
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
     id: str
-    site_id: int
-    client_id: int
-    chat_id: int
-    sender: JivoSender
-    message: JivoMessage
+    site_id: str
+    client_id: str
+    chat_id: str
+    sender: Optional[JivoSender]
+    message: Optional[JivoMessage]
     event: JivoEventType = field(
         metadata={
             "marshmallow_field": marshmallow_enum.EnumField(JivoEventType, by_value=True)

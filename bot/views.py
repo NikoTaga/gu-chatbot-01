@@ -40,8 +40,14 @@ def ok_test_webhook(request: HttpRequest) -> HttpResponse:
 def jivo_test_webhook(request: HttpRequest) -> HttpResponse:
     client = JivositeClient()
     wh = JivoIncomingWebhook.Schema().loads(request.body)
+    print('wh')
     print(wh)
-    
+    event: EventCommandReceived = client.parse_jivo_webhook(wh)
+    print('event')
+    print(event)
+    result: EventCommandToSend = test_handler(event)
+    print('result')
+    print(result)
     return HttpResponse('OK')
 
 
