@@ -6,10 +6,12 @@ from typing import List, Dict, Any
 
 from clients.jivosite import JivositeClient
 from clients.ok import OkClient
+from clients.jivosite import JivositeClient
 from entities import EventCommandReceived, EventCommandToSend
 from .handlers import message_handler, test_handler
 
 from clients.ok_entities import OkIncomingWebhook
+from clients.jivo_entities import JivoIncomingWebhook
 from .models import Chat, Message
 
 
@@ -31,6 +33,15 @@ def ok_test_webhook(request: HttpRequest) -> HttpResponse:
     client.send_test_message(result)
 
     # скрипт обязательно должен подтверждать получение с помощью отправки 200 ОК
+    return HttpResponse('OK')
+
+
+@csrf_exempt  # type: ignore
+def jivo_test_webhook(request: HttpRequest) -> HttpResponse:
+    client = JivositeClient()
+    wh = JivoIncomingWebhook.Schema().loads(request.body)
+    print(wh)
+    
     return HttpResponse('OK')
 
 
