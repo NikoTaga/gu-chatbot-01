@@ -1,10 +1,13 @@
 from typing import Dict, Any, List, Callable
 from json.decoder import JSONDecodeError
 
+from billing.constants import PaymentSystems
+from billing.paypal import PaypalClient
 from constants import MessageDirection, MessageContentType, CallbackType
 from entities import EventCommandReceived, Callback
 
 from shop.models import Category, Product, Order
+from billing.models import Checkout
 
 
 class Dialog:
@@ -105,7 +108,7 @@ class Dialog:
             f'\n\nПодтвердить заказ за {product["price"]}?'
         buttons_data: List[Dict[str, Any]] = [
             {
-                'text': 'Подтвердить',
+                'text': 'PayPal',
                 'action': {
                     'type': 'postback',
                     'payload': Callback.Schema().dumps({
@@ -118,7 +121,13 @@ class Dialog:
         self.data['inline_buttons'] = buttons_data
 
     def make_order(self) -> None:
-        Order.objects.make_order(self.data['chat_id_in_messenger'], self.data['bot_id'], self.callback.product)
-
         self.data['content_type'] = MessageContentType.TEXT
-        self.data['payload']['text'] = 'Спасибо за покупку!'
+        approve_link = 'https://www.sandbox.paypal.com/checkoutnow?token=%s'
+        order = Order.objects.make_order(
+            self.data['chat_id_in_messenger'],
+            self.data['bot_id'],
+            self.callback.product,
+        )
+        checkout_id = PaypalClient().check_out(order.pk, self.callback.product)
+        checkout = Checkout.make_checkout(PaymentSystems.PAYPAL.value, checkout_id, order.pk)
+        self.data['payload']['text'] = f'Оплатите покупку по ссылке\n{approve_link % checkout_id}!'

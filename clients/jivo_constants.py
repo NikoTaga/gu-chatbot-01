@@ -1,7 +1,7 @@
 from enum import Enum
 
 
-class JivoResponseType:
+class JivoResponseType(Enum):
     OK = '200 OK'
     BAD_REQUEST = '400 Bad Request'
     UNAUTHORIZED = '401 Unauthorized'
