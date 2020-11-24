@@ -3,7 +3,7 @@ from datetime import datetime
 import requests
 from typing import Dict, Any
 
-from constants import ContentType, MessageDirection, ChatType
+from constants import ContentType, MessageDirection, ChatType, MessageContentType
 from entities import EventCommandToSend, EventCommandReceived
 from clients.jivo_entities import JivoMessage, JivoEvent
 from clients.jivo_constants import *
@@ -52,8 +52,8 @@ class JivositeClient:
         ecr_data: Dict[str, Any] = {
             'bot_id': 1,
             # todo think about fixing
-            'chat_id_in_messenger': wh.client_id,
-            'content_type': ContentType.COMMAND,
+            'chat_id_in_messenger': wh.chat_id,
+            'content_type': MessageContentType.COMMAND,
             'payload': {
                 'direction': MessageDirection.RECEIVED,
                 # todo CHECK DOES THIS EVEN WORK ??????
@@ -64,7 +64,6 @@ class JivositeClient:
             'user_id_in_messenger': wh.chat_id
         }
         ecr = EventCommandReceived.Schema().load(ecr_data)
-        print(ecr)
         return ecr
 
     def send_message(self, payload: EventCommandToSend):
