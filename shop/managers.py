@@ -57,7 +57,9 @@ class OrderManager(models.Manager):
 
         product = Product.objects.get_product_by_id(product_id)
         chat = Chat.objects.get(bot_id=bot_id, id_in_messenger=chat_id_in_messenger)
-        self.create(chat=chat, product_id=product_id, total=product['price'], description=description)
+        order = self.create(chat=chat, product_id=product_id, total=product['price'], description=description)
+
+        return order
 
     def update_order(self, order_id: int, status: int) -> None:
         order = self.get_order(order_id)

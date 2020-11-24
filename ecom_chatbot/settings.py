@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'djmoney',
     'bot',
     'shop',
+    'billing',
 ]
 
 MIDDLEWARE = [

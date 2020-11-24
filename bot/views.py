@@ -3,6 +3,7 @@ from django.shortcuts import render
 # чтобы разрешить кросс-сайт POST запросы
 from django.views.decorators.csrf import csrf_exempt
 from typing import List, Dict, Any
+from marshmallow.exceptions import ValidationError
 
 from clients.jivosite import JivositeClient
 from clients.ok import OkClient
@@ -26,11 +27,14 @@ def ok_test_webhook(request: HttpRequest) -> HttpResponse:
     # 217.20.153.48/28
     # но с ngrok хосты расшифровываются как его удалённый хост
     print('host: ', request.get_host())
-    wh = OkIncomingWebhook.Schema().loads(request.body)
-    print(wh)
-    event: EventCommandReceived = client.parse_ok_webhook(wh)
-    result: EventCommandToSend = test_handler(event)
-    client.send_test_message(result)
+    try:
+        wh = OkIncomingWebhook.Schema().loads(request.body)
+        print(wh)
+        event: EventCommandReceived = client.parse_ok_webhook(wh)
+        result: EventCommandToSend = test_handler(event)
+        client.send_test_message(result)
+    except ValidationError as e:
+        print(e.args)
 
     # скрипт обязательно должен подтверждать получение с помощью отправки 200 ОК
     return HttpResponse('OK')
