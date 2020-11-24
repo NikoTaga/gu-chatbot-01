@@ -5,8 +5,9 @@ import marshmallow
 import marshmallow_enum
 from marshmallow_dataclass import dataclass
 
-from .jivo_constants import *
-from .ok_entities import SkipNoneSchema
+from entities import SkipNoneSchema
+
+from clients.jivo_constants import JivoMessageType, JivoEventType, JivoResponseType
 
 
 @dataclass(order=True)
@@ -39,27 +40,16 @@ class JivoButton:
 @dataclass(order=True, base_schema=SkipNoneSchema)
 class JivoMessage:
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
-
+    
     type: JivoMessageType = field(
+        default=None,
         metadata={
             "marshmallow_field": marshmallow_enum.EnumField(JivoMessageType, by_value=True)
         }
     )
-    text: str
-    timestamp: int
-    button_id: Optional[int]
-    title: Optional[str]
-    content: Optional[str]
-    buttons: Optional[List[JivoButton]] = field(
-        default=None,
-        metadata={
-            "marshmallow_field": marshmallow.fields.List(
-                marshmallow.fields.Nested(JivoButton.Schema()),
-                allow_none=True,
-                validate=marshmallow.validate.Length(max=3),
-            )
-        }
-    )
+    text: Optional[str] = None
+    timestamp: int = None
+    button_id: Optional[int] = None
 
 
 @dataclass(order=True, base_schema=SkipNoneSchema)
@@ -75,3 +65,28 @@ class JivoEvent:
     client_id: str
     chat_id: Optional[str]
     message: Optional[JivoMessage]
+
+
+@dataclass(order=True, base_schema=SkipNoneSchema)
+class JivoSender:
+    Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
+    
+    id: int
+    url: str
+    
+    
+@dataclass(order=True)
+class JivoIncomingWebhook:
+    Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
+
+    id: str
+    site_id: str
+    client_id: str
+    chat_id: str
+    sender: Optional[JivoSender]
+    message: Optional[JivoMessage]
+    event: JivoEventType = field(
+        metadata={
+            "marshmallow_field": marshmallow_enum.EnumField(JivoEventType, by_value=True)
+        }
+    )
