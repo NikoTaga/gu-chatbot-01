@@ -4,8 +4,8 @@ from paypalcheckoutsdk.orders import OrdersCaptureRequest
 from paypalhttp import HttpError
 
 from shop.models import Product
-from .models import Checkout
-from .constants import *
+from billing.constants import Currency, PaypalIntent, PaypalShippingPreference, PaypalUserAction, PaypalGoodsCategory, \
+    PaypalOrderStatus
 from .paypal_entities import PaypalCheckout
 
 

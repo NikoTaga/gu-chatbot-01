@@ -7,7 +7,7 @@ import marshmallow_enum
 from marshmallow_dataclass import dataclass
 
 from entities import SkipNoneSchema
-from .constants import *
+from billing.constants import Currency, PaypalIntent, PaypalGoodsCategory, PaypalUserAction, PaypalShippingPreference
 
 
 @dataclass(order=True, base_schema=SkipNoneSchema)
