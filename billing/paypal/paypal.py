@@ -1,7 +1,10 @@
+from pprint import pprint
+from django.http import HttpRequest
 from paypalcheckoutsdk.core import PayPalHttpClient, SandboxEnvironment
 from paypalcheckoutsdk.orders import OrdersCreateRequest, OrdersValidateRequest
 from paypalcheckoutsdk.orders import OrdersCaptureRequest
 from paypalhttp import HttpError
+from paypalrestsdk.notifications import WebhookEvent
 
 from shop.models import Product
 from billing.constants import Currency, PaypalIntent, PaypalShippingPreference, PaypalUserAction, PaypalGoodsCategory, \
@@ -19,7 +22,31 @@ class PaypalClient:
         environment = SandboxEnvironment(client_id=self.client_id, client_secret=self.client_secret)
         self.client = PayPalHttpClient(environment)
 
-    def capture(self, checkout_id):
+    def verify(self, request: HttpRequest) -> bool:
+        print('RECEIVED A PAYPAL WEBHOOK')
+        h = request.headers
+        pprint(h)
+        transmission_id = h['Paypal-Transmission-Id']
+        timestamp = h['Paypal-Transmission-Time']
+        actual_sig = h['Paypal-Transmission-Sig']
+        webhook_id = '98W08433SC026140M'
+        cert_url = h['Paypal-Cert-Url']
+        auth_algo = h['PayPal-Auth-Algo']
+        if WebhookEvent.verify(
+                transmission_id,
+                timestamp,
+                webhook_id,
+                request.body.decode('utf-8'),
+                cert_url,
+                actual_sig,
+                auth_algo
+        ):
+            return True
+        else:
+            # raise PayPalVerificationFailed()
+            return False
+
+    def capture(self, checkout_id: str):
         # Here, OrdersCaptureRequest() creates a POST request to /v2/checkout/orders
         request = OrdersCaptureRequest(checkout_id)
 
@@ -40,7 +67,7 @@ class PaypalClient:
                 # Something went wrong client side
                 print(ioe)
 
-    def check_out(self, order_id, product_id):
+    def check_out(self, order_id: int, product_id: int):
         request = OrdersCreateRequest()
         product = Product.objects.get_product_by_id(product_id)
         request.prefer('return=representation')
