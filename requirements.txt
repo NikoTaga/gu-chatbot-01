@@ -13,6 +13,9 @@ marshmallow==3.8.0
 marshmallow_enum==1.5.1
 marshmallow-dataclass==8.1.0
 
+# Stripe integration
+stripe==2.55.0
+
 # Error reporting
 sentry-sdk==0.18.0
 

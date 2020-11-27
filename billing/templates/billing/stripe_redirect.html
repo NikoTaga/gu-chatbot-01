@@ -1,0 +1,14 @@
+<html>
+  <head>
+    <script src="https://js.stripe.com/v3/"></script>
+  </head>
+  <body>
+    <script>
+      var stripe = Stripe("{{ public_key }}");
+      var urlParams = new URLSearchParams(window.location.search);
+      stripe.redirectToCheckout({
+      sessionId: "{{checkout_id}}"
+      });
+    </script>
+  </body>
+</html>
