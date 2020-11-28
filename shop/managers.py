@@ -45,6 +45,7 @@ class ProductManager(models.Manager):
 
 class OrderManager(models.Manager):
     def get_order(self, order_id: int) -> QuerySet:
+        # ToDo: change return value and everything related
         return self.filter(id=order_id)
 
     def make_order(self,
@@ -62,10 +63,11 @@ class OrderManager(models.Manager):
         return order
 
     def update_order(self, order_id: int, status: int) -> None:
-        order = self.get_order(order_id)
+        order = self.get_order(order_id).first()
+        order.status = status
         if status == OrderStatus.CANCELED.value:
-            order.update(status=status, cancel_date=timezone.now())
+            order.cancel_date = timezone.now()
         elif status == OrderStatus.COMPLETE.value:
-            order.update(status=status, paid_date=timezone.now())
-        else:
-            order.update(status=status)
+            order.paid_date = timezone.now()
+        order.save()
+        return order

@@ -129,5 +129,5 @@ class Dialog:
             self.callback.product,
         )
         checkout_id = PaypalClient().check_out(order.pk, self.callback.product)
-        checkout = Checkout.make_checkout(PaymentSystems.PAYPAL.value, checkout_id, order.pk)
+        checkout = Checkout.objects.make_checkout(PaymentSystems.PAYPAL.value, checkout_id, order.pk)
         self.data['payload']['text'] = f'Оплатите покупку по ссылке\n{approve_link % checkout_id}!'

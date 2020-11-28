@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Any, Tuple
+from typing import Any, Tuple, Dict, List, Union
 
 
 class Choice(Enum):
@@ -88,7 +88,7 @@ class OrderStatus(Choice):
     PAYMENT_REVIEW = 8
 
 
-ORDER_STATUS_ENUM = [
+ORDER_STATUS_ENUM: List[Dict[str, Union[int, str]]] = [
     {'id': OrderStatus.NEW.value, 'name': 'New'},
     {'id': OrderStatus.PENDING_PAYMENT.value, 'name': 'Pending payment'},
     {'id': OrderStatus.PROCESSING.value, 'name': 'Processing'},

@@ -17,7 +17,7 @@ def paypal_webhook(request: HttpRequest) -> HttpResponse:
     pprint(obj)
     if obj['event_type'] == 'CHECKOUT.ORDER.APPROVED':
         checkout_id = obj['resource']['id']
-        co_entity = Checkout.get_checkout(checkout_id).first()
+        co_entity = Checkout.objects.get_checkout(checkout_id).first()
         if co_entity:
             PaypalClient().capture(checkout_id)
             print('CAPTURED')
