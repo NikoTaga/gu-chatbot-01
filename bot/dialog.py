@@ -2,8 +2,8 @@ from typing import Dict, Any, List, Callable
 from json.decoder import JSONDecodeError
 
 from billing.constants import PaymentSystems
-from billing.paypal import PaypalClient
 from billing.stripe.stripe import StripeClient
+from billing.paypal.paypal import PaypalClient
 from constants import MessageDirection, MessageContentType, CallbackType
 from entities import EventCommandReceived, Callback
 
