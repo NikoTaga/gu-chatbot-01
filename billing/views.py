@@ -6,8 +6,8 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 
 from constants import OrderStatus
-from billing.stripe.stripe import StripeClient
-from billing.paypal.paypal import PaypalClient
+from billing.stripe.client import StripeClient
+from billing.paypal.client import PaypalClient
 from .models import Checkout
 from shop.models import Order
 from .constants import STRIPE_PUBLIC_KEY
@@ -22,15 +22,7 @@ def paypal_webhook(request: HttpRequest) -> HttpResponse:
         pprint(obj)
         if obj['event_type'] == 'CHECKOUT.ORDER.APPROVED':
             checkout_id = obj['resource']['id']
-            co_entity = Checkout.objects.get_checkout(checkout_id).first()
-            if co_entity and co_entity.order.status != OrderStatus.COMPLETE.value:
-                pp_client.capture(checkout_id)
-                print('>>> CAPTURED')
-                Order.objects.update_order(co_entity.order.pk, OrderStatus.COMPLETE.value)
-            elif not co_entity:
-                print('The order was modified in process and payment is not valid anymore.')
-            elif co_entity.order.status == OrderStatus.COMPLETE.value:
-                print('>>> DUPLICATE NOTIFICATION')
+            Checkout.objects.fulfill_checkout(pp_client, checkout_id)
 
     return HttpResponse('OK')
 
@@ -45,14 +37,7 @@ def stripe_webhook(request: HttpRequest) -> HttpResponse:
         pprint(obj)
         if obj['type'] == 'checkout.session.completed':
             checkout_id = obj['data']['object']['id']
-            co_entity = Checkout.objects.get_checkout(checkout_id).first()
-            if co_entity and co_entity.order.status != OrderStatus.COMPLETE.value:
-                print('>>> CAPTURED')
-                Order.objects.update_order(co_entity.order.pk, OrderStatus.COMPLETE.value)
-            elif not co_entity:
-                print('The order was modified in process and payment is not valid anymore.')
-            elif co_entity.order.status == OrderStatus.COMPLETE.value:
-                print('>>> DUPLICATE NOTIFICATION')
+            Checkout.objects.fulfill_checkout(stripe_client, checkout_id)
 
         return HttpResponse(status=200)
     else:
@@ -67,3 +52,12 @@ def stripe_redirect(request: HttpRequest, cid: str) -> HttpResponse:
     }
 
     return render(request, 'billing/stripe_redirect.html', context=content)
+
+
+def stripe_payment_success(request: HttpRequest, order_id: int) -> HttpResponse:
+    content = {
+        'title': 'Заказ оплачен успешно!',
+        'order': Order.objects.get_order(order_id).first(),
+    }
+
+    return render(request, 'billing/stripe_ok.html', context=content)

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{{title}}</title>
+</head>
+<body>
+    <h1>Оплата проведена</h1>
+    <p>Оплата вашего заказа №{{order.pk}}</p>
+    <p>позиция №{{order.product.pk}} - {{order.product.name}}</p>
+    <p>на сумму: {{order.total}}</p>
+    <p>проведена успешно! ({{order.paid_date}})</p>
+</body>
+</html>
