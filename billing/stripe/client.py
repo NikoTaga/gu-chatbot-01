@@ -1,17 +1,22 @@
 import stripe
 from pprint import pprint
 
+from stripe.error import SignatureVerificationError
+
 from billing.stripe.stripe_entities import StripeCheckout
+from constants import SITE_URL
 from shop.models import Product
 from billing.constants import StripePaymentMethod, StripeCurrency, StripeMode, STRIPE_SECRET_KEY, STRIPE_WHSEC_KEY
+from billing.paypal.client import PaymentSystemClient
 
 
-stripe.api_key = STRIPE_SECRET_KEY
+class StripeClient(PaymentSystemClient):
 
+    def __init__(self):
+        self.client = stripe
+        self.client.api_key = STRIPE_SECRET_KEY
 
-class StripeClient:
-    @staticmethod
-    def check_out(order_id, product_id):
+    def check_out(self, order_id, product_id):
         product = Product.objects.get_product_by_id(product_id)
         checkout_data = {
             'payment_method_types': [StripePaymentMethod.CARD.value],
@@ -29,12 +34,12 @@ class StripeClient:
                 },
             ],
             'mode': StripeMode.PAYMENT,
-            'success_url': f'http://194.67.90.202:8000/payment_success/{order_id}',
-            'cancel_url': f'http://194.67.90.202:8000/payment_cancel/{order_id}',
+            'success_url': f'{SITE_URL}/billing/payment_success/{order_id}',
+            'cancel_url': f'{SITE_URL}/billing/payment_cancel/{order_id}',
         }
         stripe_checkout = StripeCheckout.Schema().load(checkout_data)
         try:
-            checkout_session = stripe.checkout.Session.create(**stripe_checkout.Schema().dump(stripe_checkout))
+            checkout_session = self.client.checkout.Session.create(**stripe_checkout.Schema().dump(stripe_checkout))
             return checkout_session.id
         except Exception as e:
             print(e.args)
@@ -46,13 +51,16 @@ class StripeClient:
         event = None
 
         try:
-            event = stripe.Webhook.construct_event(
+            event = self.client.Webhook.construct_event(
                 payload, sig_header, STRIPE_WHSEC_KEY
             )
         except ValueError as e:
             # Invalid payload
             return False
-        except stripe.error.SignatureVerificationError as e:
+        except SignatureVerificationError as e:
             return False
 
+        return True
+
+    def capture(self, checkout_id):
         return True

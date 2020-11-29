@@ -2,9 +2,9 @@ from typing import Dict, Any, List, Callable
 from json.decoder import JSONDecodeError
 
 from billing.constants import PaymentSystems
-from billing.stripe.stripe import StripeClient
-from billing.paypal.paypal import PaypalClient
-from constants import MessageDirection, MessageContentType, CallbackType
+from billing.stripe.client import StripeClient
+from billing.paypal.client import PaypalClient
+from constants import MessageDirection, MessageContentType, CallbackType, SITE_URL
 from entities import EventCommandReceived, Callback
 
 from shop.models import Category, Product, Order
@@ -144,9 +144,9 @@ class Dialog:
         if self.callback.type == CallbackType.PAYPAL:
             checkout_id = PaypalClient().check_out(order.pk, self.callback.product)
             approve_link = 'https://www.sandbox.paypal.com/checkoutnow?token=%s' % checkout_id
-            checkout = Checkout.make_checkout(PaymentSystems.PAYPAL.value, checkout_id, order.pk)
+            checkout = Checkout.objects.make_checkout(PaymentSystems.PAYPAL.value, checkout_id, order.pk)
         elif self.callback.type == CallbackType.STRIPE:
             checkout_id = StripeClient().check_out(order.pk, self.callback.product)
-            approve_link = 'https://dfa7cd58c95e.ngrok.io/stripe_redirect/%s' % checkout_id
-            checkout = Checkout.make_checkout(PaymentSystems.STRIPE.value, checkout_id, order.pk)
+            approve_link = '%s/billing/stripe_redirect/%s' % (SITE_URL, checkout_id)
+            checkout = Checkout.objects.make_checkout(PaymentSystems.STRIPE.value, checkout_id, order.pk)
         self.data['payload']['text'] = f'Оплатите покупку по ссылке\n{approve_link}!'
