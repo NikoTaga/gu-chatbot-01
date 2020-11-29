@@ -43,12 +43,10 @@ def ok_test_webhook(request: HttpRequest) -> HttpResponse:
 
 @csrf_exempt  # type: ignore
 def jivo_test_webhook(request: HttpRequest) -> HttpResponse:
-    pprint(request.body)
-    rbody = json.loads(request.body)
-    rbody['chat_id'] = rbody['client_id']
+    print(request.body)
     client = JivositeClient()
     try:
-        wh = JivoIncomingWebhook.Schema().load(rbody)
+        wh = JivoIncomingWebhook.Schema().loads(request.body)
         print('wh ===')
         print(wh)
         print()
