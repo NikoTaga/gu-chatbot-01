@@ -34,7 +34,7 @@ class JivoButton:
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
     text: str
-    id: str
+    id: int
 
 
 @dataclass(order=True, base_schema=SkipNoneSchema)
@@ -50,6 +50,9 @@ class JivoMessage:
     text: Optional[str] = None
     timestamp: int = None
     button_id: Optional[int] = None
+    title: str = None
+    buttons: Optional[List[JivoButton]] = None
+
 
 
 @dataclass(order=True, base_schema=SkipNoneSchema)
@@ -61,8 +64,8 @@ class JivoEvent:
             "marshmallow_field": marshmallow_enum.EnumField(JivoEventType, by_value=True)
         }
     )
-    id: str
-    client_id: str
+    id: int
+    client_id: int
     chat_id: Optional[str]
     message: Optional[JivoMessage]
 
@@ -80,8 +83,8 @@ class JivoIncomingWebhook:
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
     id: str
-    site_id: str
-    client_id: str
+    site_id: int
+    client_id: int
     chat_id: str
     sender: Optional[JivoSender]
     message: Optional[JivoMessage]
