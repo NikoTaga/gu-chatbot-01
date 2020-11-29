@@ -1,6 +1,7 @@
 from datetime import datetime
 
 import requests
+from pprint import pprint
 from typing import Dict, Any
 
 from constants import ContentType, MessageDirection, ChatType, MessageContentType
@@ -12,7 +13,7 @@ from clients.jivo_constants import *
 class JivositeClient:
     """Класс для работы с JivoSite"""
     token: str = 'test'
-    headers: Dict[str, Any] = {'Content-Type': 'application/json;charset=utf-8'}
+    headers: Dict[str, Any] = {'Content-Type': 'application/json'}
     button_commands: Dict[int, str] = {
         0: '{"category": 1}',
         1: '{"product": 1}'
@@ -23,7 +24,7 @@ class JivositeClient:
         event_data: Dict[str, Any] = {
             'event': JivoEventType.BOT_MESSAGE,
             # todo think about how to work this around
-            'id': payload.bot_id,
+            'id': str(payload.message_id),
             'client_id': payload.chat_id_in_messenger,
         }
 
@@ -36,10 +37,10 @@ class JivositeClient:
             msg_data['title'] = payload.payload.text
             msg_data['type'] = JivoMessageType.BUTTONS
             msg_data['buttons'] = [
-                {
-                    'text': payload.inline_buttons[i].text,
-                    'id': i,
-                } for i in range(len(payload.inline_buttons))]
+               {
+                   'text': payload.inline_buttons[i].text,
+                   'id': i,
+               } for i in range(len(payload.inline_buttons[:3]))]
         else:
             msg_data['type'] = JivoMessageType.TEXT
         event_data['message'] = msg_data
@@ -65,7 +66,7 @@ class JivositeClient:
             'user_name_in_messenger': 'Тест',
             'message_id_in_messenger': str(wh.sender.id),
             'reply_id_in_messenger': None,
-            'ts_in_messenger': str(datetime.fromtimestamp(wh.message.timestamp // 1000)),
+            'ts_in_messenger': str(datetime.fromtimestamp(int(wh.message.timestamp))),
         }
         ecr = EventCommandReceived.Schema().load(ecr_data)
         return ecr
@@ -77,15 +78,15 @@ class JivositeClient:
     def send_test_message(self, payload: EventCommandToSend) -> None:
         msg = self.form_jivo_event(payload)
         print('msg ====')
-        print(msg)
+        pprint(msg)
         print()
         data = msg.Schema().dumps(msg)
         print('data ====')
-        print(data)
+        pprint(data)
         print()
-        send_link = f'https://bot.jivosite.com/webhooks/ntDQ6AScFgYVtb8/test/{payload.chat_id_in_messenger}?access_token={self.token}'
+        send_link = 'https://bot.jivosite.com/webhooks/ntDQ6AScFgYVtb8/test'
         r = requests.post(send_link, headers=self.headers, data=msg.Schema().dumps(msg))
         print(r)
         print(r.text)
-        # # url для отправки https://bot.jivosite.com/webhooks/ntDQ6AScFgYVtb8/test
-        pass
+        # url для отправки https://bot.jivosite.com/webhooks/ntDQ6AScFgYVtb8/test
+

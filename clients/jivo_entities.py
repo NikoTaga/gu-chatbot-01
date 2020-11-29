@@ -49,7 +49,7 @@ class JivoMessage:
     )
     text: Optional[str] = None
     timestamp: int = None
-    button_id: Optional[int] = None
+    button_id: Optional[str] = None
     title: str = None
     buttons: Optional[List[JivoButton]] = None
 
@@ -64,8 +64,8 @@ class JivoEvent:
             "marshmallow_field": marshmallow_enum.EnumField(JivoEventType, by_value=True)
         }
     )
-    id: int
-    client_id: int
+    id: str
+    client_id: str
     chat_id: Optional[str]
     message: Optional[JivoMessage]
 
@@ -83,8 +83,8 @@ class JivoIncomingWebhook:
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
     id: str
-    site_id: int
-    client_id: int
+    site_id: str
+    client_id: str
     chat_id: str
     sender: Optional[JivoSender]
     message: Optional[JivoMessage]

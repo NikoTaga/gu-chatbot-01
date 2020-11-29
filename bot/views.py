@@ -1,3 +1,5 @@
+from pprint import pprint
+import json
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 # чтобы разрешить кросс-сайт POST запросы
@@ -41,19 +43,22 @@ def ok_test_webhook(request: HttpRequest) -> HttpResponse:
 
 @csrf_exempt  # type: ignore
 def jivo_test_webhook(request: HttpRequest) -> HttpResponse:
+    pprint(request.body)
+    rbody = json.loads(request.body)
+    rbody['chat_id'] = rbody['client_id']
     client = JivositeClient()
     try:
-        wh = JivoIncomingWebhook.Schema().loads(request.body)
+        wh = JivoIncomingWebhook.Schema().load(rbody)
         print('wh ===')
         print(wh)
         print()
         event: EventCommandReceived = client.parse_jivo_webhook(wh)
         print('event ===')
-        print(event)
+        pprint(event)
         print()
         result: EventCommandToSend = test_handler(event)
         print('result ===')
-        print(result)
+        pprint(result)
         print()
         client.send_test_message(result)
     except ValidationError as e:
