@@ -11,7 +11,7 @@ from clients.jivo_constants import *
 
 class JivositeClient:
     """Класс для работы с JivoSite"""
-    token: str
+    token: str = 'test'
     headers: Dict[str, Any] = {'Content-Type': 'application/json;charset=utf-8'}
     button_commands: Dict[int, str] = {
         0: '{"category": 1}',
@@ -23,13 +23,15 @@ class JivositeClient:
         event_data: Dict[str, Any] = {
             'event': JivoEventType.BOT_MESSAGE,
             # todo think about how to work this around
-            'id': payload.message_id,
+            'id': payload.bot_id,
             'client_id': payload.chat_id_in_messenger,
         }
+
         msg_data: Dict[str, Any] = {
             'text': payload.payload.text,
             'timestamp': datetime.now().timestamp()
         }
+
         if payload.inline_buttons:
             msg_data['title'] = payload.payload.text
             msg_data['type'] = JivoMessageType.BUTTONS
@@ -41,16 +43,14 @@ class JivositeClient:
         else:
             msg_data['type'] = JivoMessageType.TEXT
         event_data['message'] = msg_data
-
         event = JivoEvent.Schema().load(event_data)
-
         return event
 
     @staticmethod
     def parse_jivo_webhook(wh: JivoEvent) -> EventCommandReceived:
         # формирование объекта с данными для ECR
         ecr_data: Dict[str, Any] = {
-            'bot_id': 1,
+            'bot_id': 2,
             # todo think about fixing
             'chat_id_in_messenger': wh.chat_id,
             'content_type': MessageContentType.COMMAND,
@@ -61,7 +61,11 @@ class JivositeClient:
             },
             'chat_type': ChatType.PRIVATE,
             # switched places
-            'user_id_in_messenger': wh.chat_id
+            'user_id_in_messenger': str(wh.client_id),
+            'user_name_in_messenger': 'Тест',
+            'message_id_in_messenger': str(wh.sender.id),
+            'reply_id_in_messenger': None,
+            'ts_in_messenger': str(datetime.fromtimestamp(wh.message.timestamp // 1000)),
         }
         ecr = EventCommandReceived.Schema().load(ecr_data)
         return ecr
@@ -72,7 +76,16 @@ class JivositeClient:
 
     def send_test_message(self, payload: EventCommandToSend) -> None:
         msg = self.form_jivo_event(payload)
-
-        send_link = f'{payload.chat_id_in_messenger}{self.token}'
+        print('msg ====')
+        print(msg)
+        print()
+        data = msg.Schema().dumps(msg)
+        print('data ====')
+        print(data)
+        print()
+        send_link = f'https://bot.jivosite.com/webhooks/ntDQ6AScFgYVtb8/test/{payload.chat_id_in_messenger}?access_token={self.token}'
         r = requests.post(send_link, headers=self.headers, data=msg.Schema().dumps(msg))
+        print(r)
         print(r.text)
+        # # url для отправки https://bot.jivosite.com/webhooks/ntDQ6AScFgYVtb8/test
+        pass
