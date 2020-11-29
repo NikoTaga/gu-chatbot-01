@@ -2,7 +2,8 @@ from typing import Dict, Any, List, Callable
 from json.decoder import JSONDecodeError
 
 from billing.constants import PaymentSystems
-from billing.paypal import PaypalClient
+from billing.stripe.stripe import StripeClient
+from billing.paypal.paypal import PaypalClient
 from constants import MessageDirection, MessageContentType, CallbackType
 from entities import EventCommandReceived, Callback
 
@@ -17,7 +18,8 @@ class Dialog:
             'category': self.form_product_list,
             'product': self.form_product_desc,
             'order': self.form_order_confirmation,
-            'confirm': self.make_order,
+            'paypal': self.make_order,
+            'stripe': self.make_order,
         }
         # начало формирования объекта с данными для ECTS
         self.data = self.form_preset(event)
@@ -28,7 +30,7 @@ class Dialog:
             try:
                 self.callback: Callback = Callback.Schema().loads(event.payload.command)
                 variants[str(self.callback.type.value)]()
-            except JSONDecodeError as err:
+            except (JSONDecodeError, KeyError) as err:
                 print(err.args)
 
         return self.data
@@ -105,29 +107,46 @@ class Dialog:
         product = Product.objects.get_product_by_id(self.callback.product)
         self.data['payload']['text'] = \
             f'Выбран товар \"{product["name"]}\"' \
-            f'\n\nПодтвердить заказ за {product["price"]}?'
+            f'\n\nОплатить заказ за {product["price"]} через платёжную систему?'
         buttons_data: List[Dict[str, Any]] = [
             {
                 'text': 'PayPal',
                 'action': {
                     'type': 'postback',
                     'payload': Callback.Schema().dumps({
-                        'type': CallbackType.CONFIRM,
+                        'type': CallbackType.PAYPAL,
                         'product': self.callback.product,
                     }),
                 }
-            }]
+            },
+            {
+                'text': 'Stripe',
+                'action': {
+                    'type': 'postback',
+                    'payload': Callback.Schema().dumps({
+                        'type': CallbackType.STRIPE,
+                        'product': self.callback.product,
+                    }),
+                }
+            },
+        ]
         print(buttons_data)
         self.data['inline_buttons'] = buttons_data
 
     def make_order(self) -> None:
         self.data['content_type'] = MessageContentType.TEXT
-        approve_link = 'https://www.sandbox.paypal.com/checkoutnow?token=%s'
         order = Order.objects.make_order(
             self.data['chat_id_in_messenger'],
             self.data['bot_id'],
             self.callback.product,
         )
-        checkout_id = PaypalClient().check_out(order.pk, self.callback.product)
-        checkout = Checkout.objects.make_checkout(PaymentSystems.PAYPAL.value, checkout_id, order.pk)
-        self.data['payload']['text'] = f'Оплатите покупку по ссылке\n{approve_link % checkout_id}!'
+        approve_link = ''
+        if self.callback.type == CallbackType.PAYPAL:
+            checkout_id = PaypalClient().check_out(order.pk, self.callback.product)
+            approve_link = 'https://www.sandbox.paypal.com/checkoutnow?token=%s' % checkout_id
+            checkout = Checkout.make_checkout(PaymentSystems.PAYPAL.value, checkout_id, order.pk)
+        elif self.callback.type == CallbackType.STRIPE:
+            checkout_id = StripeClient().check_out(order.pk, self.callback.product)
+            approve_link = 'https://dfa7cd58c95e.ngrok.io/stripe_redirect/%s' % checkout_id
+            checkout = Checkout.make_checkout(PaymentSystems.STRIPE.value, checkout_id, order.pk)
+        self.data['payload']['text'] = f'Оплатите покупку по ссылке\n{approve_link}!'

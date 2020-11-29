@@ -70,7 +70,9 @@ class CallbackType(Enum):
     CATEGORY = 'category'
     PRODUCT = 'product'
     ORDER = 'order'
-    CONFIRM = 'confirm'
+    # CONFIRM = 'confirm'
+    PAYPAL = 'paypal'
+    STRIPE = 'stripe'
 
 
 # ----------------------------

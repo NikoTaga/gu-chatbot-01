@@ -17,6 +17,7 @@ marshmallow-dataclass==8.1.0
 paypalrestsdk==1.13.1
 paypal-checkout-serversdk==1.0.1
 paypalhttp==1.0.0
+stripe==2.55.0
 
 # Error reporting
 sentry-sdk==0.18.0
