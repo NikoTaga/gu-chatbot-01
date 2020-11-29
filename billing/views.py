@@ -1,6 +1,7 @@
 import json
 from pprint import pprint
 from django.http import HttpRequest, HttpResponse
+from django.shortcuts import render
 # чтобы разрешить кросс-сайт POST запросы
 from django.views.decorators.csrf import csrf_exempt
 
@@ -21,7 +22,7 @@ def paypal_webhook(request: HttpRequest) -> HttpResponse:
         pprint(obj)
         if obj['event_type'] == 'CHECKOUT.ORDER.APPROVED':
             checkout_id = obj['resource']['id']
-            co_entity = Checkout.get_checkout(checkout_id).first()
+            co_entity = Checkout.objects.get_checkout(checkout_id).first()
             if co_entity and co_entity.order.status != OrderStatus.COMPLETE.value:
                 pp_client.capture(checkout_id)
                 print('>>> CAPTURED')
@@ -44,7 +45,7 @@ def stripe_webhook(request: HttpRequest) -> HttpResponse:
         pprint(obj)
         if obj['type'] == 'checkout.session.completed':
             checkout_id = obj['data']['object']['id']
-            co_entity = Checkout.get_checkout(checkout_id).first()
+            co_entity = Checkout.objects.get_checkout(checkout_id).first()
             if co_entity and co_entity.order.status != OrderStatus.COMPLETE.value:
                 print('>>> CAPTURED')
                 Order.objects.update_order(co_entity.order.pk, OrderStatus.COMPLETE.value)
