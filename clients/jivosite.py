@@ -53,7 +53,7 @@ class JivositeClient:
         ecr_data: Dict[str, Any] = {
             'bot_id': 2,
             # todo think about fixing
-            'chat_id_in_messenger': wh.chat_id,
+            'chat_id_in_messenger': wh.client_id,
             'content_type': MessageContentType.COMMAND,
             'payload': {
                 'direction': MessageDirection.RECEIVED,
@@ -62,7 +62,7 @@ class JivositeClient:
             },
             'chat_type': ChatType.PRIVATE,
             # switched places
-            'user_id_in_messenger': str(wh.client_id),
+            'user_id_in_messenger': str(wh.chat_id),
             'user_name_in_messenger': 'Тест',
             'message_id_in_messenger': str(wh.sender.id),
             'reply_id_in_messenger': None,
