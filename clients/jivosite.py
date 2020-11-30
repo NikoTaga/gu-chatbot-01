@@ -33,7 +33,7 @@ class JivositeClient:
             msg_data['type'] = JivoMessageType.BUTTONS
             msg_data['buttons'] = [
                {
-                   'text': payload.inline_buttons[i].text,
+                   'text': payload.inline_buttons[i+4].text,
                    'id': i,
                } for i in range(len(payload.inline_buttons[4:7]))]
         else:
@@ -54,6 +54,7 @@ class JivositeClient:
                 'direction': MessageDirection.RECEIVED,
                 # todo CHECK DOES THIS EVEN WORK ??????
                 'command': wh.message.button_id,  # it doesn't.
+                'text': wh.message.text,
             },
             'chat_type': ChatType.PRIVATE,
             # switched places

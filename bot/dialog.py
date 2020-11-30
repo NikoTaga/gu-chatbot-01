@@ -27,8 +27,9 @@ class Dialog:
         return dialog
 
     def __init__(self, bot_id, user_id):
-        self.cache = {}
-        self.state = 1
+        if 'cache' not in self.__dict__:
+            self.cache = {}
+            self.state = 1
         self.bot_id = bot_id
         self.user_id = user_id
 
@@ -66,6 +67,7 @@ class Dialog:
     def cache_buttons(self, buttons: list):
         for button in buttons:
             self.cache[button['text']] = button['action']['payload']
+        print(f'\n\n ==== CACHED ==== \n{self.cache}')
 
     @staticmethod
     def form_preset(event: EventCommandReceived) -> Dict[str, Any]:
