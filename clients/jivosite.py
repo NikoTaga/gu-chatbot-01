@@ -15,11 +15,7 @@ class JivositeClient:
     token: str = 'test'
     headers: Dict[str, Any] = {'Content-Type': 'application/json'}
 
-    def split_by_n(self, buttons: List[InlineButton], size: int) -> List[List[InlineButton]]:
-        for i in range(len(buttons), size):
-            yield buttons[i:i + size]
-
-    def form_jivo_events(self, payload: EventCommandToSend) -> List[JivoEvent]:
+    def form_jivo_events(self, payload: EventCommandToSend) -> JivoEvent:
         event_data: Dict[str, Any] = {
             'event': JivoEventType.BOT_MESSAGE,
             # todo think about how to work this around
@@ -39,36 +35,13 @@ class JivositeClient:
                {
                    'text': payload.inline_buttons[i].text,
                    'id': i,
-               } for i in range(3)]
+               } for i in range(len(payload.inline_buttons))]
         else:
             msg_data['type'] = JivoMessageType.TEXT
         event_data['message'] = msg_data
-        events = [JivoEvent.Schema().load(event_data)]
+        event = JivoEvent.Schema().load(event_data)
 
-        for buttons in list(self.split_by_n(payload.inline_buttons[3:], 3)):
-            event_data: Dict[str, Any] = {
-                'event': JivoEventType.BOT_MESSAGE,
-                # todo think about how to work this around
-                'id': str(payload.message_id),
-                'client_id': payload.chat_id_in_messenger,
-            }
-
-            msg_data: Dict[str, Any] = {
-                # 'text': payload.payload.text,
-                'timestamp': datetime.now().timestamp(),
-            }
-
-            # msg_data['title'] = payload.payload.text
-            msg_data['type'] = JivoMessageType.BUTTONS
-            msg_data['buttons'] = [
-                {
-                    'text': buttons[i].text,
-                    'id': i,
-                } for i in range(3)]
-            event_data['message'] = msg_data
-            events.append(JivoEvent.Schema().load(event_data))
-
-        return events
+        return event
 
     @staticmethod
     def parse_jivo_webhook(wh: JivoEvent) -> EventCommandReceived:
@@ -100,18 +73,17 @@ class JivositeClient:
         pass
 
     def send_test_message(self, payload: EventCommandToSend) -> None:
-        msgs = self.form_jivo_events(payload)
+        msg = self.form_jivo_events(payload)
         print('msg ====')
-        pprint(msgs)
+        pprint(msg)
         print()
-        for msg in msgs:
-            data = msg.Schema().dumps(msg)
-            print('data ====')
-            pprint(data)
-            print()
-            send_link = 'https://bot.jivosite.com/webhooks/ntDQ6AScFgYVtb8/test'
-            r = requests.post(send_link, headers=self.headers, data=msg.Schema().dumps(msg))
-            print(r)
-            print(r.text)
+        data = msg.Schema().dumps(msg)
+        print('data ====')
+        pprint(data)
+        print()
+        send_link = 'https://bot.jivosite.com/webhooks/ntDQ6AScFgYVtb8/test'
+        r = requests.post(send_link, headers=self.headers, data=msg.Schema().dumps(msg))
+        print(r)
+        print(r.text)
         # url для отправки https://bot.jivosite.com/webhooks/ntDQ6AScFgYVtb8/test
 
