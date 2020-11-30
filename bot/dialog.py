@@ -27,7 +27,7 @@ class Dialog:
         try:
             self.callback: Callback = Callback.Schema().loads(command)
             variants[self.callback.type]()
-        except (JSONDecodeError, KeyError) as err:
+        except (JSONDecodeError, KeyError, TypeError) as err:
             print(err.args)
             self.form_category_list()
 

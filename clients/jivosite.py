@@ -42,9 +42,10 @@ class JivositeClient:
         event_data['message'] = msg_data
         event = JivoEvent.Schema().load(event_data)
 
-        self.command_cache[payload.chat_id_in_messenger] = {
-            btn.text: btn.action.payload for btn in payload.inline_buttons
-        }
+        if payload.inline_buttons:
+            self.command_cache[payload.chat_id_in_messenger] = {
+                btn.text: btn.action.payload for btn in payload.inline_buttons
+            }
 
         return event
 
