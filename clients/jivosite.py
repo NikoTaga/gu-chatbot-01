@@ -2,7 +2,7 @@ from datetime import datetime
 
 import requests
 from pprint import pprint
-from typing import Dict, Any, Callable, List
+from typing import Dict, Any
 
 from constants import CallbackType, MessageDirection, ChatType, MessageContentType
 from entities import EventCommandToSend, EventCommandReceived, Callback, InlineButton
@@ -14,8 +14,9 @@ class JivositeClient:
     """Класс для работы с JivoSite"""
     token: str = 'test'
     headers: Dict[str, Any] = {'Content-Type': 'application/json'}
+    command_cache: Dict[str, Dict[str, str]] = {}
 
-    def form_jivo_events(self, payload: EventCommandToSend) -> JivoEvent:
+    def form_jivo_event(self, payload: EventCommandToSend) -> JivoEvent:
         event_data: Dict[str, Any] = {
             'event': JivoEventType.BOT_MESSAGE,
             # todo think about how to work this around
@@ -41,10 +42,13 @@ class JivositeClient:
         event_data['message'] = msg_data
         event = JivoEvent.Schema().load(event_data)
 
+        self.command_cache[payload.chat_id_in_messenger] = {
+            btn.text: btn.action.payload for btn in payload.inline_buttons
+        }
+
         return event
 
-    @staticmethod
-    def parse_jivo_webhook(wh: JivoEvent) -> EventCommandReceived:
+    def parse_jivo_webhook(self, wh: JivoEvent) -> EventCommandReceived:
         # формирование объекта с данными для ECR
         ecr_data: Dict[str, Any] = {
             'bot_id': 2,
@@ -65,7 +69,14 @@ class JivositeClient:
             'reply_id_in_messenger': None,
             'ts_in_messenger': str(datetime.fromtimestamp(int(wh.message.timestamp))),
         }
+
+        try:
+            if self.command_cache[wh.client_id]:
+                ecr_data['payload']['command'] = self.command_cache[wh.client_id][wh.message.text]
+        except KeyError as err:
+            print(err.args)
         ecr = EventCommandReceived.Schema().load(ecr_data)
+
         return ecr
 
     def send_message(self, payload: EventCommandToSend):
@@ -73,7 +84,7 @@ class JivositeClient:
         pass
 
     def send_test_message(self, payload: EventCommandToSend) -> None:
-        msg = self.form_jivo_events(payload)
+        msg = self.form_jivo_event(payload)
         print('msg ====')
         pprint(msg)
         print()

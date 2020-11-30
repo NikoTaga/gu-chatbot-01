@@ -12,27 +12,6 @@ from billing.models import Checkout
 
 
 class Dialog:
-    dialogs = {}
-
-    def __new__(cls, *args):
-        print(args)
-        try:
-            dialog = Dialog.dialogs[args]
-            print('>> existing')
-        except KeyError:
-            print('>> new')
-            dialog = object.__new__(cls)
-            Dialog.dialogs[args] = dialog
-
-        return dialog
-
-    def __init__(self, bot_id, user_id):
-        if 'cache' not in self.__dict__:
-            self.cache = {}
-            self.state = 1
-        self.bot_id = bot_id
-        self.user_id = user_id
-
     def __call__(self, event: EventCommandReceived) -> Dict[str, Any]:
         variants: Dict[CallbackType, Callable[..., None]] = {
             CallbackType.CATEGORY: self.form_product_list,
@@ -44,14 +23,7 @@ class Dialog:
         # начало формирования объекта с данными для ECTS
         self.data = self.form_preset(event)
 
-        command = ''
-        if not event.payload.command:
-            try:
-                command = self.cache[event.payload.text]
-            except KeyError:
-                pass
-        else:
-            command = event.payload.command
+        command = event.payload.command
         try:
             self.callback: Callback = Callback.Schema().loads(command)
             variants[self.callback.type]()
@@ -59,15 +31,7 @@ class Dialog:
             print(err.args)
             self.form_category_list()
 
-        if 'inline_buttons' in self.data:
-            self.cache_buttons(self.data['inline_buttons'])
-
         return self.data
-
-    def cache_buttons(self, buttons: list):
-        for button in buttons:
-            self.cache[button['text']] = button['action']['payload']
-        print(f'\n\n ==== CACHED ==== \n{self.cache}')
 
     @staticmethod
     def form_preset(event: EventCommandReceived) -> Dict[str, Any]:
