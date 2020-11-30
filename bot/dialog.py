@@ -12,28 +12,60 @@ from billing.models import Checkout
 
 
 class Dialog:
+    dialogs = {}
+
+    def __new__(cls, *args):
+        print(args)
+        try:
+            dialog = Dialog.dialogs[args]
+            print('>> existing')
+        except KeyError:
+            print('>> new')
+            dialog = object.__new__(cls)
+            Dialog.dialogs[args] = dialog
+
+        return dialog
+
+    def __init__(self, bot_id, user_id):
+        self.cache = {}
+        self.state = 1
+        self.bot_id = bot_id
+        self.user_id = user_id
 
     def __call__(self, event: EventCommandReceived) -> Dict[str, Any]:
-        variants: Dict[str, Callable[..., None]] = {
-            'category': self.form_product_list,
-            'product': self.form_product_desc,
-            'order': self.form_order_confirmation,
-            'paypal': self.make_order,
-            'stripe': self.make_order,
+        variants: Dict[CallbackType, Callable[..., None]] = {
+            CallbackType.CATEGORY: self.form_product_list,
+            CallbackType.PRODUCT: self.form_product_desc,
+            CallbackType.ORDER: self.form_order_confirmation,
+            CallbackType.PAYPAL: self.make_order,
+            CallbackType.STRIPE: self.make_order,
         }
         # начало формирования объекта с данными для ECTS
         self.data = self.form_preset(event)
 
+        command = ''
         if not event.payload.command:
-            self.form_category_list()
-        else:
             try:
-                self.callback: Callback = Callback.Schema().loads(event.payload.command)
-                variants[str(self.callback.type.value)]()
-            except (JSONDecodeError, KeyError) as err:
-                print(err.args)
+                command = self.cache[event.payload.text]
+            except KeyError:
+                pass
+        else:
+            command = event.payload.command
+        try:
+            self.callback: Callback = Callback.Schema().loads(command)
+            variants[self.callback.type]()
+        except (JSONDecodeError, KeyError) as err:
+            print(err.args)
+            self.form_category_list()
+
+        if 'inline_buttons' in self.data:
+            self.cache_buttons(self.data['inline_buttons'])
 
         return self.data
+
+    def cache_buttons(self, buttons: list):
+        for button in buttons:
+            self.cache[button['text']] = button['action']['payload']
 
     @staticmethod
     def form_preset(event: EventCommandReceived) -> Dict[str, Any]:
@@ -90,7 +122,7 @@ class Dialog:
             f'\n\nСтоимость: {product["price"]}'
         buttons_data: List[Dict[str, Any]] = [
             {
-                'text': 'Заказать',
+                'text': f'Заказать поз. #{product["id"]}: {product["price"]}',
                 'action': {
                     'type': 'postback',
                     'payload': Callback.Schema().dumps({
@@ -110,7 +142,7 @@ class Dialog:
             f'\n\nОплатить заказ за {product["price"]} через платёжную систему?'
         buttons_data: List[Dict[str, Any]] = [
             {
-                'text': 'PayPal',
+                'text': f'PayPal (поз. #{product["id"]}: {product["price"]})',
                 'action': {
                     'type': 'postback',
                     'payload': Callback.Schema().dumps({
@@ -120,7 +152,7 @@ class Dialog:
                 }
             },
             {
-                'text': 'Stripe',
+                'text': f'Stripe (поз. #{product["id"]}: {product["price"]})',
                 'action': {
                     'type': 'postback',
                     'payload': Callback.Schema().dumps({

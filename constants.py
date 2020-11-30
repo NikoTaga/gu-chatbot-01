@@ -82,6 +82,15 @@ class CallbackType(Enum):
     STRIPE = 'stripe'
 
 
+class DialogStates(Choice):
+    INITIAL = 0
+    CATEGORY = 1
+    PRODUCT = 2
+    ORDER = 3
+    # CONFIRM = 'confirm'
+    PAYPAL = 4
+    STRIPE = 5
+
 # ----------------------------
 # Shop
 # ----------------------------

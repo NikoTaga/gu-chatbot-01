@@ -2,10 +2,10 @@ from datetime import datetime
 
 import requests
 from pprint import pprint
-from typing import Dict, Any
+from typing import Dict, Any, Callable
 
-from constants import ContentType, MessageDirection, ChatType, MessageContentType
-from entities import EventCommandToSend, EventCommandReceived
+from constants import CallbackType, MessageDirection, ChatType, MessageContentType
+from entities import EventCommandToSend, EventCommandReceived, Callback, InlineButton
 from clients.jivo_entities import JivoMessage, JivoEvent
 from clients.jivo_constants import *
 
@@ -14,13 +14,8 @@ class JivositeClient:
     """Класс для работы с JivoSite"""
     token: str = 'test'
     headers: Dict[str, Any] = {'Content-Type': 'application/json'}
-    button_commands: Dict[int, str] = {
-        0: '{"category": 1}',
-        1: '{"product": 1}'
-    }
 
-    @staticmethod
-    def form_jivo_event(payload: EventCommandToSend) -> JivoEvent:
+    def form_jivo_event(self, payload: EventCommandToSend) -> JivoEvent:
         event_data: Dict[str, Any] = {
             'event': JivoEventType.BOT_MESSAGE,
             # todo think about how to work this around
@@ -40,7 +35,7 @@ class JivositeClient:
                {
                    'text': payload.inline_buttons[i].text,
                    'id': i,
-               } for i in range(len(payload.inline_buttons[:3]))]
+               } for i in range(len(payload.inline_buttons[4:7]))]
         else:
             msg_data['type'] = JivoMessageType.TEXT
         event_data['message'] = msg_data
@@ -53,12 +48,12 @@ class JivositeClient:
         ecr_data: Dict[str, Any] = {
             'bot_id': 2,
             # todo think about fixing
-            'chat_id_in_messenger': wh.client_id,
+            'chat_id_in_messenger': wh.client_id,  # important, do not change
             'content_type': MessageContentType.COMMAND,
             'payload': {
                 'direction': MessageDirection.RECEIVED,
                 # todo CHECK DOES THIS EVEN WORK ??????
-                'command': wh.message.button_id,
+                'command': wh.message.button_id,  # it doesn't.
             },
             'chat_type': ChatType.PRIVATE,
             # switched places

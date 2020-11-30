@@ -25,7 +25,7 @@ def test_handler(event: EventCommandReceived) -> EventCommandToSend:
         event.content_type,
         str(event.payload.command),
         event.message_id_in_messenger)
-    result_data: Dict[str, Any] = Dialog()(event)
+    result_data: Dict[str, Any] = Dialog(event.bot_id, event.user_id_in_messenger)(event)
     if result_data:
         Message.objects.save_message(
             result_data['bot_id'],
