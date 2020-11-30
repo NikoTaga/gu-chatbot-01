@@ -3,6 +3,7 @@ from typing import Optional, Union
 from django.db import models
 from django.db.models.query import QuerySet
 
+from billing.paypal.client import PaymentSystemClient
 from shop.models import Order
 from constants import OrderStatus
 
@@ -28,3 +29,18 @@ class CheckoutManager(models.Manager):
         checkout.status = payment_status
         checkout.save()
         return checkout
+
+    def fulfill_checkout(self, payment_client: PaymentSystemClient, checkout_id: str) -> None:
+        co_entity = self.get_checkout(checkout_id).first()
+        if co_entity and co_entity.order.status != OrderStatus.COMPLETE.value:
+            if payment_client.capture(checkout_id):
+                # todo add confirmation (either via webhook PAYMENT.CAPTURE.COMPLETED or by capture reply status code(?)
+                print('>>> CAPTURED')
+                Order.objects.update_order(co_entity.order.pk, OrderStatus.COMPLETE.value)
+            else:
+                # todo think about how to work with this edge case
+                print("Couldn't capture the funds.")
+        elif not co_entity:
+            print('The order was modified in process and payment is not valid anymore.')
+        elif co_entity.order.status == OrderStatus.COMPLETE.value:
+            print('>>> DUPLICATE NOTIFICATION')

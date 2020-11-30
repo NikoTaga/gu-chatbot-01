@@ -14,10 +14,9 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path
+from django.urls import path, include
 
 from shop.views import index_page
-from billing.views import paypal_webhook, stripe_webhook, stripe_redirect
 from bot.views import jivosite_webhook, ok_test_webhook, ok_webhook, chat_list, chat_view, jivo_test_webhook
 
 
@@ -26,11 +25,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('ok_webhook/', ok_webhook),
     path('ok_test/', ok_test_webhook),
-    path('pp_webhook/', paypal_webhook),
-    path('stripe_webhook/', stripe_webhook),
-    path('stripe_redirect/<str:cid>', stripe_redirect),
     path('jivo_webhook/test', jivo_test_webhook),
     path('jivosite_webhook/', jivosite_webhook),
     path('chat/<int:pk>/', chat_view),
     path('chats/', chat_list),
+    path('billing/', include('billing.urls', namespace='billing')),
 ]

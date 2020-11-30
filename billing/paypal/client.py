@@ -1,5 +1,7 @@
 from pprint import pprint
 from django.http import HttpRequest
+from abc import abstractmethod
+
 from paypalcheckoutsdk.core import PayPalHttpClient, SandboxEnvironment
 from paypalcheckoutsdk.orders import OrdersCreateRequest, OrdersValidateRequest
 from paypalcheckoutsdk.orders import OrdersCaptureRequest
@@ -12,7 +14,23 @@ from billing.constants import Currency, PaypalIntent, PaypalShippingPreference, 
 from .paypal_entities import PaypalCheckout
 
 
-class PaypalClient:
+class PaymentSystemClient:
+    client = None
+
+    @abstractmethod
+    def check_out(self, order_id, product_id):
+        pass
+
+    @abstractmethod
+    def verify(self, request: HttpRequest):
+        pass
+
+    @abstractmethod
+    def capture(self, checkout_id):
+        pass
+
+
+class PaypalClient(PaymentSystemClient):
     # Creating Access Token for Sandbox
     client_id = "ASQgJpdrDZjvbEgIaViCTuEbO_ef6-JS1Cjy9g0EXwO65OPGdVxWpVd5pM7cvgrXzotENGAB7TEQ6PLK"
     client_secret = "EPZSAbYg0C4Zvp1rZDoacf2rTOyeALHQR2OVmp5RkbS3Ox9p89UcbXd4Sa0LQ3hUDYFZRLB71RKXZZbQ"
@@ -29,7 +47,7 @@ class PaypalClient:
         transmission_id = h['Paypal-Transmission-Id']
         timestamp = h['Paypal-Transmission-Time']
         actual_sig = h['Paypal-Transmission-Sig']
-        webhook_id = '98W08433SC026140M'
+        webhook_id = '1H975891H1854444Y'
         cert_url = h['Paypal-Cert-Url']
         auth_algo = h['PayPal-Auth-Algo']
         if WebhookEvent.verify(
@@ -56,7 +74,8 @@ class PaypalClient:
 
             # If call returns body in response, you can get the deserialized version from the result attribute of the response
             order = response.result.id
-            print(order)
+            result = response.status_code
+            print(order, result)
         except IOError as ioe:
             if isinstance(ioe, HttpError):
                 # Something went wrong server-side
@@ -66,6 +85,9 @@ class PaypalClient:
             else:
                 # Something went wrong client side
                 print(ioe)
+            return False
+
+        return True if response.status_code == 201 else False
 
     def check_out(self, order_id: int, product_id: int):
         request = OrdersCreateRequest()
