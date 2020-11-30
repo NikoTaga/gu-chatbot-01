@@ -12,6 +12,7 @@ from billing.models import Checkout
 
 
 class Dialog:
+
     def __call__(self, event: EventCommandReceived) -> Dict[str, Any]:
         variants: Dict[CallbackType, Callable[..., None]] = {
             CallbackType.CATEGORY: self.form_product_list,
@@ -88,7 +89,8 @@ class Dialog:
             f'\n\nСтоимость: {product["price"]}'
         buttons_data: List[Dict[str, Any]] = [
             {
-                'text': f'Заказать поз. #{product["id"]}: {product["price"]}',
+                # 'text': f'Заказать поз. #{product["id"]}: {product["price"]}',
+                'text': 'Заказать',
                 'action': {
                     'type': 'postback',
                     'payload': Callback.Schema().dumps({
@@ -108,7 +110,8 @@ class Dialog:
             f'\n\nОплатить заказ за {product["price"]} через платёжную систему?'
         buttons_data: List[Dict[str, Any]] = [
             {
-                'text': f'PayPal (поз. #{product["id"]}: {product["price"]})',
+                # 'text': f'PayPal (поз. #{product["id"]}: {product["price"]})',
+                'text': 'PayPal',
                 'action': {
                     'type': 'postback',
                     'payload': Callback.Schema().dumps({
@@ -118,7 +121,8 @@ class Dialog:
                 }
             },
             {
-                'text': f'Stripe (поз. #{product["id"]}: {product["price"]})',
+                # 'text': f'Stripe (поз. #{product["id"]}: {product["price"]})',
+                'text': 'Stripe',
                 'action': {
                     'type': 'postback',
                     'payload': Callback.Schema().dumps({
