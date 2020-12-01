@@ -47,7 +47,7 @@ class PaypalClient(PaymentSystemClient):
         transmission_id = h['Paypal-Transmission-Id']
         timestamp = h['Paypal-Transmission-Time']
         actual_sig = h['Paypal-Transmission-Sig']
-        webhook_id = '1H975891H1854444Y'
+        webhook_id = '087431543T5024028'
         cert_url = h['Paypal-Cert-Url']
         auth_algo = h['PayPal-Auth-Algo']
         if WebhookEvent.verify(
