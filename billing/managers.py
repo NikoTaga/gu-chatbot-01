@@ -6,6 +6,7 @@ from django.db.models.query import QuerySet
 from billing.paypal.client import PaymentSystemClient
 from shop.models import Order
 from constants import OrderStatus
+from billing.constants import PaypalOrderStatus
 
 
 class CheckoutManager(models.Manager):
@@ -30,13 +31,25 @@ class CheckoutManager(models.Manager):
         checkout.save()
         return checkout
 
-    def fulfill_checkout(self, payment_client: PaymentSystemClient, checkout_id: str) -> None:
+    def fulfill_checkout(self,
+                         payment_client: PaymentSystemClient,
+                         checkout_id: str,
+                         event_type: Optional[str] = None) -> None:
+
+        from bot.dialog import Dialog
+
         co_entity = self.get_checkout(checkout_id).first()
         if co_entity and co_entity.order.status != OrderStatus.COMPLETE.value:
             if payment_client.capture(checkout_id):
-                # todo add confirmation (either via webhook PAYMENT.CAPTURE.COMPLETED or by capture reply status code(?)
-                print('>>> CAPTURED')
-                Order.objects.update_order(co_entity.order.pk, OrderStatus.COMPLETE.value)
+                if event_type == 'CHECKOUT.ORDER.APPROVED':
+                    self.update_checkout(checkout_id, PaypalOrderStatus.APPROVED.value)
+                    Order.objects.update_order(co_entity.order.pk, OrderStatus.COMPLETE.value)
+                    Dialog.send_paypal_payment_completed(co_entity)
+                elif event_type == 'PAYMENT.CAPTURE.COMPLETED':
+                    # Todo: fix: request.resource.id is not same as the Checkout.tracking_id
+                    self.update_checkout(checkout_id, PaypalOrderStatus.COMPLETED.value)
+                    Order.objects.update_order(co_entity.order.pk, OrderStatus.COMPLETE.value)
+                    Dialog.send_paypal_payment_completed(co_entity)
             else:
                 # todo think about how to work with this edge case
                 print("Couldn't capture the funds.")

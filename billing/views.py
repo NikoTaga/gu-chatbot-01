@@ -19,9 +19,9 @@ def paypal_webhook(request: HttpRequest) -> HttpResponse:
         print('>>> VERIFIED')
         obj = json.loads(request.body)
         pprint(obj)
-        if obj['event_type'] == 'CHECKOUT.ORDER.APPROVED':
+        if obj['event_type']:
             checkout_id = obj['resource']['id']
-            Checkout.objects.fulfill_checkout(pp_client, checkout_id)
+            Checkout.objects.fulfill_checkout(pp_client, checkout_id, obj['event_type'])
 
     return HttpResponse('OK')
 
