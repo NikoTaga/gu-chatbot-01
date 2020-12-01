@@ -5,7 +5,6 @@ from django.shortcuts import render
 # чтобы разрешить кросс-сайт POST запросы
 from django.views.decorators.csrf import csrf_exempt
 
-from constants import OrderStatus
 from billing.stripe.client import StripeClient
 from billing.paypal.client import PaypalClient
 from .models import Checkout

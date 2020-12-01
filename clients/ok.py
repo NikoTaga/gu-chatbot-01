@@ -55,6 +55,7 @@ class OkClient:
             'payload': {
                 'direction': MessageDirection.RECEIVED,
                 'command': wh.payload,
+                'text': wh.message.text if wh.message else None,
             },
             'chat_type': ChatType.PRIVATE,
             'user_id_in_messenger': wh.sender.user_id,
