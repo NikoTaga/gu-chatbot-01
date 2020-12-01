@@ -16,24 +16,23 @@ from billing.models import Checkout
 class Dialog:
 
     def __call__(self, event: EventCommandReceived) -> Dict[str, Any]:
-        variants: Dict[str, Callable[..., None]] = {
-            'category': self.form_product_list,
-            'product': self.form_product_desc,
-            'order': self.form_order_confirmation,
-            'paypal': self.make_order,
-            'stripe': self.make_order,
+        variants: Dict[CallbackType, Callable[..., None]] = {
+            CallbackType.CATEGORY: self.form_product_list,
+            CallbackType.PRODUCT: self.form_product_desc,
+            CallbackType.ORDER: self.form_order_confirmation,
+            CallbackType.PAYPAL: self.make_order,
+            CallbackType.STRIPE: self.make_order,
         }
         # начало формирования объекта с данными для ECTS
         self.data = self.form_preset(event)
 
-        if not event.payload.command:
+        command = event.payload.command
+        try:
+            self.callback: Callback = Callback.Schema().loads(command)
+            variants[self.callback.type]()
+        except (JSONDecodeError, KeyError, TypeError) as err:
+            print(err.args)
             self.form_category_list()
-        else:
-            try:
-                self.callback: Callback = Callback.Schema().loads(event.payload.command)
-                variants[str(self.callback.type.value)]()
-            except (JSONDecodeError, KeyError) as err:
-                print(err.args)
 
         return self.data
 
@@ -92,6 +91,7 @@ class Dialog:
             f'\n\nСтоимость: {product["price"]}'
         buttons_data: List[Dict[str, Any]] = [
             {
+                # 'text': f'Заказать поз. #{product["id"]}: {product["price"]}',
                 'text': 'Заказать',
                 'action': {
                     'type': 'postback',
@@ -112,6 +112,7 @@ class Dialog:
             f'\n\nОплатить заказ за {product["price"]} через платёжную систему?'
         buttons_data: List[Dict[str, Any]] = [
             {
+                # 'text': f'PayPal (поз. #{product["id"]}: {product["price"]})',
                 'text': 'PayPal',
                 'action': {
                     'type': 'postback',
@@ -122,6 +123,7 @@ class Dialog:
                 }
             },
             {
+                # 'text': f'Stripe (поз. #{product["id"]}: {product["price"]})',
                 'text': 'Stripe',
                 'action': {
                     'type': 'postback',

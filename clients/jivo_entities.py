@@ -34,7 +34,7 @@ class JivoButton:
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
     text: str
-    id: str
+    id: int
 
 
 @dataclass(order=True, base_schema=SkipNoneSchema)
@@ -49,7 +49,10 @@ class JivoMessage:
     )
     text: Optional[str] = None
     timestamp: int = None
-    button_id: Optional[int] = None
+    button_id: Optional[str] = None
+    title: str = None
+    buttons: Optional[List[JivoButton]] = None
+
 
 
 @dataclass(order=True, base_schema=SkipNoneSchema)
