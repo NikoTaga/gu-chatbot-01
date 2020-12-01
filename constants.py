@@ -12,7 +12,7 @@ class Choice(Enum):
 # Global
 # ----------------------------
 
-SITE_URL = 'https://71eebd3ad183.ngrok.io'
+SITE_URL = 'http://194.67.90.202:8000'
 
 
 # ----------------------------

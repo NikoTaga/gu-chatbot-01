@@ -4,8 +4,10 @@ from json.decoder import JSONDecodeError
 from billing.constants import PaymentSystems
 from billing.stripe.client import StripeClient
 from billing.paypal.client import PaypalClient
-from constants import MessageDirection, MessageContentType, CallbackType, SITE_URL
-from entities import EventCommandReceived, Callback
+from constants import MessageDirection, MessageContentType, CallbackType, SITE_URL, BotType
+from entities import EventCommandReceived, Callback, EventCommandToSend
+from clients.ok import OkClient
+from clients.jivosite import JivositeClient
 
 from shop.models import Category, Product, Order
 from billing.models import Checkout
@@ -150,3 +152,21 @@ class Dialog:
             approve_link = '%s/billing/stripe_redirect/%s' % (SITE_URL, checkout_id)
             checkout = Checkout.objects.make_checkout(PaymentSystems.STRIPE.value, checkout_id, order.pk)
         self.data['payload']['text'] = f'Оплатите покупку по ссылке\n{approve_link}!'
+
+    @staticmethod
+    def send_paypal_payment_completed(checkout: Checkout) -> None:
+        bot_type = checkout.order.chat.bot.bot_type
+        msg = {
+            'bot_id': checkout.order.chat.bot.id,
+            'chat_id_in_messenger': checkout.order.chat.id_in_messenger,
+            'content_type': MessageContentType.TEXT,
+            'payload': {
+                'direction': MessageDirection.SENT,
+                'text': f'Оплата товара: {checkout.order.product.name} прошла успешно.\nСпасибо за покупку!',
+            },
+        }
+        msg = EventCommandToSend.Schema().load(msg)
+        if bot_type == BotType.TYPE_OK.value:
+            OkClient().send_test_message(msg)
+        elif bot_type == BotType.TYPE_JIVOSITE.value:
+            JivositeClient().send_test_message(msg)
