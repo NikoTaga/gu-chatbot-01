@@ -80,11 +80,7 @@ class JivositeClient:
 
         return ecr
 
-    def send_message(self, payload: EventCommandToSend):
-        """Отпрвка сообщения"""
-        pass
-
-    def send_test_message(self, payload: EventCommandToSend) -> None:
+    def send_message(self, payload: EventCommandToSend) -> None:
         msg = self.form_jivo_event(payload)
         print('msg ====')
         pprint(msg)

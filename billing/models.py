@@ -15,6 +15,7 @@ class Checkout(TrackableUpdateCreateModel):
     )
     system = models.IntegerField('Billing system', choices=PaymentSystems.choices())
     tracking_id = models.CharField('Tracking id', max_length=255)
+    capture_id = models.CharField('Capture id', max_length=255, null=True, blank=True)
     status = models.CharField(
         'Status',
         max_length=200,

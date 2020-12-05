@@ -1,6 +1,8 @@
 from pprint import pprint
+from typing import Dict, Any
+
 from django.http import HttpRequest
-from abc import abstractmethod
+from abc import abstractmethod, ABC
 
 from paypalcheckoutsdk.core import PayPalHttpClient, SandboxEnvironment
 from paypalcheckoutsdk.orders import OrdersCreateRequest, OrdersValidateRequest
@@ -8,13 +10,16 @@ from paypalcheckoutsdk.orders import OrdersCaptureRequest
 from paypalhttp import HttpError
 from paypalrestsdk.notifications import WebhookEvent
 
+from bot.notify import send_payment_completed
 from shop.models import Product
 from billing.constants import Currency, PaypalIntent, PaypalShippingPreference, PaypalUserAction, PaypalGoodsCategory, \
     PaypalOrderStatus
 from .paypal_entities import PaypalCheckout
+from ..exceptions import UpdateCompletedCheckoutError
+from ..models import Checkout
 
 
-class PaymentSystemClient:
+class PaymentSystemClient(ABC):
     client = None
 
     @abstractmethod
@@ -39,6 +44,18 @@ class PaypalClient(PaymentSystemClient):
         # Creating an environment
         environment = SandboxEnvironment(client_id=self.client_id, client_secret=self.client_secret)
         self.client = PayPalHttpClient(environment)
+        self.process_notification = {
+            'CHECKOUT.ORDER.APPROVED': self.capture,
+            'PAYMENT.CAPTURE.COMPLETED': self.fulfill,
+        }
+
+    def fulfill(self, wh_data: Dict[str, Any]):
+        capture_id = wh_data['resource']['id']
+        try:
+            checkout = Checkout.objects.fulfill_checkout(capture_id)
+            send_payment_completed(checkout)
+        except UpdateCompletedCheckoutError as e:
+            print(e)
 
     def verify(self, request: HttpRequest) -> bool:
         print('RECEIVED A PAYPAL WEBHOOK')
@@ -47,7 +64,7 @@ class PaypalClient(PaymentSystemClient):
         transmission_id = h['Paypal-Transmission-Id']
         timestamp = h['Paypal-Transmission-Time']
         actual_sig = h['Paypal-Transmission-Sig']
-        webhook_id = '3FH61885KM759214M'
+        webhook_id = '2MW92706RJ4968357'
         cert_url = h['Paypal-Cert-Url']
         auth_algo = h['PayPal-Auth-Algo']
         if WebhookEvent.verify(
@@ -64,7 +81,13 @@ class PaypalClient(PaymentSystemClient):
             # raise PayPalVerificationFailed()
             return False
 
-    def capture(self, checkout_id: str):
+    def capture(self, wh_data: Dict[str, Any]):
+        if 'payments' in wh_data['resource']['purchase_units'][0]:
+            return
+
+        checkout_id = wh_data['resource']['id']
+        # if we call for a capture, then the customer has approved a payment for it
+        Checkout.objects.update_checkout(checkout_id, PaypalOrderStatus.APPROVED.value)
         # Here, OrdersCaptureRequest() creates a POST request to /v2/checkout/orders
         request = OrdersCaptureRequest(checkout_id)
 
@@ -75,6 +98,9 @@ class PaypalClient(PaymentSystemClient):
             # If call returns body in response, you can get the deserialized version from the result attribute of the response
             order = response.result.id
             result = response.status_code
+            if response.status_code == 201:
+                capture_id = response.result.purchase_units[0].payments.captures[0].id
+                Checkout.objects.update_capture(checkout_id, capture_id)
             print(order, result)
         except IOError as ioe:
             if isinstance(ioe, HttpError):
@@ -85,9 +111,6 @@ class PaypalClient(PaymentSystemClient):
             else:
                 # Something went wrong client side
                 print(ioe)
-            return False
-
-        return True if response.status_code == 201 else False
 
     def check_out(self, order_id: int, product_id: int):
         request = OrdersCreateRequest()

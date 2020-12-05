@@ -1,9 +1,11 @@
 import stripe
-from pprint import pprint
 
 from stripe.error import SignatureVerificationError
 
+from billing.exceptions import UpdateCompletedCheckoutError
+from billing.models import Checkout
 from billing.stripe.stripe_entities import StripeCheckout
+from bot.notify import send_payment_completed
 from constants import SITE_URL
 from shop.models import Product
 from billing.constants import StripePaymentMethod, StripeCurrency, StripeMode, STRIPE_SECRET_KEY, STRIPE_WHSEC_KEY
@@ -63,4 +65,12 @@ class StripeClient(PaymentSystemClient):
         return True
 
     def capture(self, checkout_id):
+        Checkout.objects.update_capture(checkout_id, checkout_id)
         return True
+
+    def fulfill(self, checkout_id):
+        try:
+            checkout = Checkout.objects.fulfill_checkout(checkout_id)
+            send_payment_completed(checkout)
+        except UpdateCompletedCheckoutError as e:
+            print(e)

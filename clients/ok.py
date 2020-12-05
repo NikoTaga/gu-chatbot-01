@@ -68,11 +68,7 @@ class OkClient:
         print(ecr)
         return ecr
 
-    def send_message(self, payload: EventCommandToSend):
-        """Отпрвка сообщения"""
-        pass
-
-    def send_test_message(self, payload: EventCommandToSend) -> None:
+    def send_message(self, payload: EventCommandToSend) -> None:
         msg = self.form_ok_message(payload)
 
         send_link = f'https://api.ok.ru/graph/me/messages/{payload.chat_id_in_messenger}?access_token={self.token}'
