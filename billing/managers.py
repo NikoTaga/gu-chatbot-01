@@ -3,7 +3,7 @@ from typing import Optional, Union
 from django.db import models
 from django.db.models.query import QuerySet
 
-from billing.paypal.client import PaymentSystemClient
+from billing.exceptions import UpdateCompletedCheckoutError
 from shop.models import Order
 from constants import OrderStatus
 from billing.constants import PaypalOrderStatus
@@ -25,35 +25,39 @@ class CheckoutManager(models.Manager):
         # ToDo: change return value and everything related
         return self.filter(tracking_id=checkout_id)
 
+    def get_checkout_by_capture(self, capture_id: Union[str, int]) -> QuerySet:
+        # ToDo: change return value and everything related
+        return self.filter(capture_id=capture_id)
+
     def update_checkout(self, checkout_id: Union[str, int], payment_status: str) -> None:
         checkout = self.get_checkout(checkout_id).first()
+        if checkout.status == 'COMPLETED':
+            raise UpdateCompletedCheckoutError(
+                checkout.pk, checkout.system, checkout.tracking_id, payment_status
+            )
         checkout.status = payment_status
         checkout.save()
+
         return checkout
 
-    def fulfill_checkout(self,
-                         payment_client: PaymentSystemClient,
-                         checkout_id: str,
-                         event_type: Optional[str] = None) -> None:
+    def update_capture(self, checkout_id: Union[str, int], capture_id):
+        checkout = self.get_checkout(checkout_id).first()
+        checkout.capture_id = capture_id
+        checkout.save()
 
-        from bot.dialog import Dialog
+        return checkout
 
-        co_entity = self.get_checkout(checkout_id).first()
+    def fulfill_checkout(self, capture_id: str) -> None:
+
+        co_entity = self.get_checkout_by_capture(capture_id).first()
+
         if co_entity and co_entity.order.status != OrderStatus.COMPLETE.value:
-            if payment_client.capture(checkout_id):
-                if event_type == 'CHECKOUT.ORDER.APPROVED':
-                    self.update_checkout(checkout_id, PaypalOrderStatus.APPROVED.value)
-                    Order.objects.update_order(co_entity.order.pk, OrderStatus.COMPLETE.value)
-                    Dialog.send_paypal_payment_completed(co_entity)
-                elif event_type == 'PAYMENT.CAPTURE.COMPLETED':
-                    # Todo: fix: request.resource.id is not same as the Checkout.tracking_id
-                    self.update_checkout(checkout_id, PaypalOrderStatus.COMPLETED.value)
-                    Order.objects.update_order(co_entity.order.pk, OrderStatus.COMPLETE.value)
-                    Dialog.send_paypal_payment_completed(co_entity)
-            else:
-                # todo think about how to work with this edge case
-                print("Couldn't capture the funds.")
+            # Todo: fix: request.resource.id is not same as the Checkout.tracking_id
+            self.update_checkout(co_entity.tracking_id, PaypalOrderStatus.COMPLETED.value)
+            Order.objects.update_order(co_entity.order.pk, OrderStatus.COMPLETE.value)
         elif not co_entity:
             print('The order was modified in process and payment is not valid anymore.')
         elif co_entity.order.status == OrderStatus.COMPLETE.value:
             print('>>> DUPLICATE NOTIFICATION')
+
+        return co_entity

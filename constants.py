@@ -12,7 +12,7 @@ class Choice(Enum):
 # Global
 # ----------------------------
 
-SITE_URL = 'http://194.67.90.202:8000'
+SITE_URL = 'http://8634a05c29d7.ngrok.io'
 
 
 # ----------------------------
@@ -80,6 +80,7 @@ class CallbackType(Enum):
     # CONFIRM = 'confirm'
     PAYPAL = 'paypal'
     STRIPE = 'stripe'
+    NOTIFY = 'notify'
 
 
 class DialogStates(Choice):
@@ -94,6 +95,7 @@ class DialogStates(Choice):
 # ----------------------------
 # Shop
 # ----------------------------
+
 
 class OrderStatus(Choice):
     NEW = 1

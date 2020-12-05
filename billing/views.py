@@ -19,9 +19,7 @@ def paypal_webhook(request: HttpRequest) -> HttpResponse:
         print('>>> VERIFIED')
         obj = json.loads(request.body)
         pprint(obj)
-        if obj['event_type']:
-            checkout_id = obj['resource']['id']
-            Checkout.objects.fulfill_checkout(pp_client, checkout_id, obj['event_type'])
+        pp_client.process_notification[obj['event_type']](obj)
 
     return HttpResponse('OK')
 
@@ -33,10 +31,11 @@ def stripe_webhook(request: HttpRequest) -> HttpResponse:
         # OK Signature
         print('>>> VERIFIED')
         obj = json.loads(request.body)
-        pprint(obj)
         if obj['type'] == 'checkout.session.completed':
+            pprint(obj)
             checkout_id = obj['data']['object']['id']
-            Checkout.objects.fulfill_checkout(stripe_client, checkout_id)
+            stripe_client.capture(checkout_id)
+            stripe_client.fulfill(checkout_id)
 
         return HttpResponse(status=200)
     else:

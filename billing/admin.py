@@ -9,7 +9,9 @@ class CheckoutAdmin(admin.ModelAdmin):
     list_display = ('id',
                     'order',
                     'system',
+                    'status',
                     'tracking_id',
+                    'capture_id',
                     )
     list_filter = ('system',)
     search_fields = ('id__exact', 'system__exact', 'tracking_id__exact')

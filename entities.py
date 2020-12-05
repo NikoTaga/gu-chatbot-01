@@ -208,6 +208,4 @@ class Callback:
             "marshmallow_field": marshmallow_enum.EnumField(CallbackType, by_value=True)
         }
     )
-    product: Optional[int]
-    category: Optional[int]
-    order: Optional[bool]
+    id: int

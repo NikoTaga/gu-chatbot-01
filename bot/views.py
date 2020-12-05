@@ -1,5 +1,4 @@
 from pprint import pprint
-import json
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 # чтобы разрешить кросс-сайт POST запросы
@@ -7,19 +6,18 @@ from django.views.decorators.csrf import csrf_exempt
 from typing import List, Dict, Any
 from marshmallow.exceptions import ValidationError
 
-from clients.jivosite import JivositeClient
-from clients.ok import OkClient
+from constants import BotType
 from entities import EventCommandReceived, EventCommandToSend
-from .handlers import message_handler, test_handler
-
+from .handlers import message_handler
+from clients.meta import PlatformClientFactory
 from clients.ok_entities import OkIncomingWebhook
 from clients.jivo_entities import JivoIncomingWebhook
 from .models import Chat, Message
 
 
 @csrf_exempt  # type: ignore
-def ok_test_webhook(request: HttpRequest) -> HttpResponse:
-    client = OkClient()
+def ok_webhook(request: HttpRequest) -> HttpResponse:
+    client = PlatformClientFactory.create(BotType.TYPE_OK.value)
 
     # Запросы могут производиться только с определенного списка IP-адресов:
     #
@@ -32,8 +30,8 @@ def ok_test_webhook(request: HttpRequest) -> HttpResponse:
         wh = OkIncomingWebhook.Schema().loads(request.body)
         print(wh)
         event: EventCommandReceived = client.parse_ok_webhook(wh)
-        result: EventCommandToSend = test_handler(event)
-        client.send_test_message(result)
+        result: EventCommandToSend = message_handler(event)
+        client.send_message(result)
     except ValidationError as e:
         print(e.args)
 
@@ -42,9 +40,9 @@ def ok_test_webhook(request: HttpRequest) -> HttpResponse:
 
 
 @csrf_exempt  # type: ignore
-def jivo_test_webhook(request: HttpRequest) -> HttpResponse:
+def jivo_webhook(request: HttpRequest) -> HttpResponse:
     print(request.body)
-    client = JivositeClient()
+    client = PlatformClientFactory.create(BotType.TYPE_JIVOSITE.value)
     try:
         wh = JivoIncomingWebhook.Schema().loads(request.body)
         print('wh ===')
@@ -54,29 +52,15 @@ def jivo_test_webhook(request: HttpRequest) -> HttpResponse:
         print('event ===')
         pprint(event)
         print()
-        result: EventCommandToSend = test_handler(event)
+        result: EventCommandToSend = message_handler(event)
         print('result ===')
         pprint(result)
         print()
-        client.send_test_message(result)
+        client.send_message(result)
     except ValidationError as e:
         print(e.args)
 
     return HttpResponse('OK')
-
-
-def ok_webhook(request: HttpRequest) -> None:
-    client = OkClient()
-    event = EventCommandReceived()
-    result = message_handler(event)
-    client.send_message(result)
-
-
-def jivosite_webhook(request: HttpRequest) -> None:
-    client = JivositeClient()
-    event = EventCommandReceived()
-    result = message_handler(event)
-    client.send_message(result)
 
 
 def chat_list(request: HttpRequest) -> HttpResponse:

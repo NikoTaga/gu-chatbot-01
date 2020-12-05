@@ -12,6 +12,9 @@ class BotManager(models.Manager):
     def get_bot_id_by_type(self, bot_type: int) -> int:
         return self.get(bot_type=bot_type).id
 
+    def get_bot_type_by_id(self, bot_id: int) -> int:
+        return self.get(bot_id=bot_id).bot_type
+
 
 class BotUserManager(models.Manager):
     def get_or_create_user(self, bot_id: int, messenger_user_id: Optional[str], user_name: Optional[str]) -> 'BotUser':
