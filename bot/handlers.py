@@ -8,6 +8,10 @@ from .models import Message
 
 
 def message_handler(event: EventCommandReceived) -> EventCommandToSend:
+    """Возвращает команду для отправки (ECTS) в ответ на принятую команду (ECR).
+
+    Передаёт полученные данные обработчику логики диалога и сохраняет входящие/исходящие сообщения."""
+
     Message.objects.save_message(
         event.bot_id,
         event.user_id_in_messenger,
