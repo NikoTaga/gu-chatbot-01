@@ -1,9 +1,13 @@
+"""Модуль с набором констант и перечислений относящихся к интеграции с платёжными системами."""
+
 from enum import Enum
 from constants import Choice
 
 
-STRIPE_PUBLIC_KEY = 'pk_test_51HqMI4J7UqTQQfE9i7b78Qa91U3AHOne4nzq6beJbw2WCXhdM3jtycetMAzJMZOTTKGnjs0M1tfSDkoG0UKx4gHt00AT3RCDwP'
-STRIPE_SECRET_KEY = 'sk_test_51HqMI4J7UqTQQfE9r7ZnxzdoDR4PpqoZCbekqg1TOIlTQZTevahpbO0YAMVoH02VKtRfXBdGn5ltwh9jCptnI8B100eoXJM7nE'
+STRIPE_PUBLIC_KEY = 'pk_test_51HqMI4J7UqTQQfE9i7b78Qa91U3AHOne4nzq6beJbw2WCXhdM3jtycetMAzJMZOTTKGnjs0M1tfSDkoG0UKx' \
+                    '4gHt00AT3RCDwP'
+STRIPE_SECRET_KEY = 'sk_test_51HqMI4J7UqTQQfE9r7ZnxzdoDR4PpqoZCbekqg1TOIlTQZTevahpbO0YAMVoH02VKtRfXBdGn5ltwh9jCptn' \
+                    'I8B100eoXJM7nE'
 STRIPE_WHSEC_KEY = 'whsec_wtG2TSXjPejSZ9Z1OXkhhCCFUKXNmKVp'
 
 

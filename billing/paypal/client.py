@@ -5,7 +5,7 @@ from django.http import HttpRequest
 from abc import abstractmethod, ABC
 
 from paypalcheckoutsdk.core import PayPalHttpClient, SandboxEnvironment
-from paypalcheckoutsdk.orders import OrdersCreateRequest, OrdersValidateRequest
+from paypalcheckoutsdk.orders import OrdersCreateRequest
 from paypalcheckoutsdk.orders import OrdersCaptureRequest
 from paypalhttp import HttpError
 from paypalrestsdk.notifications import WebhookEvent
@@ -20,36 +20,52 @@ from ..models import Checkout
 
 
 class PaymentSystemClient(ABC):
-    client = None
+    """Абстрактный класс, описывающий поведение платёжной системы."""
 
     @abstractmethod
-    def check_out(self, order_id, product_id):
+    def check_out(self, order_id: int, product_id: int) -> str:
+        pass
+
+    @staticmethod
+    @abstractmethod
+    def verify(request: HttpRequest) -> bool:
         pass
 
     @abstractmethod
-    def verify(self, request: HttpRequest):
+    def capture(self, wh_data: Dict[str, Any]) -> None:
         pass
 
+    @staticmethod
     @abstractmethod
-    def capture(self, checkout_id):
+    def fulfill(data: Dict[str, Any]) -> None:
         pass
 
 
 class PaypalClient(PaymentSystemClient):
-    # Creating Access Token for Sandbox
-    client_id = "ASQgJpdrDZjvbEgIaViCTuEbO_ef6-JS1Cjy9g0EXwO65OPGdVxWpVd5pM7cvgrXzotENGAB7TEQ6PLK"
-    client_secret = "EPZSAbYg0C4Zvp1rZDoacf2rTOyeALHQR2OVmp5RkbS3Ox9p89UcbXd4Sa0LQ3hUDYFZRLB71RKXZZbQ"
+    """Клиент платёжной системы PayPal.
 
-    def __init__(self):
+    Содержит методы для инициализации сессии и обработки платежей в виде PayPal Checkout -
+    выписки, захвата, верификации и завершения Checkout."""
+
+    # Creating Access Token for Sandbox
+    client_id: str = "ASQgJpdrDZjvbEgIaViCTuEbO_ef6-JS1Cjy9g0EXwO65OPGdVxWpVd5pM7cvgrXzotENGAB7TEQ6PLK"
+    client_secret: str = "EPZSAbYg0C4Zvp1rZDoacf2rTOyeALHQR2OVmp5RkbS3Ox9p89UcbXd4Sa0LQ3hUDYFZRLB71RKXZZbQ"
+
+    def __init__(self) -> None:
+        """Инициализирует сессию работы с системой PayPal."""
+
         # Creating an environment
         environment = SandboxEnvironment(client_id=self.client_id, client_secret=self.client_secret)
         self.client = PayPalHttpClient(environment)
-        self.process_notification = {
+        self.process_notification = {  # todo should this be here?
             'CHECKOUT.ORDER.APPROVED': self.capture,
             'PAYMENT.CAPTURE.COMPLETED': self.fulfill,
         }
 
-    def fulfill(self, wh_data: Dict[str, Any]):
+    @staticmethod
+    def fulfill(wh_data: Dict[str, Any]) -> None:
+        """Завершает заказ, уведомляет клиента."""
+
         capture_id = wh_data['resource']['id']
         try:
             checkout = Checkout.objects.fulfill_checkout(capture_id)
@@ -57,7 +73,12 @@ class PaypalClient(PaymentSystemClient):
         except UpdateCompletedCheckoutError as e:
             print(e)
 
-    def verify(self, request: HttpRequest) -> bool:
+    @staticmethod
+    def verify(request: HttpRequest) -> bool:
+        """Проверяет соответствие подписи вебхука на случай попытки имитации оповещения.
+
+        Возвращает результат проверки."""
+
         print('RECEIVED A PAYPAL WEBHOOK')
         h = request.headers
         pprint(h)
@@ -81,7 +102,11 @@ class PaypalClient(PaymentSystemClient):
             # raise PayPalVerificationFailed()
             return False
 
-    def capture(self, wh_data: Dict[str, Any]):
+    def capture(self, wh_data: Dict[str, Any]) -> None:
+        """Выполняет операции, связанные с захватом средств после платежа"""
+
+        # после выполнения capture приходит второй аналогичный по типу вебхук, содержащий сведения об оплате
+        # todo вообще говоря, следует здесь сверять данные по позиции и сумме, а также комиссии
         if 'payments' in wh_data['resource']['purchase_units'][0]:
             return
 
@@ -91,11 +116,13 @@ class PaypalClient(PaymentSystemClient):
         # Here, OrdersCaptureRequest() creates a POST request to /v2/checkout/orders
         request = OrdersCaptureRequest(checkout_id)
 
+        # todo выделить в отдельный метод
         try:
             # Call API with your client and get a response for your call
             response = self.client.execute(request)
 
-            # If call returns body in response, you can get the deserialized version from the result attribute of the response
+            # If call returns body in response, you can get the deserialized version
+            # from the result attribute of the response
             order = response.result.id
             result = response.status_code
             if response.status_code == 201:
@@ -112,7 +139,9 @@ class PaypalClient(PaymentSystemClient):
                 # Something went wrong client side
                 print(ioe)
 
-    def check_out(self, order_id: int, product_id: int):
+    def check_out(self, order_id: int, product_id: int) -> str:
+        """Создаёт Checkout по параметрам заказа, возвращает соответствующий tracking_id."""
+
         request = OrdersCreateRequest()
         product = Product.objects.get_product_by_id(product_id)
         request.prefer('return=representation')
@@ -152,18 +181,20 @@ class PaypalClient(PaymentSystemClient):
         pp_capture = PaypalCheckout.Schema().load(checkout_data)
         request.request_body(pp_capture.Schema().dump(pp_capture))
 
-        checkout_id = ''
+        # todo тоже выделить во внутренний метод
+        tracking_id: str = ''
         try:
             response = self.client.execute(request)
             if response.result.status == PaypalOrderStatus.CREATED.value:
-                checkout_id = response.result.id
+                tracking_id = response.result.id
             else:
                 print(response.status_code)
                 for link in response.result.links:
                     print('\t{}: {}\tCall Type: {}'.format(link.rel, link.href, link.method))
                     print('Total Amount: {} {}'.format(response.result.purchase_units[0].amount.currency_code,
                                                        response.result.purchase_units[0].amount.value))
-                    # If call returns body in response, you can get the deserialized version from the result attribute of the response
+                    # If call returns body in response, you can get the deserialized version
+                    # from the result attribute of the response
                     order = response.result
                     print(order)
         except IOError as ioe:
@@ -172,4 +203,4 @@ class PaypalClient(PaymentSystemClient):
                 # Something went wrong server-side
                 print(ioe.status_code)
 
-        return checkout_id
+        return tracking_id

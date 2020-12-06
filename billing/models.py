@@ -1,12 +1,18 @@
+"""Модуль содержит описания моделей базы данных, применяющихся в billing."""
+
 from django.db import models
 
 from bot.models import TrackableUpdateCreateModel
-from billing.constants import PaymentSystems, PaypalOrderStatus
-from shop.models import Order
+from billing.constants import PaymentSystems
 from .managers import CheckoutManager
 
 
 class Checkout(TrackableUpdateCreateModel):
+    """Модель для описания проводимого процесса оплаты.
+
+    Содержит поля для сопоставления с заказом, указания платёжной системы,
+    идентификации операций и текущего статуса."""
+
     order = models.ForeignKey(
         'shop.Order',
         verbose_name='Order',

@@ -1,6 +1,7 @@
+"""Содержит сущности для сериализации данных при обмене со Stripe."""
+
 from dataclasses import field
-from datetime import datetime
-from typing import (ClassVar, List, Optional, Type, Dict, Any)
+from typing import (ClassVar, List, Optional, Type)
 
 import marshmallow
 import marshmallow_enum
@@ -12,6 +13,10 @@ from billing.constants import StripeCurrency, StripePaymentMethod, StripeMode
 
 @dataclass(order=True)
 class StripeProductData:
+    """Класс данных для хранения информации о свойствах позиции товара.
+
+    Содержит наименование, описание и набор ссылок на изображения (при необходимости)"""
+
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
     name: str
@@ -28,6 +33,8 @@ class StripeProductData:
 
 @dataclass(order=True)
 class StripePriceData:
+    """Класс данных для хранения информации о товаре и его цене."""
+
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
     unit_amount: int
@@ -42,6 +49,8 @@ class StripePriceData:
 
 @dataclass(order=True)
 class StripeItem:
+    """Класс данных для хранения информации о позиции в заказе (включая количество)."""
+
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
     price_data: StripePriceData
@@ -50,10 +59,17 @@ class StripeItem:
 
 @dataclass(order=True, base_schema=SkipNoneSchema)
 class StripeCheckout:
+    """Класс данных верхнего уровня для хранения информации о запросе создания Payment.
+
+    Используется для сериализации данных для исходящего запроса.
+    Содержит намерение оплаты, наборы товаров из заказа, настройки для работы с покупателем
+    и ссылки для перенаправления при удаче или неудаче оплаты.
+    """
+
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
     payment_method_types: List[str] = field(
-        default=None,
+        default=[StripePaymentMethod.CARD.value],
         metadata={
             "marshmallow_field": marshmallow.fields.List(
                 marshmallow_enum.EnumField(StripePaymentMethod, by_value=True)
@@ -61,7 +77,6 @@ class StripeCheckout:
         }
     )
     line_items: List[StripeItem] = field(
-        default=None,
         metadata={
             "marshmallow_field": marshmallow.fields.List(
                 marshmallow.fields.Nested(StripeItem.Schema()),
@@ -77,13 +92,11 @@ class StripeCheckout:
         }
     )
     success_url: str = field(
-        default=None,
         metadata={
             "marshmallow_field": marshmallow.fields.Url(allow_none=True)
         }
     )
     cancel_url: str = field(
-        default=None,
         metadata={
             "marshmallow_field": marshmallow.fields.Url(allow_none=True)
         }

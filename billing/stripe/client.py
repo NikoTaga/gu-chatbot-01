@@ -1,5 +1,6 @@
-import stripe
+from typing import TYPE_CHECKING
 
+import stripe
 from stripe.error import SignatureVerificationError
 
 from billing.exceptions import UpdateCompletedCheckoutError
@@ -11,14 +12,24 @@ from shop.models import Product
 from billing.constants import StripePaymentMethod, StripeCurrency, StripeMode, STRIPE_SECRET_KEY, STRIPE_WHSEC_KEY
 from billing.paypal.client import PaymentSystemClient
 
+if TYPE_CHECKING:
+    from django.http import HttpRequest
+
 
 class StripeClient(PaymentSystemClient):
+    """Клиент платёжной системы Stripe.
 
-    def __init__(self):
+    Содержит функции для инициализации сессии и обработки платежей в виде Stripe Payment -
+    выписки, захвата, верификации и завершения."""
+
+    def __init__(self) -> None:
+        """Инициирует сессию с системой Stripe."""
         self.client = stripe
         self.client.api_key = STRIPE_SECRET_KEY
 
-    def check_out(self, order_id, product_id):
+    def check_out(self, order_id: int, product_id: int) -> str:
+        """Создаёт Payment по параметрам заказа, возвращает соответствующий checkout_session.id"""
+
         product = Product.objects.get_product_by_id(product_id)
         checkout_data = {
             'payment_method_types': [StripePaymentMethod.CARD.value],
@@ -40,35 +51,39 @@ class StripeClient(PaymentSystemClient):
             'cancel_url': f'{SITE_URL}/billing/payment_cancel/{order_id}',
         }
         stripe_checkout = StripeCheckout.Schema().load(checkout_data)
-        try:
-            checkout_session = self.client.checkout.Session.create(**stripe_checkout.Schema().dump(stripe_checkout))
-            return checkout_session.id
-        except Exception as e:
-            print(e.args)
-            return e
+        checkout_session = self.client.checkout.Session.create(**stripe_checkout.Schema().dump(stripe_checkout))
 
-    def verify(self, request) -> bool:
+        return checkout_session.id
+
+    def verify(self, request: HttpRequest) -> bool:
+        """Проверяет соответствие подписи вебхука на случай попытки имитации оповещения.
+
+        Возвращает результат проверки."""
+
         payload = request.body
         sig_header = request.META['HTTP_STRIPE_SIGNATURE']
-        event = None
 
         try:
-            event = self.client.Webhook.construct_event(
+            self.client.Webhook.construct_event(
                 payload, sig_header, STRIPE_WHSEC_KEY
             )
-        except ValueError as e:
+        except ValueError:
             # Invalid payload
             return False
-        except SignatureVerificationError as e:
+        except SignatureVerificationError:
             return False
 
         return True
 
-    def capture(self, checkout_id):
-        Checkout.objects.update_capture(checkout_id, checkout_id)
-        return True
+    # todo возможно, не самое удачное решение
+    def capture(self, checkout_id: str) -> None:
+        """Функция-филлер, для унификации процессинга с PayPal."""
 
-    def fulfill(self, checkout_id):
+        Checkout.objects.update_capture(checkout_id, checkout_id)
+
+    def fulfill(self, checkout_id: str) -> None:
+        """Завершает заказ, уведомляет клиента."""
+
         try:
             checkout = Checkout.objects.fulfill_checkout(checkout_id)
             send_payment_completed(checkout)

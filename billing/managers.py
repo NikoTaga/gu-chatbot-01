@@ -1,4 +1,4 @@
-from typing import Optional, Union
+from typing import Optional, Union, TYPE_CHECKING
 
 from django.db import models
 from django.db.models.query import QuerySet
@@ -7,6 +7,9 @@ from billing.exceptions import UpdateCompletedCheckoutError
 from shop.models import Order
 from constants import OrderStatus
 from billing.constants import PaypalOrderStatus
+
+if TYPE_CHECKING:
+    from billing.models import Checkout
 
 
 class CheckoutManager(models.Manager):
@@ -40,14 +43,14 @@ class CheckoutManager(models.Manager):
 
         return checkout
 
-    def update_capture(self, checkout_id: Union[str, int], capture_id):
+    def update_capture(self, checkout_id: Union[str, int], capture_id: str) -> Checkout:
         checkout = self.get_checkout(checkout_id).first()
         checkout.capture_id = capture_id
         checkout.save()
 
         return checkout
 
-    def fulfill_checkout(self, capture_id: str) -> None:
+    def fulfill_checkout(self, capture_id: str) -> 'Checkout':
 
         co_entity = self.get_checkout_by_capture(capture_id).first()
 
