@@ -6,7 +6,14 @@ from constants import OrderStatus
 from .managers import CategoryManager, ProductManager, OrderManager
 
 
+# todo parent-child category interactions unused
 class Category(TrackableUpdateCreateModel):
+    """Модель для описания категории товара.
+
+    Содержит поля имени, индекса родительской категории,
+    а также активности и порядка сортировки.
+    """
+
     parent_category = models.ForeignKey(
         'shop.Category',
         verbose_name='Parent category',
@@ -37,6 +44,12 @@ class Category(TrackableUpdateCreateModel):
 
 
 class Product(TrackableUpdateCreateModel):
+    """Модель для описания продукта.
+
+    Содержит поля наименования, цены, описания, категории, ссылки на изображение
+    а также активности и порядка сортировки.
+    """
+
     categories = models.ManyToManyField(
         Category,
         verbose_name='Categories',
@@ -65,6 +78,12 @@ class Product(TrackableUpdateCreateModel):
 
 
 class Order(TrackableUpdateCreateModel):
+    """Модель для описания заказы покупателя.
+
+    Содержит поля соответствующего чата (пользователя), продукта, суммы, статуса и комментариев,
+    а также времени оплаты или отмены заказа.
+    """
+
     chat = models.ForeignKey(
         'bot.Chat',
         verbose_name='Chat',
