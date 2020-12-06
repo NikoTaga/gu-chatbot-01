@@ -2,21 +2,30 @@ from datetime import datetime
 
 import requests
 from pprint import pprint
-from typing import Dict, Any
+from typing import Dict, Any, Optional
 
-from constants import CallbackType, MessageDirection, ChatType, MessageContentType
-from entities import EventCommandToSend, EventCommandReceived, Callback, InlineButton
-from clients.jivo_entities import JivoMessage, JivoEvent
-from clients.jivo_constants import *
+from bot.models import Bot
+from constants import MessageDirection, ChatType, MessageContentType, BotType
+from entities import EventCommandToSend, EventCommandReceived
+from clients.jivo_entities import JivoEvent, JivoIncomingWebhook
+from clients.jivo_constants import JivoEventType, JivoMessageType
 
 
 class JivositeClient:
-    """Класс для работы с JivoSite"""
+    """Клиент для работы с социальной платформой JivoSite.
+
+    Содержит методы для преобразования входящих вебхуков в формат ECR,
+    формирования ECTS на основе сформированного ботом ответа
+    и отправки сообщения в систему Jivo.
+    """
+
     token: str = 'test'
     headers: Dict[str, Any] = {'Content-Type': 'application/json'}
-    command_cache: Dict[str, Dict[str, str]] = {}
+    command_cache: Dict[str, Dict[str, Optional[str]]] = {}
 
     def form_jivo_event(self, payload: EventCommandToSend) -> JivoEvent:
+        """Создаёт программный объект с данными исходящего сообщения, готовыми для отправки."""
+
         event_data: Dict[str, Any] = {
             'event': JivoEventType.BOT_MESSAGE,
             # todo think about how to work this around
@@ -49,10 +58,12 @@ class JivositeClient:
 
         return event
 
-    def parse_jivo_webhook(self, wh: JivoEvent) -> EventCommandReceived:
+    def parse_jivo_webhook(self, wh: JivoIncomingWebhook) -> EventCommandReceived:
+        """Преобразует объект входящего вебхука в формат входящей команды бота - ECR."""
+
         # формирование объекта с данными для ECR
         ecr_data: Dict[str, Any] = {
-            'bot_id': 2,
+            'bot_id': Bot.objects.get_bot_id_by_type(BotType.TYPE_JIVOSITE.value),
             # todo think about fixing
             'chat_id_in_messenger': wh.client_id,  # important, do not change
             'content_type': MessageContentType.COMMAND,
@@ -81,6 +92,8 @@ class JivositeClient:
         return ecr
 
     def send_message(self, payload: EventCommandToSend) -> None:
+        """Отправляет соответствующее используемой команде формата ECTS сообщение в Jivo."""
+
         msg = self.form_jivo_event(payload)
         print('msg ====')
         pprint(msg)
@@ -94,4 +107,3 @@ class JivositeClient:
         print(r)
         print(r.text)
         # url для отправки https://bot.jivosite.com/webhooks/ntDQ6AScFgYVtb8/test
-
