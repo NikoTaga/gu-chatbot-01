@@ -43,7 +43,7 @@ class CheckoutManager(models.Manager):
 
         return checkout
 
-    def update_capture(self, checkout_id: Union[str, int], capture_id: str) -> Checkout:
+    def update_capture(self, checkout_id: Union[str, int], capture_id: str) -> 'Checkout':
         checkout = self.get_checkout(checkout_id).first()
         checkout.capture_id = capture_id
         checkout.save()

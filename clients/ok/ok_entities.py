@@ -8,8 +8,8 @@ import marshmallow
 import marshmallow_enum
 from marshmallow_dataclass import dataclass
 
-from clients.ok_constants import (OkButtonType, OkButtonIntent, OkWebhookType, OkSystemWebhookType, OkPayloadCallType,
-                                  OkPayloadCallHangupType, OkAttachmentType, OkPrivacyWarningType)
+from clients.ok.ok_constants import (OkButtonType, OkButtonIntent, OkWebhookType, OkSystemWebhookType, OkPayloadCallType,
+                                     OkPayloadCallHangupType, OkAttachmentType, OkPrivacyWarningType)
 from entities import SkipNoneSchema
 
 

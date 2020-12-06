@@ -10,8 +10,8 @@ from constants import BotType
 from entities import EventCommandReceived, EventCommandToSend
 from .handlers import message_handler
 from clients.common import PlatformClientFactory
-from clients.ok_entities import OkIncomingWebhook
-from clients.jivo_entities import JivoIncomingWebhook
+from clients.ok.ok_entities import OkIncomingWebhook
+from clients.jivosite.jivo_entities import JivoIncomingWebhook
 from .models import Chat, Message
 
 
@@ -38,7 +38,7 @@ def ok_webhook(request: HttpRequest) -> HttpResponse:
         result: EventCommandToSend = message_handler(event)
         client.send_message(result)
     except ValidationError as e:
-        print(e.args)
+        print('OK webhook:', e.args)
 
     # скрипт обязательно должен подтверждать получение с помощью отправки 200 ОК
     return HttpResponse('OK')
@@ -67,7 +67,7 @@ def jivo_webhook(request: HttpRequest) -> HttpResponse:
         print()
         client.send_message(result)
     except ValidationError as e:
-        print(e.args)
+        print('JIVO webhook:', e.args)
 
     return HttpResponse('OK')
 

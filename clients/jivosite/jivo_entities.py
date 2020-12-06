@@ -9,7 +9,7 @@ from marshmallow_dataclass import dataclass
 
 from entities import SkipNoneSchema
 
-from clients.jivo_constants import JivoMessageType, JivoEventType, JivoResponseType
+from clients.jivosite.jivo_constants import JivoMessageType, JivoEventType, JivoResponseType
 
 
 @dataclass(order=True)
@@ -56,6 +56,8 @@ class JivoMessage:
 
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
+    timestamp: int
+    title: str
     type: JivoMessageType = field(
         default=None,
         metadata={
@@ -63,9 +65,7 @@ class JivoMessage:
         }
     )
     text: Optional[str] = None
-    timestamp: int
     button_id: Optional[str] = None
-    title: str
     buttons: Optional[List[JivoButton]] = None
 
 

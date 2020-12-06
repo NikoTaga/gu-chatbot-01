@@ -55,7 +55,7 @@ class StripeClient(PaymentSystemClient):
 
         return checkout_session.id
 
-    def verify(self, request: HttpRequest) -> bool:
+    def verify(self, request: 'HttpRequest') -> bool:
         """Проверяет соответствие подписи вебхука на случай попытки имитации оповещения.
 
         Возвращает результат проверки."""

@@ -68,8 +68,7 @@ class StripeCheckout:
 
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
-    payment_method_types: List[str] = field(
-        default=[StripePaymentMethod.CARD.value],
+    payment_method_types: List[StripePaymentMethod] = field(
         metadata={
             "marshmallow_field": marshmallow.fields.List(
                 marshmallow_enum.EnumField(StripePaymentMethod, by_value=True)
@@ -85,12 +84,6 @@ class StripeCheckout:
             )
         }
     )
-    mode: StripeMode = field(
-        default=StripeMode.PAYMENT,
-        metadata={
-            "marshmallow_field": marshmallow_enum.EnumField(StripeMode, by_value=True)
-        }
-    )
     success_url: str = field(
         metadata={
             "marshmallow_field": marshmallow.fields.Url(allow_none=True)
@@ -99,5 +92,11 @@ class StripeCheckout:
     cancel_url: str = field(
         metadata={
             "marshmallow_field": marshmallow.fields.Url(allow_none=True)
+        }
+    )
+    mode: StripeMode = field(
+        default=StripeMode.PAYMENT,
+        metadata={
+            "marshmallow_field": marshmallow_enum.EnumField(StripeMode, by_value=True)
         }
     )

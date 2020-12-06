@@ -7,8 +7,8 @@ from typing import Dict, Any, Optional
 from bot.models import Bot
 from constants import MessageDirection, ChatType, MessageContentType, BotType
 from entities import EventCommandToSend, EventCommandReceived
-from clients.jivo_entities import JivoEvent, JivoIncomingWebhook
-from clients.jivo_constants import JivoEventType, JivoMessageType
+from clients.jivosite.jivo_entities import JivoEvent, JivoIncomingWebhook
+from clients.jivosite.jivo_constants import JivoEventType, JivoMessageType
 
 
 class JivositeClient:
