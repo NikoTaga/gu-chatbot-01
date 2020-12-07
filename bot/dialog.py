@@ -74,7 +74,7 @@ class Dialog:
         msg = ECTSDirector().create_message(
             bot_id=event.bot_id,
             chat_id_in_messenger=event.chat_id_in_messenger,
-            text=f'Выберите товар категории \"{category["name"]}\"',
+            text='Выберите товар категории "{}"'.format(category['name']),
             button_data=button_data,
         )
 
@@ -86,9 +86,9 @@ class Dialog:
         """Формирует данные для описания выбранного товара с кнопкой 'Заказать'."""
 
         product = Product.objects.get_product_by_id(self.callback.id)
-        text = f'Выбран товар \"{product["name"]}\"' \
-               f'\n\nКраткое описание: {product["description"][:500]}' \
-               f'\n\nСтоимость: {product["price"]}'
+        text = 'Выбран товар "{}"\n\nКраткое описание: {}\n\nСтоимость: {}'.format(
+            product['name'], product['description'][:400], product['price']
+        )
         button_data: List[Dict[str, Any]] = [
             {
                 'title': 'Заказать',
@@ -111,8 +111,10 @@ class Dialog:
         """Формирует данные для сообщения с предложением выбрать платёжную систему для оплаты."""
 
         product = Product.objects.get_product_by_id(self.callback.id)
-        text = f'Выбран товар \"{product["name"]}\"' \
-               f'\n\nОплатить заказ за {product["price"]} через платёжную систему?'
+        text = 'Выбран товар \"{}\"' \
+               '\n\nОплатить заказ за {} через платёжную систему?'.format(
+                product["name"], product["price"]
+                )
         # todo где-то нужна метаинформация по списку систем
         button_data: List[Dict[str, Any]] = [
             {
@@ -148,7 +150,7 @@ class Dialog:
         payment_client = PaymentClientFactory.create(self.callback.type.value)
         approve_link = payment_client.check_out(order.pk, self.callback.id)
 
-        text = f'Оплатите покупку по ссылке\n{approve_link}!'
+        text = 'Оплатите покупку по ссылке\n{}!'.format(approve_link)
 
         msg = ECTSDirector().create_message(
             bot_id=event.bot_id,

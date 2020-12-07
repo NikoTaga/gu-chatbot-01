@@ -12,7 +12,7 @@ from paypalrestsdk.notifications import WebhookEvent
 from bot.notify import send_payment_completed
 from shop.models import Product
 from billing.constants import Currency, PaypalIntent, PaypalShippingPreference, PaypalUserAction, PaypalGoodsCategory, \
-    PaypalOrderStatus, PaymentSystems
+    PaypalOrderStatus, PaymentSystems, PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET
 from .paypal_entities import PaypalCheckout
 from billing.common import PaymentSystemClient
 from billing.exceptions import UpdateCompletedCheckoutError
@@ -24,6 +24,7 @@ class PaypalClient(PaymentSystemClient):
 
     Содержит методы для инициализации сессии и обработки платежей в виде PayPal Checkout -
     выписки, захвата, верификации и завершения Checkout."""
+    _link_pattern = 'https://www.sandbox.paypal.com/checkoutnow?token={}'
 
     def __init__(self) -> None:
         """Инициализирует сессию работы с системой PayPal."""
@@ -187,6 +188,6 @@ class PaypalClient(PaymentSystemClient):
         checkout_id = self._initiate_payment_system_checkout(checkout_data)
         Checkout.objects.make_checkout(PaymentSystems.PAYPAL.value, checkout_id, order_id)
 
-        approve_link = self._link_pattern % checkout_id
+        approve_link = self._link_pattern.format(checkout_id)
 
         return approve_link

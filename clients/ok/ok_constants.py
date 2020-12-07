@@ -2,7 +2,7 @@ import os
 from enum import Enum
 
 
-OK_TOKEN = os.getenv("OK_TOKEN")
+OK_TOKEN = os.getenv('OK_TOKEN')
 
 
 class OkButtonType(Enum):

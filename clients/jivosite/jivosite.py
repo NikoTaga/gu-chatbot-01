@@ -101,8 +101,9 @@ class JivositeClient:
         print('data ====')
         pprint(data)
         print()
-        send_link = f'https://bot.jivosite.com/webhooks/{JIVO_WH_KEY}/{JIVO_TOKEN}'
+        send_link = 'https://bot.jivosite.com/webhooks/{}/{}'.format(
+            JIVO_WH_KEY, JIVO_TOKEN
+        )
         r = requests.post(send_link, headers=self.headers, data=msg.Schema().dumps(msg))
         print(r)
         print(r.text)
-        # url для отправки https://bot.jivosite.com/webhooks/ntDQ6AScFgYVtb8/test

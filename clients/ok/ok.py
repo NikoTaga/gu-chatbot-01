@@ -79,6 +79,8 @@ class OkClient:
     def send_message(self, payload: EventCommandToSend) -> None:
         msg = self.form_ok_message(payload)
 
-        send_link = f'https://api.ok.ru/graph/me/messages/{payload.chat_id_in_messenger}?access_token={OK_TOKEN}'
+        send_link = 'https://api.ok.ru/graph/me/messages/{}?access_token={}'.format(
+            payload.chat_id_in_messenger, OK_TOKEN
+        )
         r = requests.post(send_link, headers=self.headers, data=msg.Schema().dumps(msg))
         print(r.text)
