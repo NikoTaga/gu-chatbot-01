@@ -9,8 +9,9 @@ from billing.stripe.stripe_entities import StripeCheckout
 from bot.notify import send_payment_completed
 from constants import SITE_URL
 from shop.models import Product
-from billing.constants import StripePaymentMethod, StripeCurrency, StripeMode, STRIPE_SECRET_KEY, STRIPE_WHSEC_KEY
-from billing.paypal.client import PaymentSystemClient
+from billing.constants import StripePaymentMethod, StripeCurrency, StripeMode, STRIPE_SECRET_KEY, STRIPE_WHSEC_KEY, \
+    PaymentSystems
+from billing.common import PaymentSystemClient
 
 if TYPE_CHECKING:
     from django.http import HttpRequest
@@ -21,6 +22,8 @@ class StripeClient(PaymentSystemClient):
 
     Содержит функции для инициализации сессии и обработки платежей в виде Stripe Payment -
     выписки, захвата, верификации и завершения."""
+
+    _link_pattern: str = '%s/billing/stripe_redirect/%s'
 
     def __init__(self) -> None:
         """Инициирует сессию с системой Stripe."""
@@ -52,8 +55,11 @@ class StripeClient(PaymentSystemClient):
         }
         stripe_checkout = StripeCheckout.Schema().load(checkout_data)
         checkout_session = self.client.checkout.Session.create(**stripe_checkout.Schema().dump(stripe_checkout))
+        Checkout.objects.make_checkout(PaymentSystems.STRIPE.value, checkout_session.id, order_id)
 
-        return checkout_session.id
+        approve_link = self._link_pattern % (SITE_URL, checkout_session.id)
+
+        return approve_link
 
     def verify(self, request: 'HttpRequest') -> bool:
         """Проверяет соответствие подписи вебхука на случай попытки имитации оповещения.
