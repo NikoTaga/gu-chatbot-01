@@ -8,7 +8,7 @@ from bot.models import Bot
 from constants import MessageDirection, ChatType, MessageContentType, BotType
 from entities import EventCommandToSend, EventCommandReceived
 from clients.jivosite.jivo_entities import JivoEvent, JivoIncomingWebhook
-from clients.jivosite.jivo_constants import JivoEventType, JivoMessageType
+from clients.jivosite.jivo_constants import JivoEventType, JivoMessageType, JIVO_WH_KEY, JIVO_TOKEN
 
 
 class JivositeClient:
@@ -19,7 +19,6 @@ class JivositeClient:
     и отправки сообщения в систему Jivo.
     """
 
-    token: str = 'test'
     headers: Dict[str, Any] = {'Content-Type': 'application/json'}
     command_cache: Dict[str, Dict[str, Optional[str]]] = {}
 
@@ -102,7 +101,7 @@ class JivositeClient:
         print('data ====')
         pprint(data)
         print()
-        send_link = 'https://bot.jivosite.com/webhooks/ntDQ6AScFgYVtb8/test'
+        send_link = f'https://bot.jivosite.com/webhooks/{JIVO_WH_KEY}/{JIVO_TOKEN}'
         r = requests.post(send_link, headers=self.headers, data=msg.Schema().dumps(msg))
         print(r)
         print(r.text)

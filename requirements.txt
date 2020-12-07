@@ -19,6 +19,9 @@ paypal-checkout-serversdk==1.0.1
 paypalhttp==1.0.0
 stripe==2.55.0
 
+# ENV
+python-dotenv==0.15.0
+
 # Error reporting
 sentry-sdk==0.18.0
 

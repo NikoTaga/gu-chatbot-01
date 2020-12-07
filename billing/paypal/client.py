@@ -12,8 +12,8 @@ from paypalrestsdk.notifications import WebhookEvent
 
 from bot.notify import send_payment_completed
 from shop.models import Product
-from billing.constants import Currency, PaypalIntent, PaypalShippingPreference, PaypalUserAction, PaypalGoodsCategory, \
-    PaypalOrderStatus
+from billing.constants import (Currency, PaypalIntent, PaypalShippingPreference, PaypalUserAction, PaypalGoodsCategory,
+                               PaypalOrderStatus, PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET)
 from .paypal_entities import PaypalCheckout
 from ..exceptions import UpdateCompletedCheckoutError
 from ..models import Checkout
@@ -47,15 +47,11 @@ class PaypalClient(PaymentSystemClient):
     Содержит методы для инициализации сессии и обработки платежей в виде PayPal Checkout -
     выписки, захвата, верификации и завершения Checkout."""
 
-    # Creating Access Token for Sandbox
-    client_id: str = "ASQgJpdrDZjvbEgIaViCTuEbO_ef6-JS1Cjy9g0EXwO65OPGdVxWpVd5pM7cvgrXzotENGAB7TEQ6PLK"
-    client_secret: str = "EPZSAbYg0C4Zvp1rZDoacf2rTOyeALHQR2OVmp5RkbS3Ox9p89UcbXd4Sa0LQ3hUDYFZRLB71RKXZZbQ"
-
     def __init__(self) -> None:
         """Инициализирует сессию работы с системой PayPal."""
 
         # Creating an environment
-        environment = SandboxEnvironment(client_id=self.client_id, client_secret=self.client_secret)
+        environment = SandboxEnvironment(client_id=PAYPAL_CLIENT_ID, client_secret=PAYPAL_CLIENT_SECRET)
         self.client = PayPalHttpClient(environment)
         self.process_notification = {  # todo should this be here?
             'CHECKOUT.ORDER.APPROVED': self.capture,

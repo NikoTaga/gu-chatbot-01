@@ -1,4 +1,9 @@
+import os
 from enum import Enum
+
+
+JIVO_WH_KEY = os.getenv("JIVO_WH_KEY")
+JIVO_TOKEN = os.getenv("JIVO_TOKEN")
 
 
 class JivoResponseType(Enum):
