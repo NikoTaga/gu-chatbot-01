@@ -11,7 +11,7 @@ from constants import SITE_URL
 from shop.models import Product
 from billing.constants import StripePaymentMethod, StripeCurrency, StripeMode, STRIPE_SECRET_KEY, STRIPE_WHSEC_KEY, \
     PaymentSystems
-from billing.common import PaymentSystemClient
+from billing.abstract import PaymentSystemClient
 
 if TYPE_CHECKING:
     from django.http import HttpRequest

@@ -14,7 +14,7 @@ from shop.models import Product
 from billing.constants import Currency, PaypalIntent, PaypalShippingPreference, PaypalUserAction, PaypalGoodsCategory, \
     PaypalOrderStatus, PaymentSystems, PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET
 from .paypal_entities import PaypalCheckout
-from billing.common import PaymentSystemClient
+from billing.abstract import PaymentSystemClient
 from billing.exceptions import UpdateCompletedCheckoutError
 from billing.models import Checkout
 

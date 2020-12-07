@@ -34,7 +34,7 @@ class Dialog:
             self.callback = Callback.Schema().loads(command)
             result = variants[self.callback.type](event)
         except (JSONDecodeError, KeyError, TypeError) as err:
-            print('Dialog.ready():', err.args)
+            print('Dialog.ready():', err.with_traceback())
             result = self.form_category_list(event)
 
         return result
