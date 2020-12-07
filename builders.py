@@ -1,18 +1,18 @@
-from typing import List, Dict
+from abc import ABC
+from typing import List, Dict, Union, Any
 
 from constants import MessageDirection, MessageContentType, CallbackType, GenericTemplateActionType
 from entities import Payload, EventCommandToSend, InlineButton, GenericTemplateAction, Callback
 
 
 class ECTSBuilder:
-    def __init__(self):
-        self._command = None
-        self.callback_type = None
+    def __init__(self) -> None:
+        self._command: EventCommandToSend
 
-    def get_command(self):
+    def get_command(self) -> EventCommandToSend:
         return self._command
 
-    def form_preset(self, bot_id, chat_id_in_messenger) -> None:
+    def form_preset(self, bot_id: int, chat_id_in_messenger: str) -> None:
         pl = Payload()
         pl.direction = MessageDirection.SENT
         pl.text = None
@@ -25,20 +25,18 @@ class ECTSBuilder:
         cmd.content_type = MessageContentType.TEXT
         cmd.payload.text = text
 
-    def _build_buttons(self, button_data: List[Dict[str, str]]) -> List[InlineButton]:
+    def _build_buttons(self, button_data: List[Dict[str, Any]]) -> List[InlineButton]:
         buttons = []
         for entry in button_data:
-            btn = InlineButton()
-            btn.text = entry['title']
-            action = GenericTemplateAction()
-            action.type = GenericTemplateActionType.POSTBACK
+            action = GenericTemplateAction(GenericTemplateActionType.POSTBACK)
             action.payload = Callback.Schema().dumps({
-                 'type': self.callback_type,
-                 'product': entry['id']
+                 'type': entry['type'],
+                 'id': entry['id'],
             })
-            btn.action = action
+            btn = InlineButton(entry['title'], action)
             buttons.append(btn)
 
+        print(buttons)
         return buttons
 
     def add_buttons(self, button_data: List[Dict[str, str]]) -> None:
@@ -48,7 +46,7 @@ class ECTSBuilder:
 
 
 class ECTSDirector:
-    def __init__(self):
+    def __init__(self) -> None:
         self._builder = ECTSBuilder()
 
     # @property
@@ -61,14 +59,12 @@ class ECTSDirector:
 
     def create_message(
             self,
-            msg_type=None,
-            bot_id=None,
-            chat_id_in_messenger=None,
-            text=None,
-            button_data=None
+            bot_id: int = None,
+            chat_id_in_messenger: str = None,
+            text: str = None,
+            button_data: List[Dict[str, Any]] = None
     ) -> EventCommandToSend:
 
-        self._builder.callback_type = msg_type
         self._builder.form_preset(bot_id, chat_id_in_messenger)
         self._builder.add_text(text)
         if button_data:
@@ -76,3 +72,10 @@ class ECTSDirector:
 
         return self._builder.get_command()
 
+
+# class AbstractECRBuilder(ABC):
+#
+#
+#
+#
+# class ECRBuilder

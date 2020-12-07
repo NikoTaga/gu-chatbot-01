@@ -22,21 +22,21 @@ def message_handler(event: EventCommandReceived) -> EventCommandToSend:
         event.content_type,
         str(event.payload.command),
         event.message_id_in_messenger)
-    result_data: Dict[str, Any] = Dialog().reply(event)
-    if result_data:
+    result: EventCommandToSend = Dialog().reply(event)
+    if result:
         Message.objects.save_message(
-            result_data['bot_id'],
+            result.bot_id,
             event.user_id_in_messenger,
             event.user_name_in_messenger,
-            result_data['chat_id_in_messenger'],
+            result.chat_id_in_messenger,
             event.chat_type,
-            result_data['payload']['direction'],
-            result_data['content_type'],
-            result_data['payload']['text']
+            result.payload.direction,
+            result.content_type,
+            result.payload.text,
         )
 
     try:
-        result = EventCommandToSend.Schema().load(result_data)
+        result.Schema().validate(result)
     except ValidationError as err:
-        print(err.args)
+        print('Handler:', err.args)
     return result
