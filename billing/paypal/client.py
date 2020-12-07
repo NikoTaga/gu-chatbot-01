@@ -28,6 +28,7 @@ class PaypalClient(PaymentSystemClient):
     # Creating Access Token for Sandbox
     client_id: str = "ASQgJpdrDZjvbEgIaViCTuEbO_ef6-JS1Cjy9g0EXwO65OPGdVxWpVd5pM7cvgrXzotENGAB7TEQ6PLK"
     client_secret: str = "EPZSAbYg0C4Zvp1rZDoacf2rTOyeALHQR2OVmp5RkbS3Ox9p89UcbXd4Sa0LQ3hUDYFZRLB71RKXZZbQ"
+    _link_pattern: str = 'https://www.sandbox.paypal.com/checkoutnow?token=%s'
 
     def __init__(self) -> None:
         """Инициализирует сессию работы с системой PayPal."""
@@ -191,4 +192,6 @@ class PaypalClient(PaymentSystemClient):
         checkout_id = self._initiate_payment_system_checkout(checkout_data)
         Checkout.objects.make_checkout(PaymentSystems.PAYPAL.value, checkout_id, order_id)
 
-        return checkout_id
+        approve_link = self._link_pattern % checkout_id
+
+        return approve_link

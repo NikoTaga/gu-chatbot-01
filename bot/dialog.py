@@ -146,8 +146,7 @@ class Dialog:
             self.callback.id,
         )
         payment_client = PaymentClientFactory.create(self.callback.type.value)
-        checkout_id = payment_client.check_out(order.pk, self.callback.id)
-        approve_link = 'https://www.sandbox.paypal.com/checkoutnow?token=%s' % checkout_id
+        approve_link = payment_client.check_out(order.pk, self.callback.id)
 
         text = f'Оплатите покупку по ссылке\n{approve_link}!'
 

@@ -23,6 +23,8 @@ class StripeClient(PaymentSystemClient):
     Содержит функции для инициализации сессии и обработки платежей в виде Stripe Payment -
     выписки, захвата, верификации и завершения."""
 
+    _link_pattern: str = '%s/billing/stripe_redirect/%s'
+
     def __init__(self) -> None:
         """Инициирует сессию с системой Stripe."""
         self.client = stripe
@@ -55,7 +57,9 @@ class StripeClient(PaymentSystemClient):
         checkout_session = self.client.checkout.Session.create(**stripe_checkout.Schema().dump(stripe_checkout))
         Checkout.objects.make_checkout(PaymentSystems.STRIPE.value, checkout_session.id, order_id)
 
-        return checkout_session.id
+        approve_link = self._link_pattern % (SITE_URL, checkout_session.id)
+
+        return approve_link
 
     def verify(self, request: 'HttpRequest') -> bool:
         """Проверяет соответствие подписи вебхука на случай попытки имитации оповещения.
