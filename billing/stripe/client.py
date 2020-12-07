@@ -9,7 +9,8 @@ from billing.stripe.stripe_entities import StripeCheckout
 from bot.notify import send_payment_completed
 from constants import SITE_URL
 from shop.models import Product
-from billing.constants import StripePaymentMethod, StripeCurrency, StripeMode, STRIPE_SECRET_KEY, STRIPE_WHSEC_KEY
+from billing.constants import StripePaymentMethod, StripeCurrency, StripeMode, STRIPE_SECRET_KEY, STRIPE_WHSEC_KEY, \
+    PaymentSystems
 from billing.paypal.client import PaymentSystemClient
 
 if TYPE_CHECKING:
@@ -52,6 +53,7 @@ class StripeClient(PaymentSystemClient):
         }
         stripe_checkout = StripeCheckout.Schema().load(checkout_data)
         checkout_session = self.client.checkout.Session.create(**stripe_checkout.Schema().dump(stripe_checkout))
+        Checkout.objects.make_checkout(PaymentSystems.STRIPE.value, checkout_session.id, order_id)
 
         return checkout_session.id
 

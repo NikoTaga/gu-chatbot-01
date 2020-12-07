@@ -13,7 +13,7 @@ from paypalrestsdk.notifications import WebhookEvent
 from bot.notify import send_payment_completed
 from shop.models import Product
 from billing.constants import Currency, PaypalIntent, PaypalShippingPreference, PaypalUserAction, PaypalGoodsCategory, \
-    PaypalOrderStatus
+    PaypalOrderStatus, PaymentSystems
 from .paypal_entities import PaypalCheckout
 from ..exceptions import UpdateCompletedCheckoutError
 from ..models import Checkout
@@ -85,7 +85,7 @@ class PaypalClient(PaymentSystemClient):
         transmission_id = h['Paypal-Transmission-Id']
         timestamp = h['Paypal-Transmission-Time']
         actual_sig = h['Paypal-Transmission-Sig']
-        webhook_id = '2MW92706RJ4968357'
+        webhook_id = '8G20143784181350P'
         cert_url = h['Paypal-Cert-Url']
         auth_algo = h['PayPal-Auth-Algo']
         if WebhookEvent.verify(
@@ -139,12 +139,43 @@ class PaypalClient(PaymentSystemClient):
                 # Something went wrong client side
                 print(ioe)
 
+    def _initiate_payment_system_checkout(self, checkout_data: Dict[str, Any]) -> str:
+        """Создаёт чекаут в системе PayPal, возвращает его id."""
+
+        pp_capture = PaypalCheckout.Schema().load(checkout_data)
+
+        request = OrdersCreateRequest()
+        request.prefer('return=representation')
+        request.request_body(pp_capture.Schema().dump(pp_capture))
+
+        tracking_id: str = ''
+        try:
+            response = self.client.execute(request)
+            if response.result.status == PaypalOrderStatus.CREATED.value:
+                tracking_id = response.result.id
+            else:
+                print(response.status_code)
+                for link in response.result.links:
+                    print('\t{}: {}\tCall Type: {}'.format(link.rel, link.href, link.method))
+                    print('Total Amount: {} {}'.format(response.result.purchase_units[0].amount.currency_code,
+                                                       response.result.purchase_units[0].amount.value))
+                    # If call returns body in response, you can get the deserialized version
+                    # from the result attribute of the response
+                    order = response.result
+                    print(order)
+        except IOError as ioe:
+            print(ioe)
+            if isinstance(ioe, HttpError):
+                # Something went wrong server-side
+                print(ioe.status_code)
+
+        return tracking_id
+
     def check_out(self, order_id: int, product_id: int) -> str:
         """Создаёт Checkout по параметрам заказа, возвращает соответствующий tracking_id."""
 
-        request = OrdersCreateRequest()
+        # todo create a builder?
         product = Product.objects.get_product_by_id(product_id)
-        request.prefer('return=representation')
         checkout_data = {
             'intent': PaypalIntent.CAPTURE,
             'purchase_units': [{
@@ -178,29 +209,8 @@ class PaypalClient(PaymentSystemClient):
                 'user_action': PaypalUserAction.PAY_NOW,
             }
         }
-        pp_capture = PaypalCheckout.Schema().load(checkout_data)
-        request.request_body(pp_capture.Schema().dump(pp_capture))
 
-        # todo тоже выделить во внутренний метод
-        tracking_id: str = ''
-        try:
-            response = self.client.execute(request)
-            if response.result.status == PaypalOrderStatus.CREATED.value:
-                tracking_id = response.result.id
-            else:
-                print(response.status_code)
-                for link in response.result.links:
-                    print('\t{}: {}\tCall Type: {}'.format(link.rel, link.href, link.method))
-                    print('Total Amount: {} {}'.format(response.result.purchase_units[0].amount.currency_code,
-                                                       response.result.purchase_units[0].amount.value))
-                    # If call returns body in response, you can get the deserialized version
-                    # from the result attribute of the response
-                    order = response.result
-                    print(order)
-        except IOError as ioe:
-            print(ioe)
-            if isinstance(ioe, HttpError):
-                # Something went wrong server-side
-                print(ioe.status_code)
+        checkout_id = self._initiate_payment_system_checkout(checkout_data)
+        Checkout.objects.make_checkout(PaymentSystems.PAYPAL.value, checkout_id, order_id)
 
-        return tracking_id
+        return checkout_id

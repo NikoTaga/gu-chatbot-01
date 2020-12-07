@@ -2,7 +2,6 @@ from typing import TYPE_CHECKING
 
 from builders import ECTSDirector
 from clients.common import PlatformClientFactory
-from constants import CallbackType
 
 if TYPE_CHECKING:
     from billing.models import Checkout

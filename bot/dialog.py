@@ -1,18 +1,14 @@
 from typing import Dict, Any, List, Callable
 from json.decoder import JSONDecodeError
 
-from billing.constants import PaymentSystems
-from billing.stripe.client import StripeClient
-from billing.paypal.client import PaypalClient
+from billing.common import PaymentClientFactory
 from builders import ECTSDirector
-from constants import MessageDirection, MessageContentType, CallbackType, SITE_URL
+from constants import CallbackType
 from entities import EventCommandReceived, Callback, EventCommandToSend
 
 from shop.models import Category, Product, Order
-from billing.models import Checkout
 
 
-# todo rewrite using a builder
 class Dialog:
     """Содержит логику взаимодействия бота с пользователем.
 
@@ -25,7 +21,7 @@ class Dialog:
     def reply(self, event: EventCommandReceived) -> EventCommandToSend:
         """Основной метод класса, формирует словарь-ответ на базе типа и параметров запроса в формате ECR."""
 
-        variants: Dict[CallbackType, Callable[..., None]] = {
+        variants: Dict[CallbackType, Callable[[EventCommandReceived], EventCommandToSend]] = {
             CallbackType.CATEGORY: self.form_product_list,
             CallbackType.PRODUCT: self.form_product_desc,
             CallbackType.ORDER: self.form_order_confirmation,
@@ -45,6 +41,7 @@ class Dialog:
 
     def form_category_list(self, event: EventCommandReceived) -> EventCommandToSend:
         """Собирает список категорий в виде данных для сообщения с соответствующими кнопками."""
+
         button_data: List[Dict[str, Any]] = [
             {
                 'title': category['name'],
@@ -116,6 +113,7 @@ class Dialog:
         product = Product.objects.get_product_by_id(self.callback.id)
         text = f'Выбран товар \"{product["name"]}\"' \
                f'\n\nОплатить заказ за {product["price"]} через платёжную систему?'
+        # todo где-то нужна метаинформация по списку систем
         button_data: List[Dict[str, Any]] = [
             {
                 'title': 'PayPal',
@@ -147,16 +145,10 @@ class Dialog:
             event.bot_id,
             self.callback.id,
         )
-        approve_link = ''
-        # todo fix duplication
-        if self.callback.type == CallbackType.PAYPAL:
-            checkout_id = PaypalClient().check_out(order.pk, self.callback.id)
-            approve_link = 'https://www.sandbox.paypal.com/checkoutnow?token=%s' % checkout_id
-            checkout = Checkout.objects.make_checkout(PaymentSystems.PAYPAL.value, checkout_id, order.pk)
-        elif self.callback.type == CallbackType.STRIPE:
-            checkout_id = StripeClient().check_out(order.pk, self.callback.id)
-            approve_link = '%s/billing/stripe_redirect/%s' % (SITE_URL, checkout_id)
-            checkout = Checkout.objects.make_checkout(PaymentSystems.STRIPE.value, checkout_id, order.pk)
+        payment_client = PaymentClientFactory.create(self.callback.type.value)
+        checkout_id = payment_client.check_out(order.pk, self.callback.id)
+        approve_link = 'https://www.sandbox.paypal.com/checkoutnow?token=%s' % checkout_id
+
         text = f'Оплатите покупку по ссылке\n{approve_link}!'
 
         msg = ECTSDirector().create_message(

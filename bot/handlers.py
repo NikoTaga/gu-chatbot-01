@@ -38,5 +38,5 @@ def message_handler(event: EventCommandReceived) -> EventCommandToSend:
     try:
         result.Schema().validate(result)
     except ValidationError as err:
-        print(err.args)
+        print('Handler:', err.args)
     return result
