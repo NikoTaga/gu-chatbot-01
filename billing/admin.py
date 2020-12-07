@@ -5,6 +5,8 @@ from .models import (Checkout)
 
 @admin.register(Checkout)
 class CheckoutAdmin(admin.ModelAdmin):
+    """Класс с настройками для работы с моделью Checkout в админке Django."""
+
     readonly_fields = ('created_at', 'updated_at')
     list_display = ('id',
                     'order',

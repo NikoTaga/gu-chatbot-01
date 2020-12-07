@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 
 from builders import ECTSDirector
-from clients.meta import PlatformClientFactory
+from clients.common import PlatformClientFactory
 from constants import CallbackType
 
 if TYPE_CHECKING:
@@ -9,9 +9,11 @@ if TYPE_CHECKING:
 
 
 def send_payment_completed(checkout: 'Checkout') -> None:
+    """Формирует сообщение об удачной оплате и посылает его через соответствующий клиент."""
+
     bot_type = checkout.order.chat.bot.bot_type
     msg = ECTSDirector().create_message(
-        msg_type=CallbackType.NOTIFY,
+        callback_type=CallbackType.NOTIFY,
         bot_id=checkout.order.chat.bot.id,
         chat_id_in_messenger=checkout.order.chat.id_in_messenger,
         text=f'Оплата товара: {checkout.order.product.name} прошла успешно.\nСпасибо за покупку!',

@@ -1,3 +1,5 @@
+"""Модуль содержит список адресов страниц под управлением billing."""
+
 from django.urls import path
 
 import billing.views as billing

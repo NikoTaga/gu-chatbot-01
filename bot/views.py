@@ -9,14 +9,19 @@ from marshmallow.exceptions import ValidationError
 from constants import BotType
 from entities import EventCommandReceived, EventCommandToSend
 from .handlers import message_handler
-from clients.meta import PlatformClientFactory
-from clients.ok_entities import OkIncomingWebhook
-from clients.jivo_entities import JivoIncomingWebhook
+from clients.common import PlatformClientFactory
+from clients.ok.ok_entities import OkIncomingWebhook
+from clients.jivosite.jivo_entities import JivoIncomingWebhook
 from .models import Chat, Message
 
 
 @csrf_exempt  # type: ignore
 def ok_webhook(request: HttpRequest) -> HttpResponse:
+    """Обрабатывает входящие вебхуки со стороны OK и возвращает 200 ОК.
+
+    Проводит верификацию хоста (?), проводит парсинг в ECR,
+    направляет в хендлер для получения ответа и отсылает обратно клиенту при удаче."""
+
     client = PlatformClientFactory.create(BotType.TYPE_OK.value)
 
     # Запросы могут производиться только с определенного списка IP-адресов:
@@ -33,7 +38,7 @@ def ok_webhook(request: HttpRequest) -> HttpResponse:
         result: EventCommandToSend = message_handler(event)
         client.send_message(result)
     except ValidationError as e:
-        print(e.args)
+        print('OK webhook:', e.args)
 
     # скрипт обязательно должен подтверждать получение с помощью отправки 200 ОК
     return HttpResponse('OK')
@@ -41,6 +46,10 @@ def ok_webhook(request: HttpRequest) -> HttpResponse:
 
 @csrf_exempt  # type: ignore
 def jivo_webhook(request: HttpRequest) -> HttpResponse:
+    """Обрабатывает входящие вебхуки со стороны JivoSite и возвращает 200 ОК.
+
+    Проводит парсинг в ECR, направляет в хендлер для получения ответа и отсылает обратно клиенту при удаче."""
+
     print(request.body)
     client = PlatformClientFactory.create(BotType.TYPE_JIVOSITE.value)
     try:
@@ -58,12 +67,17 @@ def jivo_webhook(request: HttpRequest) -> HttpResponse:
         print()
         client.send_message(result)
     except ValidationError as e:
-        print(e.args)
+        print('JIVO webhook:', e.args)
 
     return HttpResponse('OK')
 
 
 def chat_list(request: HttpRequest) -> HttpResponse:
+    """Отображает список проведённых чатов.
+
+    Сообщает имя клиента, последнее сообщение и время его отправки.
+    Позволяет открыть требуемый чат для просмотра содержимого."""
+
     chats: List[Dict[str, Any]] = [
         {
             'number': chat.pk,
@@ -80,7 +94,10 @@ def chat_list(request: HttpRequest) -> HttpResponse:
     return render(request, 'bot/chat_list.html', context)
 
 
+# todo well that's some hardcore duplication
 def chat_view(request: HttpRequest, pk: int) -> HttpResponse:
+    """Отображает список проведённых чатов и содержимое просматриваемого чата."""
+
     chats: List[Dict[str, Any]] = [
         {
             'number': chat.pk,

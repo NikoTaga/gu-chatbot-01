@@ -2,18 +2,26 @@ import requests
 from typing import Dict, Any
 from datetime import datetime
 
-from constants import MessageDirection, ChatType, MessageContentType
+from bot.models import Bot
+from constants import MessageDirection, ChatType, MessageContentType, BotType
 from entities import EventCommandToSend, EventCommandReceived
 from .ok_entities import OkOutgoingMessage, OkIncomingWebhook, OkAttachmentType, OkButtonType, OkButtonIntent
 
 
 class OkClient:
-    """Класс для работы с Однокласниками"""
+    """Клиент для работы с социальной платформой Одноклассники.
+
+    Содержит методы для преобразования входящих вебхуков в формат ECR,
+    формирования ECTS на основе сформированного ботом ответа
+    и отправки сообщения в систему ОК.
+    """
+
     token: str = 'tkn1wILRxmauO2rhrdYCdw41cqv2aLtebSzXqTHbv6SrRzQuZ7u8hz0ZOJMc9NmRESevE2:CLOKPPJGDIHBABABA'
     headers: Dict[str, Any] = {'Content-Type': 'application/json;charset=utf-8'}
 
     @staticmethod
     def form_ok_message(payload: EventCommandToSend) -> OkOutgoingMessage:
+
         msg_data: Dict[str, Any] = {
             'recipient': {
                 'chat_id': payload.chat_id_in_messenger,
@@ -23,7 +31,7 @@ class OkClient:
             }
         }
         if payload.inline_buttons:
-            msg_data['message']['attachment']: Dict[str, Any] = {
+            msg_data['message']['attachment'] = {
                 'type': OkAttachmentType.INLINE_KEYBOARD,
                 'payload': {
                     'keyboard': {
@@ -49,7 +57,7 @@ class OkClient:
     def parse_ok_webhook(wh: OkIncomingWebhook) -> EventCommandReceived:
         # формирование объекта с данными для ECR
         ecr_data: Dict[str, Any] = {
-            'bot_id': 1,  # todo BotManager.get_bot_by_type(BotType.TYPE_OK)
+            'bot_id': Bot.objects.get_bot_id_by_type(BotType.TYPE_OK.value),
             'chat_id_in_messenger': wh.recipient.chat_id,
             'content_type': MessageContentType.COMMAND,
             'payload': {

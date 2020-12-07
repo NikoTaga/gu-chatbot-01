@@ -14,6 +14,8 @@ developers = (
 
 
 def index_page(request: WSGIRequest) -> HttpResponse:
+    """Вид главной страницы, содержит список разработчиков и виджет JivoSite."""
+
     context = {
         'title_page': 'Основная страница',
         'developers': developers,

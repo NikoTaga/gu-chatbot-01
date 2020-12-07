@@ -5,6 +5,8 @@ from .models import (Bot, BotUser, Chat, Message)
 
 @admin.register(Bot)
 class BotAdmin(admin.ModelAdmin):
+    """Класс с настройками для работы с моделью Bot в админке Django."""
+
     readonly_fields = ('created_at', 'updated_at')
     list_display = ('name', 'bot_type')
     list_filter = ('bot_type',)
@@ -12,6 +14,8 @@ class BotAdmin(admin.ModelAdmin):
 
 @admin.register(Chat)
 class ChatAdmin(admin.ModelAdmin):
+    """Класс с настройками для работы с моделью Chat в админке Django."""
+
     readonly_fields = ('created_at', 'updated_at')
     list_display = ('id',
                     'bot',
@@ -27,6 +31,8 @@ class ChatAdmin(admin.ModelAdmin):
 
 @admin.register(BotUser)
 class BotUserAdmin(admin.ModelAdmin):
+    """Класс с настройками для работы с моделью BotUser в админке Django."""
+
     readonly_fields = ('created_at', 'updated_at')
     list_display = ('bot', 'name', 'messenger_user_id', 'created_at', 'updated_at')
     list_filter = ('bot',)
@@ -35,6 +41,8 @@ class BotUserAdmin(admin.ModelAdmin):
 
 @admin.register(Message)
 class MessageAdmin(admin.ModelAdmin):
+    """Класс с настройками для работы с моделью Message в админке Django."""
+
     readonly_fields = (
         'created_at',
         'updated_at',

@@ -1,3 +1,5 @@
+"""Содержит сущности для сериализации данных при обмене с JivoSite."""
+
 from dataclasses import field
 from typing import ClassVar, List, Optional, Type
 
@@ -7,11 +9,15 @@ from marshmallow_dataclass import dataclass
 
 from entities import SkipNoneSchema
 
-from clients.jivo_constants import JivoMessageType, JivoEventType, JivoResponseType
+from clients.jivosite.jivo_constants import JivoMessageType, JivoEventType, JivoResponseType
 
 
 @dataclass(order=True)
 class JivoError:
+    """Класс данных для хранения информации об ошибке работы с JIVO.
+
+    Включает код и описание ошибки."""
+
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
     code: JivoResponseType = field(
@@ -24,6 +30,8 @@ class JivoError:
 
 @dataclass(order=True, base_schema=SkipNoneSchema)
 class JivoErrorMessage:
+    """Класс данных для обёртывания информации об ошибке Jivo."""
+
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
     error: JivoError
@@ -31,6 +39,8 @@ class JivoErrorMessage:
 
 @dataclass(order=True)
 class JivoButton:
+    """Класс данных для хранения информации о кнопке в сообщении."""
+
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
     text: str
@@ -39,8 +49,15 @@ class JivoButton:
 
 @dataclass(order=True, base_schema=SkipNoneSchema)
 class JivoMessage:
+    """Класс данных для хранения информации о сообщении в системе JivoSite.
+
+    Содержит тип, текст, таймстамп, id нажатой кнопки (не используется), заголовок и кнопки.
+    """
+
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
-    
+
+    timestamp: int
+    title: str
     type: JivoMessageType = field(
         default=None,
         metadata={
@@ -48,15 +65,17 @@ class JivoMessage:
         }
     )
     text: Optional[str] = None
-    timestamp: int = None
     button_id: Optional[str] = None
-    title: str = None
     buttons: Optional[List[JivoButton]] = None
-
 
 
 @dataclass(order=True, base_schema=SkipNoneSchema)
 class JivoEvent:
+    """Класс данных для хранения информации об исходящем сообщении JivoSite.
+
+    Содержит тип, идентификатор сообщения, информацию о чате и клиенте Jivo, а также тело сообщения.
+    """
+
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
     event: JivoEventType = field(
@@ -72,14 +91,18 @@ class JivoEvent:
 
 @dataclass(order=True, base_schema=SkipNoneSchema)
 class JivoSender:
+    """Класс данных для хранения информации о отправителе входящего сообщения Jivo."""
+
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
-    
+
     id: int
     url: str
-    
-    
+
+
 @dataclass(order=True)
 class JivoIncomingWebhook:
+    """Класс данных для хранения информации о входящем вебхуке от JivoSite."""
+
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
     id: str

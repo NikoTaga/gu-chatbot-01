@@ -1,3 +1,6 @@
+"""Содержит сущности для сериализации данных при обмене с Одноклассниками."""
+# todo описать поля классов в докстрингах
+
 from dataclasses import field
 from typing import ClassVar, List, Optional, Type
 
@@ -5,14 +8,15 @@ import marshmallow
 import marshmallow_enum
 from marshmallow_dataclass import dataclass
 
-# from clients.ok_constants import *
-from clients.ok_constants import OkButtonType, OkButtonIntent, OkWebhookType, OkSystemWebhookType, OkPayloadCallType, \
-    OkPayloadCallHangupType, OkAttachmentType, OkPrivacyWarningType
+from clients.ok.ok_constants import (OkButtonType, OkButtonIntent, OkWebhookType, OkSystemWebhookType, OkPayloadCallType,
+                                     OkPayloadCallHangupType, OkAttachmentType, OkPrivacyWarningType)
 from entities import SkipNoneSchema
 
 
 @dataclass(order=True, base_schema=SkipNoneSchema)
 class OkSender:
+    """Класс данных для хранения информации о отправителе входящего сообщения OK."""
+
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
     user_id: str
@@ -21,6 +25,8 @@ class OkSender:
 
 @dataclass(order=True)
 class OkRecipient:
+    """Класс данных для хранения информации о получателе входящего сообщения ОК."""
+
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
     chat_id: str
@@ -28,6 +34,8 @@ class OkRecipient:
 
 @dataclass(order=True, base_schema=SkipNoneSchema)
 class OkButton:
+    """Класс данных для хранения информации о кнопке в сообщении ОК."""
+
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
     type: OkButtonType = field(
@@ -53,10 +61,12 @@ class OkButton:
 
 @dataclass(order=True, base_schema=SkipNoneSchema)
 class OkButtons:
+    """Класс данных для обертывания информации о кнопках в сообщении."""
+
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
     buttons: List[List[OkButton]] = field(
-        default=None,
+        # default=None,
         metadata={
             "marshmallow_field": marshmallow.fields.List(marshmallow.fields.List(
                 marshmallow.fields.Nested(OkButton.Schema())),
@@ -69,6 +79,8 @@ class OkButtons:
 
 @dataclass(order=True, base_schema=SkipNoneSchema)
 class OkPayload:
+    """Класс данных для хранения информации о содержимом приложения в сообщении ОК."""
+
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
     id: Optional[str] = None
@@ -109,6 +121,8 @@ class OkPayload:
 
 @dataclass(order=True)
 class OkAttachment:
+    """Класс данных для хранения информации о приложении к сообщению ОК."""
+
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
     type: OkAttachmentType = field(
@@ -121,6 +135,8 @@ class OkAttachment:
 
 @dataclass(order=True, base_schema=SkipNoneSchema)
 class OkMessage:
+    """Класс данных для хранения информации о сообщении ОК."""
+
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
     text: Optional[str] = None
@@ -148,6 +164,8 @@ class OkMessage:
 
 @dataclass(order=True)
 class OkIncomingWebhook:
+    """Класс данных для хранения информации о входящем вебхуке от ОК."""
+
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
     webhookType: OkWebhookType = field(
@@ -172,6 +190,8 @@ class OkIncomingWebhook:
 
 @dataclass(order=True)
 class OkOutgoingMessage:
+    """Класс данных для хранения информации об исходящем сообщении ОК."""
+
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
     recipient: OkRecipient

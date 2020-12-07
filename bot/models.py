@@ -6,6 +6,8 @@ from .managers import BotManager, ChatManager, MessageManager, BotUserManager
 
 
 class TrackableUpdateCreateModel(models.Model):
+    """Базовый компонент модели с полями для отслеживания времени создания и обновления."""
+
     created_at = models.DateTimeField(auto_now_add=True, db_index=True)
     updated_at = models.DateTimeField(auto_now=True, db_index=True)
 
@@ -14,6 +16,10 @@ class TrackableUpdateCreateModel(models.Model):
 
 
 class Bot(TrackableUpdateCreateModel):
+    """Модель для описания инстанса бота.
+
+    Содержит поля наименования и типа бота."""
+
     name = models.CharField('Name', max_length=255, blank=True)
     bot_type = models.PositiveSmallIntegerField('Bot Type', choices=BotType.choices())
     objects = BotManager()
@@ -29,6 +35,12 @@ class Bot(TrackableUpdateCreateModel):
 
 
 class BotUser(TrackableUpdateCreateModel):
+    """Модель для описания пользователя бота.
+
+    Содержит поля для сопоставления с инстансом бота, социальной платформой, именем
+    и дополнительными необязательными данными о пользователе.
+    """
+
     bot = models.ForeignKey(Bot, verbose_name='Bot', on_delete=models.CASCADE, db_index=True)
 
     messenger_user_id = models.CharField('MessengerUserId', max_length=64)
@@ -52,6 +64,12 @@ class BotUser(TrackableUpdateCreateModel):
 
 
 class Chat(TrackableUpdateCreateModel):
+    """Модель для описания чата.
+
+    Содержит поля для сопоставления с инстансом бота, пользователем бота, отслеживания времени последних сообщений
+    типом чата и идентификаторами в социальной платформе, а также дополнительными данными со стороны платформы.
+    """
+
     bot = models.ForeignKey(Bot, verbose_name='Bot', on_delete=models.CASCADE, db_index=True)
     type = models.PositiveSmallIntegerField('Type', choices=ChatType.choices())
     bot_user = models.OneToOneField(
@@ -87,6 +105,13 @@ class Chat(TrackableUpdateCreateModel):
 
 
 class Message(TrackableUpdateCreateModel):
+    """Модель для описания сообщения.
+
+    Содержит поля для сопоставления с ботом, пользователем бота, чатом,
+    а также поля для содержимого, направления, типа, вариантов вложений
+    и сопоставления с индексацией сообщений в социальной платформе.
+    """
+
     bot = models.ForeignKey(Bot, verbose_name='Bot', on_delete=models.CASCADE, db_index=True)
     bot_user = models.ForeignKey(BotUser, verbose_name='Bot user', on_delete=models.SET_NULL, blank=True, null=True)
     chat = models.ForeignKey(
@@ -97,6 +122,7 @@ class Message(TrackableUpdateCreateModel):
         null=True,
         db_index=True,
     )
+    # todo track message status
     status = models.PositiveSmallIntegerField(
         'Status',
         choices=MessageStatus.choices(),

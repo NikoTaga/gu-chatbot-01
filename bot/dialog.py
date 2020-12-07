@@ -2,24 +2,29 @@ from typing import Dict, Any, List, Callable
 from json.decoder import JSONDecodeError
 
 from billing.constants import PaymentSystems
-from builders import ECTSDirector
 from billing.stripe.client import StripeClient
 from billing.paypal.client import PaypalClient
-from clients.meta import PlatformClientFactory
-from constants import MessageDirection, MessageContentType, CallbackType, SITE_URL, BotType
+from constants import MessageDirection, MessageContentType, CallbackType, SITE_URL
 from entities import EventCommandReceived, Callback
 
 from shop.models import Category, Product, Order
 from billing.models import Checkout
 
 
+# todo rewrite using a builder
 class Dialog:
+    """Содержит логику взаимодействия бота с пользователем.
 
-    def __init__(self):
+    Осуществляет диалог из нескольких этапов, предлагая выбрать категорию, товар, систему оплаты.
+    По итогу инициирует выставление счёта в соответствующей системе."""
+
+    def __init__(self) -> None:
         self.data = None
         self.callback = None
 
     def reply(self, event: EventCommandReceived) -> Dict[str, Any]:
+        """Основной метод класса, формирует словарь-ответ на базе типа и параметров запроса в формате ECR."""
+
         variants: Dict[CallbackType, Callable[..., None]] = {
             CallbackType.CATEGORY: self.form_product_list,
             CallbackType.PRODUCT: self.form_product_desc,
@@ -32,16 +37,17 @@ class Dialog:
 
         command = event.payload.command
         try:
-            self.callback: Callback = Callback.Schema().loads(command)
+            self.callback = Callback.Schema().loads(command)
             variants[self.callback.type]()
         except (JSONDecodeError, KeyError, TypeError) as err:
-            print(err.args)
+            print('Dialog.ready():', err.args)
             self.form_category_list()
 
         return self.data
 
     @staticmethod
     def form_preset(event: EventCommandReceived) -> Dict[str, Any]:
+
         return {
             'bot_id': event.bot_id,
             'chat_id_in_messenger': event.chat_id_in_messenger,
@@ -52,6 +58,8 @@ class Dialog:
         }
 
     def form_category_list(self) -> None:
+        """Собирает список категорий в виде данных для сообщения с соответствующими кнопками."""
+
         self.data['content_type'] = MessageContentType.INLINE
         self.data['payload']['text'] = 'Выберите категорию товара:'
         buttons_data: List[Dict[str, Any]] = [
@@ -69,6 +77,8 @@ class Dialog:
         self.data['inline_buttons'] = buttons_data
 
     def form_product_list(self) -> None:
+        """Собирает список продуктов категории в виде данных для сообщения с соответствующими кнопками."""
+
         self.data['content_type'] = MessageContentType.INLINE
         category = Category.objects.get_category_by_id(self.callback.id)
         self.data['payload']['text'] = f'Выберите товар категории \"{category["name"]}\"'
@@ -87,6 +97,8 @@ class Dialog:
         self.data['inline_buttons'] = buttons_data
 
     def form_product_desc(self) -> None:
+        """Формирует данные для описания выбранного товара с кнопкой 'Заказать'."""
+
         self.data['content_type'] = MessageContentType.INLINE
         product = Product.objects.get_product_by_id(self.callback.id)
         self.data['payload']['text'] = \
@@ -109,6 +121,8 @@ class Dialog:
         self.data['inline_buttons'] = buttons_data
 
     def form_order_confirmation(self) -> None:
+        """Формирует данные для сообщения с предложением выбрать платёжную систему для оплаты."""
+
         self.data['content_type'] = MessageContentType.INLINE
         product = Product.objects.get_product_by_id(self.callback.id)
         self.data['payload']['text'] = \
@@ -142,6 +156,8 @@ class Dialog:
         self.data['inline_buttons'] = buttons_data
 
     def make_order(self) -> None:
+        """Формирует заказ и готовит данные для сообщения со ссылкой для произведения оплаты пользователем."""
+
         self.data['content_type'] = MessageContentType.TEXT
         order = Order.objects.make_order(
             self.data['chat_id_in_messenger'],
@@ -158,4 +174,3 @@ class Dialog:
             approve_link = '%s/billing/stripe_redirect/%s' % (SITE_URL, checkout_id)
             checkout = Checkout.objects.make_checkout(PaymentSystems.STRIPE.value, checkout_id, order.pk)
         self.data['payload']['text'] = f'Оплатите покупку по ссылке\n{approve_link}!'
-

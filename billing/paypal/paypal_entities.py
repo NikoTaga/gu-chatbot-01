@@ -1,6 +1,7 @@
+"""Содержит сущности для сериализации данных при обмене с PayPal."""
+
 from dataclasses import field
 from typing import ClassVar, List, Optional, Type
-from decimal import Decimal
 
 import marshmallow
 import marshmallow_enum
@@ -12,6 +13,8 @@ from billing.constants import Currency, PaypalIntent, PaypalGoodsCategory, Paypa
 
 @dataclass(order=True, base_schema=SkipNoneSchema)
 class PaypalAmount:
+    """Класс данных для хранения информации о суммах денег в разных валютах."""
+
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
     currency_code: Currency = field(
@@ -24,6 +27,10 @@ class PaypalAmount:
 
 @dataclass(order=True, base_schema=SkipNoneSchema)
 class PaypalItem:
+    """Класс данных для хранения информации о позиции товара.
+
+    Включает имя, описание, стоимость, количество, а также категорию (digital или physical goods) и артикул."""
+
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
     name: str
@@ -40,6 +47,10 @@ class PaypalItem:
 
 @dataclass(order=True, base_schema=SkipNoneSchema)
 class PaypalBreakdown:
+    """Класс данных для хранения развёрнутой информации о стоимости товара.
+
+    Включает базовую стоимость, цену доставку и налоги."""
+
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
     item_total: PaypalAmount
@@ -49,6 +60,8 @@ class PaypalBreakdown:
 
 @dataclass(order=True, base_schema=SkipNoneSchema)
 class PaypalAmountWithBreakdown(PaypalAmount):
+    """Класс данных для обёртывания breakdown."""
+
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
     breakdown: Optional[PaypalBreakdown]
@@ -63,6 +76,8 @@ class PaypalAmountWithBreakdown(PaypalAmount):
 
 @dataclass(order=True, base_schema=SkipNoneSchema)
 class PaypalPurchaseUnit:
+    """Класс данных для хранения информации об отдельном наборе товаров в заказе."""
+
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
     amount: PaypalAmountWithBreakdown
@@ -82,6 +97,10 @@ class PaypalPurchaseUnit:
 
 @dataclass(order=True, base_schema=SkipNoneSchema)
 class PaypalAppContext:
+    """Класс данных для хранения информации о настройках для работы с покупателем.
+
+    Содержит настройки получения предпочтительного адреса доставки и особенностей оплаты."""
+
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
     shipping_preference: PaypalShippingPreference = field(
@@ -100,6 +119,12 @@ class PaypalAppContext:
 
 @dataclass(order=True, base_schema=SkipNoneSchema)
 class PaypalCheckout:
+    """Класс данных верхнего уровня для хранения информации о запросе Checkout.
+
+    Используется для сериализации данных для исходящего запроса.
+    Содержит намерение чекаута, наборы товаров из заказа и настройки работы с покупателем.
+    """
+
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
     intent: PaypalIntent = field(
