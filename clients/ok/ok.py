@@ -5,6 +5,7 @@ from datetime import datetime
 from bot.models import Bot
 from constants import MessageDirection, ChatType, MessageContentType, BotType
 from entities import EventCommandToSend, EventCommandReceived
+from .ok_constants import OK_TOKEN
 from .ok_entities import OkOutgoingMessage, OkIncomingWebhook, OkAttachmentType, OkButtonType, OkButtonIntent
 
 
@@ -16,7 +17,6 @@ class OkClient:
     и отправки сообщения в систему ОК.
     """
 
-    token: str = 'tkn1wILRxmauO2rhrdYCdw41cqv2aLtebSzXqTHbv6SrRzQuZ7u8hz0ZOJMc9NmRESevE2:CLOKPPJGDIHBABABA'
     headers: Dict[str, Any] = {'Content-Type': 'application/json;charset=utf-8'}
 
     @staticmethod
@@ -79,6 +79,8 @@ class OkClient:
     def send_message(self, payload: EventCommandToSend) -> None:
         msg = self.form_ok_message(payload)
 
-        send_link = f'https://api.ok.ru/graph/me/messages/{payload.chat_id_in_messenger}?access_token={self.token}'
+        send_link = 'https://api.ok.ru/graph/me/messages/{}?access_token={}'.format(
+            payload.chat_id_in_messenger, OK_TOKEN
+        )
         r = requests.post(send_link, headers=self.headers, data=msg.Schema().dumps(msg))
         print(r.text)

@@ -1,14 +1,17 @@
 """Модуль с набором констант и перечислений относящихся к интеграции с платёжными системами."""
 
+import os
 from enum import Enum
 from constants import Choice
 
 
-STRIPE_PUBLIC_KEY = 'pk_test_51HqMI4J7UqTQQfE9i7b78Qa91U3AHOne4nzq6beJbw2WCXhdM3jtycetMAzJMZOTTKGnjs0M1tfSDkoG0UKx' \
-                    '4gHt00AT3RCDwP'
-STRIPE_SECRET_KEY = 'sk_test_51HqMI4J7UqTQQfE9r7ZnxzdoDR4PpqoZCbekqg1TOIlTQZTevahpbO0YAMVoH02VKtRfXBdGn5ltwh9jCptn' \
-                    'I8B100eoXJM7nE'
-STRIPE_WHSEC_KEY = 'whsec_wtG2TSXjPejSZ9Z1OXkhhCCFUKXNmKVp'
+PAYPAL_CLIENT_ID = os.getenv("PAYPAL_CLIENT_ID")
+PAYPAL_CLIENT_SECRET = os.getenv("PAYPAL_CLIENT_SECRET")
+PAYPAL_WEBHOOK_ID = os.getenv("PAYPAL_WEBHOOK_ID")
+
+STRIPE_PUBLIC_KEY = os.getenv("STRIPE_PUBLIC_KEY")
+STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
+STRIPE_WHSEC_KEY = os.getenv("STRIPE_WHSEC_KEY")
 
 
 class PaymentSystems(Choice):

@@ -12,9 +12,9 @@ from paypalrestsdk.notifications import WebhookEvent
 from bot.notify import send_payment_completed
 from shop.models import Product
 from billing.constants import Currency, PaypalIntent, PaypalShippingPreference, PaypalUserAction, PaypalGoodsCategory, \
-    PaypalOrderStatus, PaymentSystems
+    PaypalOrderStatus, PaymentSystems, PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET
 from .paypal_entities import PaypalCheckout
-from billing.common import PaymentSystemClient
+from billing.abstract import PaymentSystemClient
 from billing.exceptions import UpdateCompletedCheckoutError
 from billing.models import Checkout
 
@@ -24,17 +24,13 @@ class PaypalClient(PaymentSystemClient):
 
     Содержит методы для инициализации сессии и обработки платежей в виде PayPal Checkout -
     выписки, захвата, верификации и завершения Checkout."""
-
-    # Creating Access Token for Sandbox
-    client_id: str = "ASQgJpdrDZjvbEgIaViCTuEbO_ef6-JS1Cjy9g0EXwO65OPGdVxWpVd5pM7cvgrXzotENGAB7TEQ6PLK"
-    client_secret: str = "EPZSAbYg0C4Zvp1rZDoacf2rTOyeALHQR2OVmp5RkbS3Ox9p89UcbXd4Sa0LQ3hUDYFZRLB71RKXZZbQ"
-    _link_pattern: str = 'https://www.sandbox.paypal.com/checkoutnow?token=%s'
+    _link_pattern = 'https://www.sandbox.paypal.com/checkoutnow?token={}'
 
     def __init__(self) -> None:
         """Инициализирует сессию работы с системой PayPal."""
 
         # Creating an environment
-        environment = SandboxEnvironment(client_id=self.client_id, client_secret=self.client_secret)
+        environment = SandboxEnvironment(client_id=PAYPAL_CLIENT_ID, client_secret=PAYPAL_CLIENT_SECRET)
         self.client = PayPalHttpClient(environment)
         self.process_notification = {  # todo should this be here?
             'CHECKOUT.ORDER.APPROVED': self.capture,
@@ -64,7 +60,7 @@ class PaypalClient(PaymentSystemClient):
         transmission_id = h['Paypal-Transmission-Id']
         timestamp = h['Paypal-Transmission-Time']
         actual_sig = h['Paypal-Transmission-Sig']
-        webhook_id = '8G20143784181350P'
+        webhook_id = '2MW92706RJ4968357'
         cert_url = h['Paypal-Cert-Url']
         auth_algo = h['PayPal-Auth-Algo']
         if WebhookEvent.verify(
@@ -192,6 +188,6 @@ class PaypalClient(PaymentSystemClient):
         checkout_id = self._initiate_payment_system_checkout(checkout_data)
         Checkout.objects.make_checkout(PaymentSystems.PAYPAL.value, checkout_id, order_id)
 
-        approve_link = self._link_pattern % checkout_id
+        approve_link = self._link_pattern.format(checkout_id)
 
         return approve_link
