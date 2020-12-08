@@ -1,16 +1,18 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 import requests
 import logging
 from typing import Dict, Any, Optional
 
-from bot.models import Bot
+from bot.models import Bot, Message
 from constants import MessageDirection, ChatType, MessageContentType, BotType
 from entities import EventCommandToSend, EventCommandReceived
 from clients.jivosite.jivo_entities import JivoEvent, JivoIncomingWebhook
 from clients.jivosite.jivo_constants import JivoEventType, JivoMessageType, JIVO_WH_KEY, JIVO_TOKEN
+from bot.apps import SingletonAPS
 
 
 logger = logging.getLogger('clients')
+bot_aps = SingletonAPS().get_aps
 
 
 class JivositeClient:
@@ -96,15 +98,33 @@ class JivositeClient:
 
         return ecr
 
+    def _post_to_platform(self, message_id: int, send_link: str, data: str) -> None:
+        print('Trying to send...')
+        try:
+            r = requests.post(send_link, headers=self.headers, data=data)
+            logger.debug(f'JIVO answered: {r.text}')
+            Message.objects.set_sent(message_id)
+            bot_aps.remove_job(f'jivo_{message_id}')
+        except (requests.Timeout, requests.ConnectionError) as e:
+            logger.error(f'JIVO unreachable{e.args}')
+
     def send_message(self, payload: EventCommandToSend) -> None:
         """Отправляет соответствующее используемой команде формата ECTS сообщение в Jivo."""
 
         msg = self.form_jivo_event(payload)
-        data = msg.Schema().dumps(msg)
-
-        logger.debug(f'Sending to JIVO: {data}')
         send_link = 'https://bot.jivosite.com/webhooks/{}/{}'.format(
             JIVO_WH_KEY, JIVO_TOKEN
         )
-        r = requests.post(send_link, headers=self.headers, data=data)
-        logger.debug(f'Jivo answered: {r.text}')
+        data = msg.Schema().dumps(msg)
+
+        logger.debug(f'Sending to JIVO: {data}')
+
+        bot_aps.add_job(
+            self._post_to_platform,
+            'interval',
+            seconds=5,
+            next_run_time=datetime.now(),
+            end_date=datetime.now() + timedelta(minutes=5),
+            args=[payload.message_id, send_link, data],
+            id=f'jivo_{payload.message_id}',
+            )

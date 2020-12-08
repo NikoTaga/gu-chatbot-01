@@ -9,7 +9,7 @@ from entities import EventCommandToSend, EventCommandReceived
 from .ok_constants import OK_TOKEN
 from .ok_entities import OkOutgoingMessage, OkIncomingWebhook, OkAttachmentType, OkButtonType, OkButtonIntent
 from bot.apps import SingletonAPS
-
+from ..exceptions import OkServerError
 
 logger = logging.getLogger('clients')
 bot_aps = SingletonAPS().get_aps
@@ -85,15 +85,18 @@ class OkClient:
 
         return ecr
 
-    def _post_to_ok(self, message_id: int, send_link: str, data: str) -> None:
-        print('Trying to send to OK...')
+    def _post_to_platform(self, message_id: int, send_link: str, data: str) -> None:
+        print('Trying to send...')
         try:
             r = requests.post(send_link, headers=self.headers, data=data)
             logger.debug(f'OK answered: {r.text}')
-            Message.objects.set_sent(message_id)
             bot_aps.remove_job(f'ok_{message_id}')
+            if 'invocation-error' in r.headers:
+                logger.error(f'OK error: {r.headers["invocation-error"]} -> {r.json()}')
+                raise OkServerError(r.headers["invocation-error"], r.json())
+            Message.objects.set_sent(message_id)
         except (requests.Timeout, requests.ConnectionError) as e:
-            logger.error(f'OK unreachable{e.args}')
+            logger.error(f'OK unreachable: {e.args}')
 
     def send_message(self, payload: EventCommandToSend) -> None:
         msg = self.form_ok_message(payload)
@@ -103,9 +106,10 @@ class OkClient:
         )
 
         data = msg.Schema().dumps(msg)
+        logger.debug(f'Sending to OK: {data}')
 
         bot_aps.add_job(
-            self._post_to_ok,
+            self._post_to_platform,
             'interval',
             seconds=5,
             next_run_time=datetime.now(),
@@ -113,6 +117,3 @@ class OkClient:
             args=[payload.message_id, send_link, data],
             id=f'ok_{payload.message_id}',
             )
-
-
-
