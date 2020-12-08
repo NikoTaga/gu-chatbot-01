@@ -1,8 +1,11 @@
-from abc import ABC
+import logging
 from typing import List, Dict, Union, Any
 
 from constants import MessageDirection, MessageContentType, CallbackType, GenericTemplateActionType
 from entities import Payload, EventCommandToSend, InlineButton, GenericTemplateAction, Callback
+
+
+logger = logging.getLogger('root')
 
 
 class ECTSBuilder:
@@ -36,7 +39,7 @@ class ECTSBuilder:
             btn = InlineButton(entry['title'], action)
             buttons.append(btn)
 
-        print(buttons)
+        logger.debug(f'Builder: {buttons}')
         return buttons
 
     def add_buttons(self, button_data: List[Dict[str, str]]) -> None:

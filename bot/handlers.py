@@ -1,10 +1,12 @@
-from typing import Dict, Any
-
+import logging
 from marshmallow import ValidationError
 
 from entities import EventCommandReceived, EventCommandToSend
 from .dialog import Dialog
 from .models import Message
+
+
+logger = logging.getLogger('bot')
 
 
 def message_handler(event: EventCommandReceived) -> EventCommandToSend:
@@ -38,5 +40,5 @@ def message_handler(event: EventCommandReceived) -> EventCommandToSend:
     try:
         result.Schema().validate(result)
     except ValidationError as err:
-        print('Handler:', err.args)
+        logger.error(f'Handler: {err.args}')
     return result
