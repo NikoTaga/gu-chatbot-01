@@ -55,6 +55,7 @@ class MessageAdmin(admin.ModelAdmin):
         'content_type',
         'created_at',
         'direction',
+        'status',
     )
     list_filter = ('bot', 'content_type', 'direction')
     search_fields = (

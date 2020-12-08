@@ -1,16 +1,18 @@
 import requests
 import logging
 from typing import Dict, Any
-from datetime import datetime
+from datetime import datetime, timedelta
 
-from bot.models import Bot
+from bot.models import Bot, Message
 from constants import MessageDirection, ChatType, MessageContentType, BotType
 from entities import EventCommandToSend, EventCommandReceived
 from .ok_constants import OK_TOKEN
 from .ok_entities import OkOutgoingMessage, OkIncomingWebhook, OkAttachmentType, OkButtonType, OkButtonIntent
+from bot.apps import SingletonAPS
 
 
 logger = logging.getLogger('clients')
+bot_aps = SingletonAPS().get_aps
 
 
 class OkClient:
@@ -83,11 +85,34 @@ class OkClient:
 
         return ecr
 
+    def _post_to_ok(self, message_id: int, send_link: str, data: str) -> None:
+        print('Trying to send to OK...')
+        try:
+            r = requests.post(send_link, headers=self.headers, data=data)
+            logger.debug(f'OK answered: {r.text}')
+            Message.objects.set_sent(message_id)
+            bot_aps.remove_job(f'ok_{message_id}')
+        except (requests.Timeout, requests.ConnectionError) as e:
+            logger.error(f'OK unreachable{e.args}')
+
     def send_message(self, payload: EventCommandToSend) -> None:
         msg = self.form_ok_message(payload)
 
         send_link = 'https://api.ok.ru/graph/me/messages/{}?access_token={}'.format(
             payload.chat_id_in_messenger, OK_TOKEN
         )
-        r = requests.post(send_link, headers=self.headers, data=msg.Schema().dumps(msg))
-        logger.debug(f'OK answered: {r.text}')
+
+        data = msg.Schema().dumps(msg)
+
+        bot_aps.add_job(
+            self._post_to_ok,
+            'interval',
+            seconds=5,
+            next_run_time=datetime.now(),
+            end_date=datetime.now() + timedelta(minutes=5),
+            args=[payload.message_id, send_link, data],
+            id=f'ok_{payload.message_id}',
+            )
+
+
+

@@ -26,7 +26,7 @@ def message_handler(event: EventCommandReceived) -> EventCommandToSend:
         event.message_id_in_messenger)
     result: EventCommandToSend = Dialog().reply(event)
     if result:
-        Message.objects.save_message(
+        message = Message.objects.save_message(
             result.bot_id,
             event.user_id_in_messenger,
             event.user_name_in_messenger,
@@ -36,7 +36,7 @@ def message_handler(event: EventCommandReceived) -> EventCommandToSend:
             result.content_type,
             result.payload.text,
         )
-
+        result.message_id = message.pk
     try:
         result.Schema().validate(result)
     except ValidationError as err:
