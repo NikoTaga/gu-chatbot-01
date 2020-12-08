@@ -1,14 +1,21 @@
+"""Модуль содержит менеджеры моделей бота."""
+
 from typing import Optional, TYPE_CHECKING
 
 from django.db import models
 from django.db.models.query import QuerySet
 
-from constants import (ChatType, MessageDirection, MessageContentType)
+from constants import (ChatType, MessageDirection, MessageContentType, MessageStatus)
 if TYPE_CHECKING:
     from bot.models import (BotUser, Chat, Message)
 
 
 class BotManager(models.Manager):
+    """Класс менеджеров модели bot.
+
+    Содержит методы для автоматизированного соотнесения идентификаторов ботов
+    и обработчиков соответствующих социальных платформ."""
+
     def get_bot_id_by_type(self, bot_type: int) -> int:
         return self.get(bot_type=bot_type).id
 
@@ -42,6 +49,8 @@ class ChatManager(models.Manager):
 
 
 class MessageManager(models.Manager):
+    """Класс для управления моделью Message."""
+
     def save_message(self,
                      bot_id: int,
                      messenger_user_id: Optional[str],
@@ -51,7 +60,8 @@ class MessageManager(models.Manager):
                      message_direction: MessageDirection,
                      message_content_type: MessageContentType,
                      message_text: Optional[str] = '',
-                     message_id_in_messenger: Optional[str] = '') -> None:
+                     message_id_in_messenger: Optional[str] = '') -> 'Message':
+        """Сохраняет входящие/исходящие сообщения, обновляет соответствующие поля активности чатов."""
 
         from .models import BotUser, Chat
         # can't import the models at the top of the file because of a circular dependency
@@ -64,13 +74,24 @@ class MessageManager(models.Manager):
             direction=message_direction.value,
             content_type=message_content_type.value,
             id_in_messenger=message_id_in_messenger,
-            text=message_text
+            text=message_text,
         )
+        if message_direction == MessageDirection.RECEIVED:
+            message.status = MessageStatus.DELIVERED.value
         message.save()
         # save message in chat last message
         chat.last_message_time = message.created_at
         chat.last_message_text = message.text
         chat.save()
+
+        return message
+
+    def set_sent(self, message_id: int):
+        """Устанавливает статус SENT сообщениям, успешно отправленным через API платформы."""
+
+        message = self.get(id=message_id)
+        message.status = MessageStatus.SENT.value
+        message.save()
 
     def get_chat_messages(self, chat_id: int) -> 'QuerySet[Message]':
         return self.filter(chat_id=chat_id).order_by('created_at').all()

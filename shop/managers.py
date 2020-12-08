@@ -1,3 +1,7 @@
+"""Модуль содержит менеджеры моделей магазина.
+
+Методы модуля предназначены для совершения операций между ботом и базой данных магазина."""
+
 from typing import Optional, List, Dict, Any
 
 from django.utils import timezone
@@ -11,6 +15,10 @@ from constants import OrderStatus
 
 class CategoryManager(models.Manager):
     def get_categories(self, category_id: Optional[int] = None) -> List[Dict[str, Any]]:
+        """Возвращает список категорий в формате словаря.
+
+        Возможно указание родительской категории для выдачи подкатегорий."""
+
         categories_queryset = self.filter(parent_category_id=category_id)
         categories = [{'id': c.id, 'name': c.name, 'parent_category_id': c.parent_category_id,
                        'child_category_exists': c.child_categories.exists()} for c in categories_queryset]
@@ -27,6 +35,8 @@ class CategoryManager(models.Manager):
 
 class ProductManager(models.Manager):
     def get_products(self, category_id: Optional[int]) -> List[Dict[str, Any]]:
+        """Возвращает список товаров из категории."""
+
         products = list(self.filter(categories__id=category_id).values('id', 'name', 'categories', 'price',
                                                                        'image_url', 'description', 'is_active'))
         return products
@@ -37,6 +47,8 @@ class ProductManager(models.Manager):
         return product
 
     def get_products_by_query(self, query_string: str) -> List[Dict[str, Any]]:
+        """Возвращает список товаров, отфильтрованных поиском по подстроке наименования."""
+
         products = list(self.filter(name__icontains=query_string).values('id', 'name', 'price', 'image_url',
                                                                          'description', 'is_active'))
         return products
@@ -53,6 +65,8 @@ class OrderManager(models.Manager):
                    product_id: Optional[int],
                    description: Optional[str] = '') -> None:
 
+        """Создаёт и возвращает заказ на основе требуемых параметров."""
+
         from .models import Product
 
         product = Product.objects.get_product_by_id(product_id)
@@ -62,6 +76,8 @@ class OrderManager(models.Manager):
         return order
 
     def update_order(self, order_id: int, status: int) -> None:
+        """Обновляет статус заказа на завершённый или отменённый."""
+
         order = self.get_order(order_id).first()
         order.status = status
         if status == OrderStatus.CANCELED.value:
