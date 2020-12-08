@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from typing import List, Dict, Any
 from marshmallow.exceptions import ValidationError
+import logging
 
 from constants import BotType
 from entities import EventCommandReceived, EventCommandToSend
@@ -13,6 +14,9 @@ from clients.common import PlatformClientFactory
 from clients.ok.ok_entities import OkIncomingWebhook
 from clients.jivosite.jivo_entities import JivoIncomingWebhook
 from .models import Chat, Message
+
+
+logger = logging.getLogger('bot')
 
 
 @csrf_exempt  # type: ignore
@@ -30,15 +34,15 @@ def ok_webhook(request: HttpRequest) -> HttpResponse:
     # 217.20.151.160/28
     # 217.20.153.48/28
     # но с ngrok хосты расшифровываются как его удалённый хост
-    print('host: ', request.get_host())
+    logger.debug(f'"inc wh from: {request.get_host()}"')
     try:
         wh = OkIncomingWebhook.Schema().loads(request.body)
-        print(wh)
+        logger.debug(wh)
         event: EventCommandReceived = client.parse_ok_webhook(wh)
         result: EventCommandToSend = message_handler(event)
         client.send_message(result)
     except ValidationError as e:
-        print('OK webhook:', e.args)
+        logger.error(f'OK webhook: {e.args}')
 
     # скрипт обязательно должен подтверждать получение с помощью отправки 200 ОК
     return HttpResponse('OK')

@@ -9,7 +9,6 @@ https://docs.djangoproject.com/en/3.0/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.0/ref/settings/
 """
-
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -128,10 +127,57 @@ FIXTURE_DIRS = (
    os.path.join(BASE_DIR, 'fixtures'),
 )
 
-
 LANGUAGES = (
     ('ru', 'Russian'),
     ('en', 'English'),
     ('fr', 'French'),
     ('uz', "O'zbek"),
 )
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'filters': {
+        'require_debug_true': {
+            '()': 'django.utils.log.RequireDebugTrue',
+        },
+    },
+    'formatters': {
+        'default': {
+            'format': '{levelname} {asctime} {module} {message}',
+            'style': '{',
+        }
+    },
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'logs/debug.log'),
+            'encoding': 'utf-8',
+            'filters': ['require_debug_true'],
+            'formatter': 'default',
+        },
+        'console': {
+            'level': 'ERROR',
+            'class': 'logging.StreamHandler',
+            'formatter': 'default',
+        }
+    },
+    'loggers': {
+        'root': {
+            'handlers': ['file', 'console'],
+            'level': 'DEBUG',
+        },
+        'bot': {
+            'handlers': ['file', 'console'],
+            'level': 'DEBUG',
+        },
+        'clients': {
+            'handlers': ['file', 'console'],
+            'level': 'DEBUG',
+        },
+        'django': {
+            'handlers': ['file', 'console'],
+        },
+    }
+}

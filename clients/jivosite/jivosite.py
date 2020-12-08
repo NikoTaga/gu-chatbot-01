@@ -1,7 +1,6 @@
 from datetime import datetime
-
 import requests
-from pprint import pprint
+import logging
 from typing import Dict, Any, Optional
 
 from bot.models import Bot
@@ -9,6 +8,9 @@ from constants import MessageDirection, ChatType, MessageContentType, BotType
 from entities import EventCommandToSend, EventCommandReceived
 from clients.jivosite.jivo_entities import JivoEvent, JivoIncomingWebhook
 from clients.jivosite.jivo_constants import JivoEventType, JivoMessageType, JIVO_WH_KEY, JIVO_TOKEN
+
+
+logger = logging.getLogger('clients')
 
 
 class JivositeClient:
@@ -50,6 +52,8 @@ class JivositeClient:
         event_data['message'] = msg_data
         event = JivoEvent.Schema().load(event_data)
 
+        logger.debug(event)
+
         if payload.inline_buttons:
             self.command_cache[payload.chat_id_in_messenger] = {
                 btn.text: btn.action.payload for btn in payload.inline_buttons
@@ -85,8 +89,10 @@ class JivositeClient:
             if self.command_cache[wh.client_id]:
                 ecr_data['payload']['command'] = self.command_cache[wh.client_id][wh.message.text]
         except KeyError as err:
-            print(err.args)
+            logger.debug(f'nothing in command_cache: {err.args}')
         ecr = EventCommandReceived.Schema().load(ecr_data)
+
+        logger.debug(ecr)
 
         return ecr
 
@@ -94,16 +100,11 @@ class JivositeClient:
         """Отправляет соответствующее используемой команде формата ECTS сообщение в Jivo."""
 
         msg = self.form_jivo_event(payload)
-        print('msg ====')
-        pprint(msg)
-        print()
         data = msg.Schema().dumps(msg)
-        print('data ====')
-        pprint(data)
-        print()
+
+        logger.debug(f'Sending to JIVO: {data}')
         send_link = 'https://bot.jivosite.com/webhooks/{}/{}'.format(
             JIVO_WH_KEY, JIVO_TOKEN
         )
-        r = requests.post(send_link, headers=self.headers, data=msg.Schema().dumps(msg))
-        print(r)
-        print(r.text)
+        r = requests.post(send_link, headers=self.headers, data=data)
+        logger.debug(f'Jivo answered: {r.text}')

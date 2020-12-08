@@ -1,4 +1,5 @@
 import requests
+import logging
 from typing import Dict, Any
 from datetime import datetime
 
@@ -7,6 +8,9 @@ from constants import MessageDirection, ChatType, MessageContentType, BotType
 from entities import EventCommandToSend, EventCommandReceived
 from .ok_constants import OK_TOKEN
 from .ok_entities import OkOutgoingMessage, OkIncomingWebhook, OkAttachmentType, OkButtonType, OkButtonIntent
+
+
+logger = logging.getLogger('clients')
 
 
 class OkClient:
@@ -51,6 +55,8 @@ class OkClient:
 
         msg = OkOutgoingMessage.Schema().load(msg_data)
 
+        logger.debug(msg)
+
         return msg
 
     @staticmethod
@@ -73,7 +79,8 @@ class OkClient:
             'ts_in_messenger': str(datetime.fromtimestamp(wh.timestamp // 1000)),
         }
         ecr = EventCommandReceived.Schema().load(ecr_data)
-        print(ecr)
+        logger.debug(ecr)
+
         return ecr
 
     def send_message(self, payload: EventCommandToSend) -> None:
@@ -83,4 +90,4 @@ class OkClient:
             payload.chat_id_in_messenger, OK_TOKEN
         )
         r = requests.post(send_link, headers=self.headers, data=msg.Schema().dumps(msg))
-        print(r.text)
+        logger.debug(f'OK answered: {r.text}')
