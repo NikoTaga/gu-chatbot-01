@@ -3,6 +3,7 @@ from typing import Dict, Any
 from datetime import datetime
 
 from bot.models import Bot
+from builders import MessageDirector
 from constants import MessageDirection, ChatType, MessageContentType, BotType
 from entities import EventCommandToSend, EventCommandReceived
 from .ok_constants import OK_TOKEN
@@ -22,34 +23,8 @@ class OkClient:
     @staticmethod
     def form_ok_message(payload: EventCommandToSend) -> OkOutgoingMessage:
 
-        msg_data: Dict[str, Any] = {
-            'recipient': {
-                'chat_id': payload.chat_id_in_messenger,
-            },
-            'message': {
-                'text': payload.payload.text,
-            }
-        }
-        if payload.inline_buttons:
-            msg_data['message']['attachment'] = {
-                'type': OkAttachmentType.INLINE_KEYBOARD,
-                'payload': {
-                    'keyboard': {
-                        # это должно быть списком списков
-                        # каждый список означает одну строку кнопок
-                        'buttons': [[
-                            {
-                                'type': OkButtonType.CALLBACK,
-                                'text': entry.text,
-                                'intent': OkButtonIntent.POSITIVE,
-                                'payload': entry.action.payload,
-                            }
-                        ] for entry in payload.inline_buttons]
-                    }
-                }
-            }
-
-        msg = OkOutgoingMessage.Schema().load(msg_data)
+        msg = MessageDirector().create_ok_message(payload)
+        msg.Schema().validate(msg)
 
         return msg
 
