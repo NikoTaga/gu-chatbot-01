@@ -1,3 +1,4 @@
+import logging
 from typing import List, Dict, Any
 
 from clients.ok.ok_constants import OkButtonIntent, OkButtonType, OkAttachmentType
@@ -5,6 +6,9 @@ from clients.ok.ok_entities import (OkOutgoingMessage, OkMessage, OkRecipient, O
                                     OkButtons)
 from constants import MessageDirection, MessageContentType, GenericTemplateActionType
 from entities import Payload, EventCommandToSend, InlineButton, GenericTemplateAction, Callback
+
+
+logger = logging.getLogger('root')
 
 
 class ECTSBuilder:
@@ -38,7 +42,7 @@ class ECTSBuilder:
             btn = InlineButton(entry['title'], action)
             buttons.append(btn)
 
-        print(buttons)
+        logger.debug(f'Builder: {buttons}')
         return buttons
 
     def add_buttons(self, button_data: List[Dict[str, str]]) -> None:

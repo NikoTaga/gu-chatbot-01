@@ -1,5 +1,6 @@
 from typing import Dict, Any, List, Callable
 from json.decoder import JSONDecodeError
+import logging
 
 from billing.common import PaymentClientFactory
 from builders import MessageDirector
@@ -7,6 +8,9 @@ from constants import CallbackType
 from entities import EventCommandReceived, Callback, EventCommandToSend
 
 from shop.models import Category, Product, Order
+
+
+logger = logging.getLogger('bot')
 
 
 class Dialog:
@@ -34,7 +38,7 @@ class Dialog:
             self.callback = Callback.Schema().loads(command)
             result = variants[self.callback.type](event)
         except (JSONDecodeError, KeyError, TypeError) as err:
-            print('Dialog.ready():', err.args)
+            logger.debug(f'Dialog.ready(): {err.args}')
             result = self.form_category_list(event)
 
         return result
@@ -56,7 +60,7 @@ class Dialog:
             button_data=button_data,
         )
 
-        print(button_data)
+        logger.debug(f'"BUTTONS: {button_data}"')
 
         return msg
 
@@ -78,7 +82,7 @@ class Dialog:
             button_data=button_data,
         )
 
-        print(button_data)
+        logger.debug(f'"BUTTONS: {button_data}"')
 
         return msg
 
@@ -103,7 +107,7 @@ class Dialog:
             button_data=button_data,
         )
 
-        print(button_data)
+        logger.debug(f'"BUTTONS: {button_data}"')
 
         return msg
 
@@ -136,7 +140,8 @@ class Dialog:
             button_data=button_data,
         )
 
-        print(button_data)
+        logger.debug(f'"BUTTONS: {button_data}"')
+
         return msg
 
     def make_order(self, event: EventCommandReceived) -> EventCommandToSend:
