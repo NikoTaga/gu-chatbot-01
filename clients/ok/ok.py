@@ -1,22 +1,24 @@
 import requests
 import logging
+from datetime import datetime, timedelta
 from ipaddress import ip_network, ip_address
 from typing import Dict, Any, TYPE_CHECKING
-from datetime import datetime
 
-from bot.models import Bot
 from builders import MessageDirector
+from bot.models import Bot, Message
 from constants import MessageDirection, ChatType, MessageContentType, BotType
 from entities import EventCommandToSend, EventCommandReceived
 from .ok_constants import OK_TOKEN
 from .ok_entities import OkOutgoingMessage, OkIncomingWebhook, OkAttachmentType, OkButtonType, OkButtonIntent
-
+from bot.apps import SingletonAPS
+from ..exceptions import OkServerError
 if TYPE_CHECKING:
     from django.http import HttpRequest
 
 
 OK_IP_POOL = '217.20.145.192/28, 217.20.151.160/28, 217.20.153.48/28'
 logger = logging.getLogger('clients')
+bot_aps = SingletonAPS().get_aps
 
 
 class OkClient:
@@ -74,11 +76,35 @@ class OkClient:
 
         return ecr
 
+    def _post_to_platform(self, message_id: int, send_link: str, data: str) -> None:
+        print('Trying to send...')
+        try:
+            r = requests.post(send_link, headers=self.headers, data=data)
+            logger.debug(f'OK answered: {r.text}')
+            bot_aps.remove_job(f'ok_{message_id}')
+            if 'invocation-error' in r.headers:
+                logger.error(f'OK error: {r.headers["invocation-error"]} -> {r.json()}')
+                raise OkServerError(r.headers["invocation-error"], r.json())
+            Message.objects.set_sent(message_id)
+        except (requests.Timeout, requests.ConnectionError) as e:
+            logger.error(f'OK unreachable: {e.args}')
+
     def send_message(self, payload: EventCommandToSend) -> None:
         msg = self.form_ok_message(payload)
 
         send_link = 'https://api.ok.ru/graph/me/messages/{}?access_token={}'.format(
             payload.chat_id_in_messenger, OK_TOKEN
         )
-        r = requests.post(send_link, headers=self.headers, data=msg.Schema().dumps(msg))
-        logger.debug(f'OK answered: {r.text}')
+
+        data = msg.Schema().dumps(msg)
+        logger.debug(f'Sending to OK: {data}')
+
+        bot_aps.add_job(
+            self._post_to_platform,
+            'interval',
+            seconds=5,
+            next_run_time=datetime.now(),
+            end_date=datetime.now() + timedelta(minutes=5),
+            args=[payload.message_id, send_link, data],
+            id=f'ok_{payload.message_id}',
+            )

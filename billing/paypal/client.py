@@ -12,7 +12,7 @@ from paypalrestsdk.notifications import WebhookEvent
 from bot.notify import send_payment_completed
 from shop.models import Product
 from billing.constants import Currency, PaypalIntent, PaypalShippingPreference, PaypalUserAction, PaypalGoodsCategory, \
-    PaypalOrderStatus, PaymentSystems, PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET
+    PaypalOrderStatus, PaymentSystems, PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET, PAYPAL_WEBHOOK_ID
 from .paypal_entities import PaypalCheckout
 from billing.abstract import PaymentSystemClient
 from billing.exceptions import UpdateCompletedCheckoutError
@@ -60,7 +60,7 @@ class PaypalClient(PaymentSystemClient):
         transmission_id = h['Paypal-Transmission-Id']
         timestamp = h['Paypal-Transmission-Time']
         actual_sig = h['Paypal-Transmission-Sig']
-        webhook_id = '2MW92706RJ4968357'
+        webhook_id = PAYPAL_WEBHOOK_ID
         cert_url = h['Paypal-Cert-Url']
         auth_algo = h['PayPal-Auth-Algo']
         if WebhookEvent.verify(

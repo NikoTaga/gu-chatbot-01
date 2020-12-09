@@ -22,6 +22,9 @@ stripe==2.55.0
 # ENV
 python-dotenv==0.15.0
 
+# Scheduler
+apscheduler==3.6.3
+
 # Error reporting
 sentry-sdk==0.18.0
 
