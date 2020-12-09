@@ -1,4 +1,4 @@
-from typing import Dict, Any, List, Callable
+from typing import Dict, Any, List, Callable, Optional
 from json.decoder import JSONDecodeError
 import logging
 
@@ -22,10 +22,11 @@ class Dialog:
     def __init__(self) -> None:
         self.callback = None
 
-    def reply(self, event: EventCommandReceived) -> EventCommandToSend:
+    def reply(self, event: EventCommandReceived) -> Optional[EventCommandToSend]:
         """Основной метод класса, формирует словарь-ответ на базе типа и параметров запроса в формате ECR."""
 
         variants: Dict[CallbackType, Callable[[EventCommandReceived], EventCommandToSend]] = {
+            CallbackType.GREETING: self.form_category_list,
             CallbackType.CATEGORY: self.form_product_list,
             CallbackType.PRODUCT: self.form_product_desc,
             CallbackType.ORDER: self.form_order_confirmation,
@@ -34,14 +35,45 @@ class Dialog:
         }
 
         command = event.payload.command
+        result = None
         try:
             self.callback = Callback.Schema().loads(command)
             result = variants[self.callback.type](event)
-        except (JSONDecodeError, KeyError, TypeError) as err:
+        except JSONDecodeError as err:
+            logger.debug(f'Dialog GREETING: {err.args}')
+            self._form_greeting(event)
+        except (KeyError, TypeError) as err:
             logger.debug(f'Dialog.ready(): {err.args}')
-            result = self.form_category_list(event)
+            # result = self.form_category_list(event)
 
         return result
+
+    def _form_greeting(self, event: EventCommandReceived) -> EventCommandToSend:
+        """Формирует приветствие пользователя при написании произвольного сообщения."""
+
+        button_data: List[Dict[str, Any]] = [
+            {
+                'title': 'Начать работу',
+                'id': 0,
+                'type': CallbackType.GREETING,
+            }]
+
+        greeting = 'Добро пожаловать{}!\nНажмите на кнопку для начала работы:'
+        if event.user_name_in_messenger:
+            greeting = greeting.format(f', {event.user_name_in_messenger}')
+        else:
+            greeting = greeting.format('')
+
+        msg = ECTSDirector().create_message(
+            bot_id=event.bot_id,
+            chat_id_in_messenger=event.chat_id_in_messenger,
+            text=greeting,
+            button_data=button_data,
+        )
+
+        logger.debug(f'"BUTTONS: {button_data}"')
+
+        return msg
 
     def form_category_list(self, event: EventCommandReceived) -> EventCommandToSend:
         """Собирает список категорий в виде данных для сообщения с соответствующими кнопками."""

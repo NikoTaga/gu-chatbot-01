@@ -1,4 +1,3 @@
-from pprint import pprint
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 # чтобы разрешить кросс-сайт POST запросы
@@ -39,8 +38,10 @@ def ok_webhook(request: HttpRequest) -> HttpResponse:
         wh = OkIncomingWebhook.Schema().loads(request.body)
         logger.debug(wh)
         event: EventCommandReceived = client.parse_ok_webhook(wh)
+        logger.debug(event)
         result: EventCommandToSend = message_handler(event)
-        client.send_message(result)
+        if result:
+            client.send_message(result)
     except ValidationError as e:
         logger.error(f'OK webhook: {e.args}')
 
@@ -54,24 +55,17 @@ def jivo_webhook(request: HttpRequest) -> HttpResponse:
 
     Проводит парсинг в ECR, направляет в хендлер для получения ответа и отсылает обратно клиенту при удаче."""
 
-    print(request.body)
     client = PlatformClientFactory.create(BotType.TYPE_JIVOSITE.value)
     try:
         wh = JivoIncomingWebhook.Schema().loads(request.body)
-        print('wh ===')
-        print(wh)
-        print()
+        logger.debug(wh)
         event: EventCommandReceived = client.parse_jivo_webhook(wh)
-        print('event ===')
-        pprint(event)
-        print()
+        logger.debug(event)
         result: EventCommandToSend = message_handler(event)
-        print('result ===')
-        pprint(result)
-        print()
-        client.send_message(result)
+        if result:
+            client.send_message(result)
     except ValidationError as e:
-        print('JIVO webhook:', e.args)
+        logger.error(f'JIVO webhook: {e.args}')
 
     return HttpResponse('OK')
 
