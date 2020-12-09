@@ -12,7 +12,7 @@ from bot.apps import SingletonAPS
 from ..exceptions import OkServerError
 
 logger = logging.getLogger('clients')
-bot_aps = SingletonAPS().get_aps
+bot_scheduler = SingletonAPS().get_aps
 
 
 class OkClient:
@@ -90,7 +90,7 @@ class OkClient:
         try:
             r = requests.post(send_link, headers=self.headers, data=data)
             logger.debug(f'OK answered: {r.text}')
-            bot_aps.remove_job(f'ok_{message_id}')
+            bot_scheduler.remove_job(f'ok_{message_id}')
             if 'invocation-error' in r.headers:
                 logger.error(f'OK error: {r.headers["invocation-error"]} -> {r.json()}')
                 raise OkServerError(r.headers["invocation-error"], r.json())
@@ -108,7 +108,7 @@ class OkClient:
         data = msg.Schema().dumps(msg)
         logger.debug(f'Sending to OK: {data}')
 
-        bot_aps.add_job(
+        bot_scheduler.add_job(
             self._post_to_platform,
             'interval',
             seconds=5,

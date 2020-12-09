@@ -4,6 +4,7 @@ import logging
 from typing import Dict, Any, Optional
 
 from bot.models import Bot, Message
+from clients.exceptions import JivoServerError
 from constants import MessageDirection, ChatType, MessageContentType, BotType
 from entities import EventCommandToSend, EventCommandReceived
 from clients.jivosite.jivo_entities import JivoEvent, JivoIncomingWebhook
@@ -12,7 +13,7 @@ from bot.apps import SingletonAPS
 
 
 logger = logging.getLogger('clients')
-bot_aps = SingletonAPS().get_aps
+bot_scheduler = SingletonAPS().get_aps
 
 
 class JivositeClient:
@@ -25,6 +26,9 @@ class JivositeClient:
 
     headers: Dict[str, Any] = {'Content-Type': 'application/json'}
     command_cache: Dict[str, Dict[str, Optional[str]]] = {}
+    _send_link = 'https://bot.jivosite.com/webhooks/{}/{}'.format(
+        JIVO_WH_KEY, JIVO_TOKEN
+    )
 
     def form_jivo_event(self, payload: EventCommandToSend) -> JivoEvent:
         """Создаёт программный объект с данными исходящего сообщения, готовыми для отправки."""
@@ -49,6 +53,13 @@ class JivositeClient:
                    'text': payload.inline_buttons[i].text,
                    'id': i,
                } for i in range(len(payload.inline_buttons))]
+            # todo pretty much a hack, but a good solution kinda requires
+            # passing more data in base commands tbh
+            if payload.inline_buttons[0].action.payload.find('greeting'):
+                msg_data['buttons'].append({
+                    'text': 'Переключиться на оператора',
+                    'id': 0,
+                })
         else:
             msg_data['type'] = JivoMessageType.TEXT
         event_data['message'] = msg_data
@@ -63,19 +74,36 @@ class JivositeClient:
 
         return event
 
+    def _invite_agent(self, wh: JivoIncomingWebhook):
+        data = {
+            'event': 'INVITE_AGENT',
+            # todo more magic hacks
+            'id': -int(wh.client_id),
+            'client_id': wh.client_id,
+            'chat_id': wh.chat_id,
+        }
+        event = JivoEvent.Schema().load(data)
+        bot_scheduler.add_job(
+            self._post_to_platform,
+            'interval',
+            seconds=5,
+            next_run_time=datetime.now(),
+            end_date=datetime.now() + timedelta(minutes=5),
+            args=[data['id'], self._send_link, event.Schema().dumps(event)],
+            id=f'jivo_{wh.client_id}',
+            )
+
     def parse_jivo_webhook(self, wh: JivoIncomingWebhook) -> EventCommandReceived:
         """Преобразует объект входящего вебхука в формат входящей команды бота - ECR."""
 
         # формирование объекта с данными для ECR
         ecr_data: Dict[str, Any] = {
             'bot_id': Bot.objects.get_bot_id_by_type(BotType.TYPE_JIVOSITE.value),
-            # todo think about fixing
             'chat_id_in_messenger': wh.client_id,  # important, do not change
             'content_type': MessageContentType.COMMAND,
             'payload': {
                 'direction': MessageDirection.RECEIVED,
-                # todo CHECK DOES THIS EVEN WORK ??????
-                'command': wh.message.button_id,  # it doesn't.
+                'command': wh.message.button_id,  # it doesn't do anything.
                 'text': wh.message.text,
             },
             'chat_type': ChatType.PRIVATE,
@@ -92,19 +120,32 @@ class JivositeClient:
                 ecr_data['payload']['command'] = self.command_cache[wh.client_id][wh.message.text]
         except KeyError as err:
             logger.debug(f'nothing in command_cache: {err.args}')
+
+        if wh.message.text == 'Переключиться на оператора':
+            logger.info('Agent invited: {}'.format(wh.client_id))
+            self._invite_agent(wh)
+            # todo more hacks
+            ecr_data['payload']['command'] = '{"type": "invite", "id": 0}'
+
         ecr = EventCommandReceived.Schema().load(ecr_data)
 
         logger.debug(ecr)
 
         return ecr
 
-    def _post_to_platform(self, message_id: int, send_link: str, data: str) -> None:
+    def _post_to_platform(self, message_id: int, send_link: str, data: str,) -> None:
         print('Trying to send...')
+
         try:
             r = requests.post(send_link, headers=self.headers, data=data)
             logger.debug(f'JIVO answered: {r.text}')
-            Message.objects.set_sent(message_id)
-            bot_aps.remove_job(f'jivo_{message_id}')
+            bot_scheduler.remove_job(f'jivo_{message_id}')
+            if 'error' in r.json():
+                err = r.json()['error']
+                logger.error(f'OK error: {err["code"]} -> {err["message"]}')
+                raise JivoServerError(err["code"], err["message"])
+            if message_id > 0:
+                Message.objects.set_sent(message_id)
         except (requests.Timeout, requests.ConnectionError) as e:
             logger.error(f'JIVO unreachable{e.args}')
 
@@ -119,7 +160,7 @@ class JivositeClient:
 
         logger.debug(f'Sending to JIVO: {data}')
 
-        bot_aps.add_job(
+        bot_scheduler.add_job(
             self._post_to_platform,
             'interval',
             seconds=5,
