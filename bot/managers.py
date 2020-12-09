@@ -9,6 +9,11 @@ if TYPE_CHECKING:
 
 
 class BotManager(models.Manager):
+    """Класс менеджеров модели bot.
+
+    Содержит методы для автоматизированного соотнесения идентификаторов ботов
+    и обработчиков соответствующих социальных платформ."""
+
     def get_bot_id_by_type(self, bot_type: int) -> int:
         return self.get(bot_type=bot_type).id
 
@@ -42,6 +47,8 @@ class ChatManager(models.Manager):
 
 
 class MessageManager(models.Manager):
+    """Класс для управления моделью Message."""
+
     def save_message(self,
                      bot_id: int,
                      messenger_user_id: Optional[str],
@@ -52,6 +59,7 @@ class MessageManager(models.Manager):
                      message_content_type: MessageContentType,
                      message_text: Optional[str] = '',
                      message_id_in_messenger: Optional[str] = '') -> 'Message':
+        """Сохраняет входящие/исходящие сообщения, обновляет соответствующие поля активности чатов."""
 
         from .models import BotUser, Chat
         # can't import the models at the top of the file because of a circular dependency
@@ -77,6 +85,8 @@ class MessageManager(models.Manager):
         return message
 
     def set_sent(self, message_id: int):
+        """Устанавливает статус SENT сообщениям, успешно отправленным через API платформы."""
+
         message = self.get(id=message_id)
         message.status = MessageStatus.SENT.value
         message.save()
