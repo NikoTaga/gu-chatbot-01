@@ -1,5 +1,3 @@
-"""Модуль содержит менеджеры моделей бота."""
-
 from typing import Optional, TYPE_CHECKING
 
 from django.db import models
