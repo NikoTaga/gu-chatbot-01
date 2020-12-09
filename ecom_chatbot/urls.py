@@ -25,7 +25,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('ok_webhook/', ok_webhook),
     path('jivo_webhook/test', jivo_webhook),
-    path('chat/<int:pk>/', chat_view),
-    path('chats/', chat_list),
+    path('chats/<int:pk>/', chat_view),
+    path('chats/', chat_view),
     path('billing/', include('billing.urls', namespace='billing')),
 ]

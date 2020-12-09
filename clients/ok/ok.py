@@ -1,6 +1,7 @@
 import requests
 import logging
-from typing import Dict, Any
+from ipaddress import ip_network, ip_address
+from typing import Dict, Any, TYPE_CHECKING
 from datetime import datetime
 
 from bot.models import Bot
@@ -10,7 +11,11 @@ from entities import EventCommandToSend, EventCommandReceived
 from .ok_constants import OK_TOKEN
 from .ok_entities import OkOutgoingMessage, OkIncomingWebhook, OkAttachmentType, OkButtonType, OkButtonIntent
 
+if TYPE_CHECKING:
+    from django.http import HttpRequest
 
+
+OK_IP_POOL = '217.20.145.192/28, 217.20.151.160/28, 217.20.153.48/28'
 logger = logging.getLogger('clients')
 
 
@@ -23,6 +28,17 @@ class OkClient:
     """
 
     headers: Dict[str, Any] = {'Content-Type': 'application/json;charset=utf-8'}
+
+    @staticmethod
+    def verify(request: 'HttpRequest') -> bool:
+        ip_pool = [ip_network(net) for net in OK_IP_POOL.split(', ')]
+        # todo might not work due to host routing
+        host_ip = ip_address(request.META.get('REMOTE_ADDR'))
+
+        for network in ip_pool:
+            if host_ip in network:
+                return True
+        return False
 
     @staticmethod
     def form_ok_message(payload: EventCommandToSend) -> OkOutgoingMessage:
@@ -54,7 +70,7 @@ class OkClient:
             'ts_in_messenger': str(datetime.fromtimestamp(wh.timestamp // 1000)),
         }
         ecr = EventCommandReceived.Schema().load(ecr_data)
-        logger.debug(ecr)
+        # logger.debug(ecr)
 
         return ecr
 

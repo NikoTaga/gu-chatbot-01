@@ -1,9 +1,8 @@
-from pprint import pprint
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 # чтобы разрешить кросс-сайт POST запросы
 from django.views.decorators.csrf import csrf_exempt
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional
 from marshmallow.exceptions import ValidationError
 import logging
 
@@ -28,18 +27,16 @@ def ok_webhook(request: HttpRequest) -> HttpResponse:
 
     client = PlatformClientFactory.create(BotType.TYPE_OK.value)
 
-    # Запросы могут производиться только с определенного списка IP-адресов:
-    #
-    # 217.20.145.192/28
-    # 217.20.151.160/28
-    # 217.20.153.48/28
-    # но с ngrok хосты расшифровываются как его удалённый хост
-    logger.debug(f'"inc wh from: {request.get_host()}"')
+    logger.debug(f'"inc wh from: {request.get_host()}')
+    # todo doesn't work yet due to ngrok
+    logger.debug(f'verified: {client.verify(request)}')
     try:
         wh = OkIncomingWebhook.Schema().loads(request.body)
         logger.debug(wh)
         event: EventCommandReceived = client.parse_ok_webhook(wh)
+        logger.debug(event)
         result: EventCommandToSend = message_handler(event)
+        # logger.debug(result)
         client.send_message(result)
     except ValidationError as e:
         logger.error(f'OK webhook: {e.args}')
@@ -54,52 +51,23 @@ def jivo_webhook(request: HttpRequest) -> HttpResponse:
 
     Проводит парсинг в ECR, направляет в хендлер для получения ответа и отсылает обратно клиенту при удаче."""
 
-    print(request.body)
+    logger.debug(f'"inc wh from: {request.get_host()}')
     client = PlatformClientFactory.create(BotType.TYPE_JIVOSITE.value)
     try:
         wh = JivoIncomingWebhook.Schema().loads(request.body)
-        print('wh ===')
-        print(wh)
-        print()
+        logger.debug(wh)
         event: EventCommandReceived = client.parse_jivo_webhook(wh)
-        print('event ===')
-        pprint(event)
-        print()
+        logger.debug(event)
         result: EventCommandToSend = message_handler(event)
-        print('result ===')
-        pprint(result)
-        print()
+        # logger.debug(result)
         client.send_message(result)
     except ValidationError as e:
-        print('JIVO webhook:', e.args)
+        logger.error(f'JIVO webhook: {e.args}')
 
     return HttpResponse('OK')
 
 
-def chat_list(request: HttpRequest) -> HttpResponse:
-    """Отображает список проведённых чатов.
-
-    Сообщает имя клиента, последнее сообщение и время его отправки.
-    Позволяет открыть требуемый чат для просмотра содержимого."""
-
-    chats: List[Dict[str, Any]] = [
-        {
-            'number': chat.pk,
-            'name': chat.bot_user.name,
-            'chat_last_message': chat.last_message_text,
-            'time': chat.last_message_time,
-        } for chat in Chat.objects.all()
-    ]
-    context: Dict[str, Any] = {
-        'title_page': 'Список чатов',
-        'objects_list': chats
-    }
-
-    return render(request, 'bot/chat_list.html', context)
-
-
-# todo well that's some hardcore duplication
-def chat_view(request: HttpRequest, pk: int) -> HttpResponse:
+def chat_view(request: HttpRequest, pk: Optional[int] = None) -> HttpResponse:
     """Отображает список проведённых чатов и содержимое просматриваемого чата."""
 
     chats: List[Dict[str, Any]] = [
@@ -110,14 +78,16 @@ def chat_view(request: HttpRequest, pk: int) -> HttpResponse:
             'time': chat.last_message_time
         } for chat in Chat.objects.all()
     ]
-    messages: List[Dict[str, Any]] = [
-        {
-            'number': message.pk,
-            'content': message.text,
-            'direction': bool(message.direction % 2),
-            'time': message.created_at,
-        } for message in Message.objects.get_chat_messages(pk)
-    ]
+    messages = []
+    if pk:
+        messages: List[Dict[str, Any]] = [
+            {
+                'number': message.pk,
+                'content': message.text,
+                'direction': bool(message.direction % 2),
+                'time': message.created_at,
+            } for message in Message.objects.get_chat_messages(pk)
+        ]
     context: Dict[str, Any] = {
         'title_page': 'Список чатов',
         'chat_list': chats,
