@@ -5,7 +5,7 @@
 <div class="chat-view clearfix">
     <div class="chat-list">
         {% for chat in chat_list %}
-        <a href="/chat/{{chat.number}}/" class="chat-button"><div class="chat-entry {% if chat.number == selected %}highlight{%endif%}">
+        <a href="/chats/{{chat.number}}/" class="chat-button"><div class="chat-entry {% if chat.number == selected %}highlight{%endif%}">
             <div class="chat-name">{{ chat.name }}</div>
             <div class="chat-last-message">{{ chat.chat_last_message }}</div>
             <div class="chat-time">{{ chat.time|date:"d.m.Y" }}, {{ chat.time|time:"h:i" }}</div>
