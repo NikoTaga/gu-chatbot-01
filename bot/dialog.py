@@ -3,7 +3,7 @@ from json.decoder import JSONDecodeError
 import logging
 
 from billing.common import PaymentClientFactory
-from builders import ECTSDirector
+from builders import MessageDirector
 from constants import CallbackType
 from entities import EventCommandReceived, Callback, EventCommandToSend
 
@@ -85,7 +85,7 @@ class Dialog:
                 'type': CallbackType.CATEGORY,
             } for category in Category.objects.get_categories()][:10]
 
-        msg = ECTSDirector().create_message(
+        msg = MessageDirector().create_ects(
             bot_id=event.bot_id,
             chat_id_in_messenger=event.chat_id_in_messenger,
             text='Выберите категорию товара:',
@@ -107,7 +107,7 @@ class Dialog:
                  'type': CallbackType.PRODUCT,
              } for product in Product.objects.get_products(self.callback.id)][:10]
 
-        msg = ECTSDirector().create_message(
+        msg = MessageDirector().create_ects(
             bot_id=event.bot_id,
             chat_id_in_messenger=event.chat_id_in_messenger,
             text='Выберите товар категории "{}"'.format(category['name']),
@@ -132,7 +132,7 @@ class Dialog:
                 'type': CallbackType.ORDER,
             }]
 
-        msg = ECTSDirector().create_message(
+        msg = MessageDirector().create_ects(
             bot_id=event.bot_id,
             chat_id_in_messenger=event.chat_id_in_messenger,
             text=text,
@@ -165,7 +165,7 @@ class Dialog:
             },
         ]
 
-        msg = ECTSDirector().create_message(
+        msg = MessageDirector().create_ects(
             bot_id=event.bot_id,
             chat_id_in_messenger=event.chat_id_in_messenger,
             text=text,
@@ -189,7 +189,7 @@ class Dialog:
 
         text = 'Оплатите покупку по ссылке\n{}!'.format(approve_link)
 
-        msg = ECTSDirector().create_message(
+        msg = MessageDirector().create_ects(
             bot_id=event.bot_id,
             chat_id_in_messenger=event.chat_id_in_messenger,
             text=text,
