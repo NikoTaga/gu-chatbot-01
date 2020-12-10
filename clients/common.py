@@ -1,11 +1,8 @@
-from typing import Union, Dict, Any, Optional
+from typing import Union, Dict, Any
 
 from constants import BotType
 from clients.ok.ok import OkClient
 from clients.jivosite.jivosite import JivositeClient
-
-# в принципе, не должно быть сложно объединить клиенты через абстракцию
-from entities import EventCommandReceived, EventCommandToSend
 
 
 class PlatformClientFactory:

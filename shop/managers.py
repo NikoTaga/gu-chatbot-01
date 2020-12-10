@@ -2,7 +2,7 @@
 
 Методы модуля предназначены для совершения операций между ботом и базой данных магазина."""
 
-from typing import Optional, List, Dict, Any
+from typing import Optional, List, Dict, Any, TYPE_CHECKING
 
 from django.utils import timezone
 from django.db import models
@@ -11,6 +11,9 @@ from django.db.models.query import QuerySet
 
 from bot.models import Chat
 from constants import OrderStatus
+
+if TYPE_CHECKING:
+    from .models import Order
 
 
 class CategoryManager(models.Manager):
@@ -63,7 +66,7 @@ class OrderManager(models.Manager):
                    chat_id_in_messenger: str,
                    bot_id: int,
                    product_id: Optional[int],
-                   description: Optional[str] = '') -> None:
+                   description: Optional[str] = '') -> 'Order':
 
         """Создаёт и возвращает заказ на основе требуемых параметров."""
 

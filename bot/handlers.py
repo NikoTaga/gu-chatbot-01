@@ -1,4 +1,6 @@
 import logging
+from typing import Optional
+
 from marshmallow import ValidationError
 
 from entities import EventCommandReceived, EventCommandToSend
@@ -9,7 +11,7 @@ from .models import Message
 logger = logging.getLogger('bot')
 
 
-def message_handler(event: EventCommandReceived) -> EventCommandToSend:
+def message_handler(event: EventCommandReceived) -> Optional[EventCommandToSend]:
     """Возвращает команду для отправки (ECTS) в ответ на принятую команду (ECR).
 
     Передаёт полученные данные обработчику логики диалога и сохраняет входящие/исходящие сообщения."""
@@ -24,7 +26,7 @@ def message_handler(event: EventCommandReceived) -> EventCommandToSend:
         event.user_name_in_messenger,
         str(event.payload.command),
         event.message_id_in_messenger)
-    result: EventCommandToSend = Dialog().reply(event)
+    result: Optional[EventCommandToSend] = Dialog().reply(event)
     if result:
         message = Message.objects.save_message(
             result.bot_id,
@@ -38,7 +40,7 @@ def message_handler(event: EventCommandReceived) -> EventCommandToSend:
         )
         result.message_id = message.pk
         try:
-            result.Schema().validate(result)
+            result.Schema().validate(result.Schema().dump(result))
         except ValidationError as err:
             logger.error(f'Handler: {err.args}')
     return result

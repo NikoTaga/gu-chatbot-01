@@ -19,8 +19,7 @@ class Dialog:
     Осуществляет диалог из нескольких этапов, предлагая выбрать категорию, товар, систему оплаты.
     По итогу инициирует выставление счёта в соответствующей системе."""
 
-    def __init__(self) -> None:
-        self.callback = None
+    callback: Callback
 
     def reply(self, event: EventCommandReceived) -> Optional[EventCommandToSend]:
         """Основной метод класса, формирует словарь-ответ на базе типа и параметров запроса в формате ECR."""
@@ -34,17 +33,21 @@ class Dialog:
             CallbackType.STRIPE: self.make_order,
         }
 
-        command = event.payload.command
         result = None
-        try:
-            self.callback = Callback.Schema().loads(command)
-            result = variants[self.callback.type](event)
-        except (JSONDecodeError, TypeError) as err:
-            logger.debug(f'Dialog GREETING: {err.args}')
+        if event.payload.command is not None:
+            command: str = event.payload.command
+            try:
+                self.callback = Callback.Schema().loads(command)
+                result = variants[self.callback.type](event)
+            except JSONDecodeError as err:
+                logger.error(f'Dialog GREETING formed: {err.args}')
+                result = self._form_greeting(event)
+            except KeyError as err:
+                logger.debug(f'Dialog.ready(): {err.args}')
+                # result = self.form_category_list(event)
+        else:
+            logger.debug(f'Dialog GREETING formed.')
             result = self._form_greeting(event)
-        except KeyError as err:
-            logger.debug(f'Dialog.ready(): {err.args}')
-            # result = self.form_category_list(event)
 
         return result
 

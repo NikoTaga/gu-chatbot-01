@@ -35,8 +35,8 @@ def ok_webhook(request: HttpRequest) -> HttpResponse:
         logger.debug(wh)
         event: EventCommandReceived = client.parse_ok_webhook(wh)
         logger.debug(event)
-        result: EventCommandToSend = message_handler(event)
-        if result:
+        result: Optional[EventCommandToSend] = message_handler(event)
+        if result is not None:
             client.send_message(result)
     except ValidationError as e:
         logger.error(f'OK webhook: {e.args}')
@@ -58,8 +58,8 @@ def jivo_webhook(request: HttpRequest) -> HttpResponse:
         logger.debug(wh)
         event: EventCommandReceived = client.parse_jivo_webhook(wh)
         logger.debug(event)
-        result: EventCommandToSend = message_handler(event)
-        if result:
+        result: Optional[EventCommandToSend] = message_handler(event)
+        if result is not None:
             client.send_message(result)
     except ValidationError as e:
         logger.error(f'JIVO webhook: {e.args}')
@@ -78,9 +78,9 @@ def chat_view(request: HttpRequest, pk: Optional[int] = None) -> HttpResponse:
             'time': chat.last_message_time
         } for chat in Chat.objects.all()
     ]
-    messages = []
+    messages: List[Dict[str, Any]] = []
     if pk:
-        messages: List[Dict[str, Any]] = [
+        messages = [
             {
                 'number': message.pk,
                 'content': message.text,

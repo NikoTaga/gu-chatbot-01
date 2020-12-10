@@ -9,7 +9,7 @@ from bot.models import Bot, Message
 from constants import MessageDirection, ChatType, MessageContentType, BotType
 from entities import EventCommandToSend, EventCommandReceived
 from .ok_constants import OK_TOKEN
-from .ok_entities import OkOutgoingMessage, OkIncomingWebhook, OkAttachmentType, OkButtonType, OkButtonIntent
+from .ok_entities import OkOutgoingMessage, OkIncomingWebhook
 from bot.apps import SingletonAPS
 from ..exceptions import OkServerError
 if TYPE_CHECKING:
