@@ -17,7 +17,7 @@ from django.contrib import admin
 from django.urls import path, include
 
 from shop.views import index_page
-from bot.views import jivo_webhook, ok_webhook, chat_list, chat_view
+from bot.views import jivo_webhook, ok_webhook, chat_view
 
 
 urlpatterns = [
