@@ -51,12 +51,12 @@ class MessageManager(models.Manager):
 
     def save_message(self,
                      bot_id: int,
-                     messenger_user_id: Optional[str],
-                     user_name: Optional[str],
                      chat_id_in_messenger: str,
                      chat_type: ChatType,
                      message_direction: MessageDirection,
                      message_content_type: MessageContentType,
+                     messenger_user_id: Optional[str],
+                     user_name: Optional[str],
                      message_text: Optional[str] = '',
                      message_id_in_messenger: Optional[str] = '') -> 'Message':
         """Сохраняет входящие/исходящие сообщения, обновляет соответствующие поля активности чатов."""

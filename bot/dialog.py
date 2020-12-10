@@ -39,10 +39,10 @@ class Dialog:
         try:
             self.callback = Callback.Schema().loads(command)
             result = variants[self.callback.type](event)
-        except JSONDecodeError as err:
+        except (JSONDecodeError, TypeError) as err:
             logger.debug(f'Dialog GREETING: {err.args}')
-            self._form_greeting(event)
-        except (KeyError, TypeError) as err:
+            result = self._form_greeting(event)
+        except KeyError as err:
             logger.debug(f'Dialog.ready(): {err.args}')
             # result = self.form_category_list(event)
 
@@ -64,7 +64,7 @@ class Dialog:
         else:
             greeting = greeting.format('')
 
-        msg = ECTSDirector().create_message(
+        msg = MessageDirector().create_ects(
             bot_id=event.bot_id,
             chat_id_in_messenger=event.chat_id_in_messenger,
             text=greeting,

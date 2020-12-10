@@ -12,7 +12,7 @@ class Choice(Enum):
 # Global
 # ----------------------------
 
-SITE_URL = 'http://8634a05c29d7.ngrok.io'
+SITE_URL = 'http://4560caa3384e.ngrok.io'
 
 
 # ----------------------------
@@ -74,6 +74,7 @@ class MessageContentType(Choice):
 
 
 class CallbackType(Enum):
+    GREETING = 'greeting'
     CATEGORY = 'category'
     PRODUCT = 'product'
     ORDER = 'order'

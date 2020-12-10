@@ -1,6 +1,8 @@
 from typing import TYPE_CHECKING
 
 from builders import MessageDirector
+from constants import ChatType
+from .models import Message
 from clients.common import PlatformClientFactory
 
 if TYPE_CHECKING:
@@ -11,10 +13,21 @@ def send_payment_completed(checkout: 'Checkout') -> None:
     """Формирует сообщение об удачной оплате и посылает его через соответствующий клиент."""
 
     bot_type = checkout.order.chat.bot.bot_type
-    msg = MessageDirector().create_ects(
+    command = MessageDirector().create_ects(
         bot_id=checkout.order.chat.bot.id,
         chat_id_in_messenger=checkout.order.chat.id_in_messenger,
         text=f'Оплата товара: {checkout.order.product.name} прошла успешно.\nСпасибо за покупку!',
     )
+    message = Message.objects.save_message(
+        bot_id=command.bot_id,
+        chat_id_in_messenger=command.chat_id_in_messenger,
+        chat_type=ChatType.PRIVATE,
+        message_direction=command.payload.direction,
+        message_content_type=command.content_type,
+        messenger_user_id=checkout.order.chat.bot_user.messenger_user_id,
+        user_name=checkout.order.chat.bot_user.name,
+        message_text=command.payload.text,
+    )
+    command.message_id = message.pk
     client = PlatformClientFactory.create(bot_type)
-    client.send_message(msg)
+    client.send_message(command)
