@@ -1,0 +1,29 @@
+name: Prepare
+
+on:
+  push:
+    branches:
+      - '*'
+      - '**'
+
+    pull_request:
+      branches:
+        - '*'
+        - '**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Git checkout
+        uses: actions/checkout@v2
+
+      - name: Python installation
+        uses: actions/setup-python@v2
+        with:
+          python-version: 3.8
+
+      - name: Install dependencies
+        run: |
+          python prepare.py
