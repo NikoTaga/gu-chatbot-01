@@ -37,8 +37,7 @@ class PaypalClient(PaymentSystemClient):
             'PAYMENT.CAPTURE.COMPLETED': self.fulfill,
         }
 
-    @staticmethod
-    def fulfill(wh_data: Dict[str, Any]) -> None:
+    def fulfill(self, wh_data: Dict[str, Any]) -> None:
         """Завершает заказ, уведомляет клиента."""
 
         capture_id = wh_data['resource']['id']
@@ -48,8 +47,7 @@ class PaypalClient(PaymentSystemClient):
         except UpdateCompletedCheckoutError as e:
             print(e)
 
-    @staticmethod
-    def verify(request: HttpRequest) -> bool:
+    def verify(self, request: HttpRequest) -> bool:
         """Проверяет соответствие подписи вебхука на случай попытки имитации оповещения.
 
         Возвращает результат проверки."""

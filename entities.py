@@ -13,8 +13,9 @@ from constants import (ChatType, GenericTemplateActionType, MessageDirection, Ca
 
 class LinterFix:
 
+    # todo rework this
     def __init__(self, *args: Any, **kwargs: Any) -> None:
-        super().__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)  # type: ignore
 
 
 # заставляет отбрасывать все значения None при дампе

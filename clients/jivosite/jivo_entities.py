@@ -59,7 +59,6 @@ class JivoMessage:
     timestamp: int
     title: str
     type: JivoMessageType = field(
-        default=None,
         metadata={
             "marshmallow_field": marshmallow_enum.EnumField(JivoMessageType, by_value=True)
         }

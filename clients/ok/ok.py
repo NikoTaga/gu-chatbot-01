@@ -11,7 +11,9 @@ from entities import EventCommandToSend, EventCommandReceived
 from .ok_constants import OK_TOKEN
 from .ok_entities import OkOutgoingMessage, OkIncomingWebhook
 from bot.apps import SingletonAPS
-from ..exceptions import OkServerError
+from clients.abstract import SocialPlatformClient
+from clients.exceptions import OkServerError
+
 if TYPE_CHECKING:
     from django.http import HttpRequest
 
@@ -21,7 +23,7 @@ logger = logging.getLogger('clients')
 bot_scheduler = SingletonAPS().get_aps
 
 
-class OkClient:
+class OkClient(SocialPlatformClient):
     """Клиент для работы с социальной платформой Одноклассники.
 
     Содержит методы для преобразования входящих вебхуков в формат ECR,
@@ -32,7 +34,7 @@ class OkClient:
     headers: Dict[str, Any] = {'Content-Type': 'application/json;charset=utf-8'}
 
     @staticmethod
-    def verify(request: 'HttpRequest') -> bool:
+    def verify_request(request: 'HttpRequest') -> bool:
         ip_pool = [ip_network(net) for net in OK_IP_POOL.split(', ')]
         # todo might not work due to host routing
         host_ip = ip_address(request.META.get('REMOTE_ADDR'))
@@ -42,18 +44,18 @@ class OkClient:
                 return True
         return False
 
-    @staticmethod
-    def form_ok_message(payload: EventCommandToSend) -> OkOutgoingMessage:
+    def _form_message(self, payload: EventCommandToSend) -> OkOutgoingMessage:
 
         msg = MessageDirector().create_ok_message(payload)
-        msg.Schema().validate(msg)
+        msg.Schema().validate(msg.Schema().dump(msg))
 
         logger.debug(msg)
 
         return msg
 
-    @staticmethod
-    def parse_ok_webhook(wh: OkIncomingWebhook) -> EventCommandReceived:
+    def parse_webhook(self, request: 'HttpRequest') -> EventCommandReceived:
+        wh = OkIncomingWebhook.Schema().loads(request.body)
+        logger.debug(wh)
         # формирование объекта с данными для ECR
         ecr_data: Dict[str, Any] = {
             'bot_id': Bot.objects.get_bot_id_by_type(BotType.TYPE_OK.value),
@@ -90,7 +92,7 @@ class OkClient:
             logger.error(f'OK unreachable: {e.args}')
 
     def send_message(self, payload: EventCommandToSend) -> None:
-        msg = self.form_ok_message(payload)
+        msg = self._form_message(payload)
 
         send_link = 'https://api.ok.ru/graph/me/messages/{}?access_token={}'.format(
             payload.chat_id_in_messenger, OK_TOKEN

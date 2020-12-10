@@ -46,7 +46,7 @@ class Dialog:
                 logger.debug(f'Dialog.ready(): {err.args}')
                 # result = self.form_category_list(event)
         else:
-            logger.debug(f'Dialog GREETING formed.')
+            logger.debug('Dialog GREETING formed.')
             result = self._form_greeting(event)
 
         return result

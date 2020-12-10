@@ -12,16 +12,14 @@ class PaymentSystemClient(ABC):
     def check_out(self, order_id: int, product_id: int) -> str:
         pass
 
-    @staticmethod
     @abstractmethod
-    def verify(request: 'HttpRequest') -> bool:
+    def verify(self, request: 'HttpRequest') -> bool:
         pass
 
     @abstractmethod
     def capture(self, wh_data: Dict[str, Any]) -> None:
         pass
 
-    @staticmethod
     @abstractmethod
-    def fulfill(data: Dict[str, Any]) -> None:
+    def fulfill(self, data: Dict[str, Any]) -> None:
         pass
