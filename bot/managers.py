@@ -84,7 +84,7 @@ class MessageManager(models.Manager):
 
         return message
 
-    def set_sent(self, message_id: int):
+    def set_sent(self, message_id: int) -> None:
         """Устанавливает статус SENT сообщениям, успешно отправленным через API платформы."""
 
         message = self.get(id=message_id)

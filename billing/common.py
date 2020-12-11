@@ -10,11 +10,11 @@ if TYPE_CHECKING:
 class PaymentClientFactory:
     """Создаёт инстанс клиента социальной платформы по типу платформы."""
 
-    types: Dict[int, Any] = {
+    types: Dict[str, Any] = {
         'paypal': PaypalClient,
         'stripe': StripeClient,
     }
 
     @classmethod
-    def create(cls, bot_type: int) -> 'PaymentSystemClient':
+    def create(cls, bot_type: str) -> 'PaymentSystemClient':
         return cls.types[bot_type]()

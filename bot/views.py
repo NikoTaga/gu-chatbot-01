@@ -10,8 +10,6 @@ from constants import BotType
 from entities import EventCommandReceived, EventCommandToSend
 from .handlers import message_handler
 from clients.common import PlatformClientFactory
-from clients.ok.ok_entities import OkIncomingWebhook
-from clients.jivosite.jivo_entities import JivoIncomingWebhook
 from .models import Chat, Message
 
 
@@ -29,14 +27,12 @@ def ok_webhook(request: HttpRequest) -> HttpResponse:
 
     logger.debug(f'"inc wh from: {request.get_host()}')
     # todo doesn't work yet due to ngrok
-    logger.debug(f'verified: {client.verify(request)}')
+    logger.debug(f'verified: {client.verify_request(request)}')
     try:
-        wh = OkIncomingWebhook.Schema().loads(request.body)
-        logger.debug(wh)
-        event: EventCommandReceived = client.parse_ok_webhook(wh)
+        event: EventCommandReceived = client.parse_webhook(request)
         logger.debug(event)
-        result: EventCommandToSend = message_handler(event)
-        if result:
+        result: Optional[EventCommandToSend] = message_handler(event)
+        if result is not None:
             client.send_message(result)
     except ValidationError as e:
         logger.error(f'OK webhook: {e.args}')
@@ -54,12 +50,10 @@ def jivo_webhook(request: HttpRequest) -> HttpResponse:
     logger.debug(f'"inc jivo wh from: {request.get_host()}')
     client = PlatformClientFactory.create(BotType.TYPE_JIVOSITE.value)
     try:
-        wh = JivoIncomingWebhook.Schema().loads(request.body)
-        logger.debug(wh)
-        event: EventCommandReceived = client.parse_jivo_webhook(wh)
+        event: EventCommandReceived = client.parse_webhook(request)
         logger.debug(event)
-        result: EventCommandToSend = message_handler(event)
-        if result:
+        result: Optional[EventCommandToSend] = message_handler(event)
+        if result is not None:
             client.send_message(result)
     except ValidationError as e:
         logger.error(f'JIVO webhook: {e.args}')
@@ -78,9 +72,9 @@ def chat_view(request: HttpRequest, pk: Optional[int] = None) -> HttpResponse:
             'time': chat.last_message_time
         } for chat in Chat.objects.all()
     ]
-    messages = []
+    messages: List[Dict[str, Any]] = []
     if pk:
-        messages: List[Dict[str, Any]] = [
+        messages = [
             {
                 'number': message.pk,
                 'content': message.text,

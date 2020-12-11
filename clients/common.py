@@ -1,11 +1,11 @@
-from typing import Union, Dict, Any, Optional
+from typing import Dict, Any, TYPE_CHECKING
 
 from constants import BotType
 from clients.ok.ok import OkClient
 from clients.jivosite.jivosite import JivositeClient
 
-# в принципе, не должно быть сложно объединить клиенты через абстракцию
-from entities import EventCommandReceived, EventCommandToSend
+if TYPE_CHECKING:
+    from clients.abstract import SocialPlatformClient
 
 
 class PlatformClientFactory:
@@ -17,7 +17,7 @@ class PlatformClientFactory:
     }
 
     @classmethod
-    def create(cls, bot_type: int) -> Union[OkClient, JivositeClient]:
+    def create(cls, bot_type: int) -> 'SocialPlatformClient':
         return cls.types[bot_type]()
 
 

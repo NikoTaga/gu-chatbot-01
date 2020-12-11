@@ -8,9 +8,9 @@ import marshmallow
 import marshmallow_enum
 from marshmallow_dataclass import dataclass
 
-from clients.ok.ok_constants import (OkButtonType, OkButtonIntent, OkWebhookType, OkSystemWebhookType, OkPayloadCallType,
-                                     OkPayloadCallHangupType, OkAttachmentType, OkPrivacyWarningType)
-from entities import SkipNoneSchema
+from clients.ok.ok_constants import (OkButtonType, OkButtonIntent, OkWebhookType, OkSystemWebhookType,
+                                     OkPayloadCallType, OkPayloadCallHangupType, OkAttachmentType, OkPrivacyWarningType)
+from entities import SkipNoneSchema, LinterFix
 
 
 @dataclass(order=True, base_schema=SkipNoneSchema)
@@ -24,7 +24,7 @@ class OkSender:
 
 
 @dataclass(order=True)
-class OkRecipient:
+class OkRecipient(LinterFix):
     """Класс данных для хранения информации о получателе входящего сообщения ОК."""
 
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
@@ -33,7 +33,7 @@ class OkRecipient:
 
 
 @dataclass(order=True, base_schema=SkipNoneSchema)
-class OkButton:
+class OkButton(LinterFix):
     """Класс данных для хранения информации о кнопке в сообщении ОК."""
 
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
@@ -60,7 +60,7 @@ class OkButton:
 
 
 @dataclass(order=True, base_schema=SkipNoneSchema)
-class OkButtons:
+class OkButtons(LinterFix):
     """Класс данных для обертывания информации о кнопках в сообщении."""
 
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
@@ -78,7 +78,7 @@ class OkButtons:
 
 
 @dataclass(order=True, base_schema=SkipNoneSchema)
-class OkPayload:
+class OkPayload(LinterFix):
     """Класс данных для хранения информации о содержимом приложения в сообщении ОК."""
 
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
@@ -120,7 +120,7 @@ class OkPayload:
 
 
 @dataclass(order=True)
-class OkAttachment:
+class OkAttachment(LinterFix):
     """Класс данных для хранения информации о приложении к сообщению ОК."""
 
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
@@ -134,7 +134,7 @@ class OkAttachment:
 
 
 @dataclass(order=True, base_schema=SkipNoneSchema)
-class OkMessage:
+class OkMessage(LinterFix):
     """Класс данных для хранения информации о сообщении ОК."""
 
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
@@ -189,7 +189,7 @@ class OkIncomingWebhook:
 
 
 @dataclass(order=True)
-class OkOutgoingMessage:
+class OkOutgoingMessage(LinterFix):
     """Класс данных для хранения информации об исходящем сообщении ОК."""
 
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema

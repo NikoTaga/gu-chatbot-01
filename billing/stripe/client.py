@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict, Any
 
 import stripe
 from stripe.error import SignatureVerificationError
@@ -82,14 +82,15 @@ class StripeClient(PaymentSystemClient):
         return True
 
     # todo возможно, не самое удачное решение
-    def capture(self, checkout_id: str) -> None:
+    def capture(self, wh_data: Dict[str, Any]) -> None:
         """Функция-филлер, для унификации процессинга с PayPal."""
-
+        checkout_id = wh_data['data']['object']['id']
         Checkout.objects.update_capture(checkout_id, checkout_id)
 
-    def fulfill(self, checkout_id: str) -> None:
+    def fulfill(self, wh_data: Dict[str, Any]) -> None:
         """Завершает заказ, уведомляет клиента."""
 
+        checkout_id = wh_data['data']['object']['id']
         try:
             checkout = Checkout.objects.fulfill_checkout(checkout_id)
             send_payment_completed(checkout)

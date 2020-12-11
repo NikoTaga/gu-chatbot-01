@@ -49,9 +49,9 @@ def stripe_webhook(request: HttpRequest) -> HttpResponse:
         print('>>> VERIFIED')
         pprint(obj)
         if obj['type'] == 'checkout.session.completed':
-            checkout_id = obj['data']['object']['id']
-            stripe_client.capture(checkout_id)
-            stripe_client.fulfill(checkout_id)
+
+            stripe_client.capture(obj)
+            stripe_client.fulfill(obj)
 
         return HttpResponse(status=200)
     else:

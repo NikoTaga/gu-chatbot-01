@@ -11,6 +11,13 @@ from constants import (ChatType, GenericTemplateActionType, MessageDirection, Ca
                        MessageContentType)
 
 
+class LinterFix:
+
+    # todo rework this
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
+        super().__init__(*args, **kwargs)  # type: ignore
+
+
 # заставляет отбрасывать все значения None при дампе
 # имеет смысл промаркировать все классы, данные из которых планируются к передаче НА удалённый сервер
 class SkipNoneSchema(marshmallow.Schema):
@@ -33,7 +40,7 @@ class Contact:
 
 
 @dataclass(order=True)
-class GenericTemplateAction:
+class GenericTemplateAction(LinterFix):
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
     type: GenericTemplateActionType = field(
@@ -59,7 +66,7 @@ class GenericTemplateAction:
 
 
 @dataclass(order=True)
-class InlineButton:
+class InlineButton(LinterFix):
     Schema: ClassVar[Type[marshmallow.Schema]] = marshmallow.Schema
 
     text: str
@@ -143,7 +150,7 @@ class AbstractCommand(ABC):
 
 
 @dataclass(order=True)
-class EventCommandReceived(AbstractCommand):
+class EventCommandReceived(LinterFix, AbstractCommand):
     chat_type: ChatType = field(
         metadata={
             "marshmallow_field": marshmallow_enum.EnumField(ChatType, by_value=True)
@@ -185,7 +192,7 @@ class EventCommandReceived(AbstractCommand):
 
 
 @dataclass(order=True)
-class EventCommandToSend(AbstractCommand):
+class EventCommandToSend(LinterFix, AbstractCommand):
     # Перед отправкой мы должны сохранить сообщение и знать его ID
     message_id: Optional[int] = None
 

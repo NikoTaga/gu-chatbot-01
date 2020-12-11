@@ -1,9 +1,10 @@
 from datetime import datetime, timedelta
 import requests
 import logging
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, TYPE_CHECKING
 
 from bot.models import Bot, Message
+from clients.abstract import SocialPlatformClient
 from clients.exceptions import JivoServerError
 from constants import MessageDirection, ChatType, MessageContentType, BotType
 from entities import EventCommandToSend, EventCommandReceived
@@ -11,12 +12,15 @@ from clients.jivosite.jivo_entities import JivoEvent, JivoIncomingWebhook
 from clients.jivosite.jivo_constants import JivoEventType, JivoMessageType, JIVO_WH_KEY, JIVO_TOKEN
 from bot.apps import SingletonAPS
 
+if TYPE_CHECKING:
+    from django.http import HttpRequest
+
 
 logger = logging.getLogger('clients')
 bot_scheduler = SingletonAPS().get_aps
 
 
-class JivositeClient:
+class JivositeClient(SocialPlatformClient):
     """Клиент для работы с социальной платформой JivoSite.
 
     Содержит методы для преобразования входящих вебхуков в формат ECR,
@@ -30,7 +34,12 @@ class JivositeClient:
         JIVO_WH_KEY, JIVO_TOKEN
     )
 
-    def form_jivo_event(self, payload: EventCommandToSend) -> JivoEvent:
+    @staticmethod
+    def verify_request(request: 'HttpRequest') -> bool:
+        # todo implement auth session?
+        return True
+
+    def _form_message(self, payload: EventCommandToSend) -> JivoEvent:
         """Создаёт программный объект с данными исходящего сообщения, готовыми для отправки."""
 
         event_data: Dict[str, Any] = {
@@ -53,8 +62,8 @@ class JivositeClient:
                    'text': payload.inline_buttons[i].text,
                    'id': i,
                } for i in range(len(payload.inline_buttons))]
-            # todo pretty much a hack, but a good solution kinda requires
-            # passing more data in base commands tbh
+            assert payload.inline_buttons[0].action.payload is not None, 'Malformed payload in ECTS.'
+            # todo pretty much a hack, but a good solution kinda requires passing more data in base commands tbh
             if payload.inline_buttons[0].action.payload.find('greeting'):
                 msg_data['buttons'].append({
                     'text': 'Переключиться на оператора',
@@ -74,7 +83,7 @@ class JivositeClient:
 
         return event
 
-    def _invite_agent(self, wh: JivoIncomingWebhook):
+    def _invite_agent(self, wh: JivoIncomingWebhook) -> None:
         data = {
             'event': 'INVITE_AGENT',
             # todo more magic hacks
@@ -93,9 +102,11 @@ class JivositeClient:
             id=f'jivo_{wh.client_id}',
             )
 
-    def parse_jivo_webhook(self, wh: JivoIncomingWebhook) -> EventCommandReceived:
+    def parse_webhook(self, request: 'HttpRequest') -> EventCommandReceived:
         """Преобразует объект входящего вебхука в формат входящей команды бота - ECR."""
 
+        wh = JivoIncomingWebhook.Schema().loads(request.body)
+        logger.debug(wh)
         # формирование объекта с данными для ECR
         ecr_data: Dict[str, Any] = {
             'bot_id': Bot.objects.get_bot_id_by_type(BotType.TYPE_JIVOSITE.value),
@@ -152,7 +163,7 @@ class JivositeClient:
     def send_message(self, payload: EventCommandToSend) -> None:
         """Отправляет соответствующее используемой команде формата ECTS сообщение в Jivo."""
 
-        msg = self.form_jivo_event(payload)
+        msg = self._form_message(payload)
         send_link = 'https://bot.jivosite.com/webhooks/{}/{}'.format(
             JIVO_WH_KEY, JIVO_TOKEN
         )
