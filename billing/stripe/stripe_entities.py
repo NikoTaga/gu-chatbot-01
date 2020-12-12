@@ -7,7 +7,7 @@ import marshmallow
 import marshmallow_enum
 from marshmallow_dataclass import dataclass
 
-from entities import SkipNoneSchema
+from common.entities import SkipNoneSchema
 from billing.constants import StripeCurrency, StripePaymentMethod, StripeMode
 
 

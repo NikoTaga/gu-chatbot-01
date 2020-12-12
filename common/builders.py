@@ -4,8 +4,8 @@ from typing import List, Dict, Any, Optional
 from clients.ok.ok_constants import OkButtonIntent, OkButtonType, OkAttachmentType
 from clients.ok.ok_entities import (OkOutgoingMessage, OkMessage, OkRecipient, OkButton, OkAttachment, OkPayload,
                                     OkButtons)
-from constants import MessageDirection, MessageContentType, GenericTemplateActionType
-from entities import Payload, EventCommandToSend, InlineButton, GenericTemplateAction, Callback
+from common.constants import MessageDirection, MessageContentType, GenericTemplateActionType
+from common.entities import Payload, EventCommandToSend, InlineButton, GenericTemplateAction, Callback
 
 
 logger = logging.getLogger('root')

@@ -168,14 +168,6 @@ LOGGING = {
             'handlers': ['file', 'console'],
             'level': 'DEBUG',
         },
-        'bot': {
-            'handlers': ['file', 'console'],
-            'level': 'DEBUG',
-        },
-        'clients': {
-            'handlers': ['file', 'console'],
-            'level': 'DEBUG',
-        },
         'django': {
             'handlers': ['file', 'console'],
         },

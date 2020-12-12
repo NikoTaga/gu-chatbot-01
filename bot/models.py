@@ -1,6 +1,6 @@
 from django.db import models
 
-from constants import (BotType, ChatType, MessageContentType, MessageDirection, MessageStatus)
+from common.constants import (BotType, ChatType, MessageContentType, MessageDirection, MessageStatus)
 from ecom_chatbot.settings import LANGUAGES
 from .managers import BotManager, ChatManager, MessageManager, BotUserManager
 

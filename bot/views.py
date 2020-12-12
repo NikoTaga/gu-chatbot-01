@@ -6,14 +6,14 @@ from typing import List, Dict, Any, Optional
 from marshmallow.exceptions import ValidationError
 import logging
 
-from constants import BotType
-from entities import EventCommandReceived, EventCommandToSend
+from common.constants import BotType
+from common.entities import EventCommandReceived, EventCommandToSend
 from .handlers import message_handler
 from clients.common import PlatformClientFactory
 from .models import Chat, Message
 
 
-logger = logging.getLogger('bot')
+logger = logging.getLogger('root')
 
 
 @csrf_exempt  # type: ignore

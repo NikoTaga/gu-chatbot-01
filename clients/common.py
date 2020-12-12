@@ -1,6 +1,6 @@
 from typing import Dict, Any, TYPE_CHECKING
 
-from constants import BotType
+from common.constants import BotType
 from clients.ok.ok import OkClient
 from clients.jivosite.jivosite import JivositeClient
 

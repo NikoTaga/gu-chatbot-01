@@ -7,11 +7,11 @@ from billing.exceptions import UpdateCompletedCheckoutError
 from billing.models import Checkout
 from billing.stripe.stripe_entities import StripeCheckout
 from bot.notify import send_payment_completed
-from constants import SITE_URL
 from shop.models import Product
 from billing.constants import StripePaymentMethod, StripeCurrency, StripeMode, STRIPE_SECRET_KEY, STRIPE_WHSEC_KEY, \
-    PaymentSystems
+    PaymentSystems, SITE_HTTPS_URL
 from billing.abstract import PaymentSystemClient
+from common.strings import StripeStrings
 
 if TYPE_CHECKING:
     from django.http import HttpRequest
@@ -23,7 +23,7 @@ class StripeClient(PaymentSystemClient):
     Содержит функции для инициализации сессии и обработки платежей в виде Stripe Payment -
     выписки, захвата, верификации и завершения."""
 
-    _link_pattern: str = '%s/billing/stripe_redirect/%s'
+    _link_pattern: str = StripeStrings.LINK_PATTERN.value
 
     def __init__(self) -> None:
         """Инициирует сессию с системой Stripe."""
@@ -50,14 +50,14 @@ class StripeClient(PaymentSystemClient):
                 },
             ],
             'mode': StripeMode.PAYMENT,
-            'success_url': f'{SITE_URL}/billing/payment_success/{order_id}',
-            'cancel_url': f'{SITE_URL}/billing/payment_cancel/{order_id}',
+            'success_url': StripeStrings.LINK_SUCCESS.value.format(site=SITE_HTTPS_URL, order_id=order_id),
+            'cancel_url': StripeStrings.LINK_CANCEL.value.format(site=SITE_HTTPS_URL, order_id=order_id),
         }
         stripe_checkout = StripeCheckout.Schema().load(checkout_data)
         checkout_session = self.client.checkout.Session.create(**stripe_checkout.Schema().dump(stripe_checkout))
         Checkout.objects.make_checkout(PaymentSystems.STRIPE.value, checkout_session.id, order_id)
 
-        approve_link = self._link_pattern % (SITE_URL, checkout_session.id)
+        approve_link = self._link_pattern.format(site=SITE_HTTPS_URL, session=checkout_session.id)
 
         return approve_link
 

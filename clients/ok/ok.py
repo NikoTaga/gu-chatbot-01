@@ -4,22 +4,22 @@ from datetime import datetime, timedelta
 from ipaddress import ip_network, ip_address
 from typing import Dict, Any, TYPE_CHECKING
 
-from builders import MessageDirector
+from common.builders import MessageDirector
 from bot.models import Bot, Message
-from constants import MessageDirection, ChatType, MessageContentType, BotType
-from entities import EventCommandToSend, EventCommandReceived
+from common.constants import MessageDirection, ChatType, MessageContentType, BotType
+from common.entities import EventCommandToSend, EventCommandReceived
 from .ok_constants import OK_TOKEN
 from .ok_entities import OkOutgoingMessage, OkIncomingWebhook
 from bot.apps import SingletonAPS
 from clients.abstract import SocialPlatformClient
 from clients.exceptions import OkServerError
+from common.strings import OkStrings
 
 if TYPE_CHECKING:
     from django.http import HttpRequest
 
 
-OK_IP_POOL = '217.20.145.192/28, 217.20.151.160/28, 217.20.153.48/28'
-logger = logging.getLogger('clients')
+logger = logging.getLogger('root')
 bot_scheduler = SingletonAPS().get_aps
 
 
@@ -35,7 +35,8 @@ class OkClient(SocialPlatformClient):
 
     @staticmethod
     def verify_request(request: 'HttpRequest') -> bool:
-        ip_pool = [ip_network(net) for net in OK_IP_POOL.split(', ')]
+        ip_pool = [ip_network(net)
+                   for net in OkStrings.IP_POOL.value.split(', ')]
         # todo might not work due to host routing
         host_ip = ip_address(request.META.get('REMOTE_ADDR'))
 
@@ -94,8 +95,8 @@ class OkClient(SocialPlatformClient):
     def send_message(self, payload: EventCommandToSend) -> None:
         msg = self._form_message(payload)
 
-        send_link = 'https://api.ok.ru/graph/me/messages/{}?access_token={}'.format(
-            payload.chat_id_in_messenger, OK_TOKEN
+        send_link = OkStrings.API_LINK.value.format(
+            chat_id=payload.chat_id_in_messenger, token=OK_TOKEN
         )
 
         data = msg.Schema().dumps(msg)

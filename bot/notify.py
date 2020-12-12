@@ -1,7 +1,8 @@
 from typing import TYPE_CHECKING
 
-from builders import MessageDirector
-from constants import ChatType
+from common.builders import MessageDirector
+from common.constants import ChatType
+from common.strings import NotifyPhrases
 from .models import Message
 from clients.common import PlatformClientFactory
 
@@ -16,7 +17,7 @@ def send_payment_completed(checkout: 'Checkout') -> None:
     command = MessageDirector().create_ects(
         bot_id=checkout.order.chat.bot.id,
         chat_id_in_messenger=checkout.order.chat.id_in_messenger,
-        text=f'Оплата товара: {checkout.order.product.name} прошла успешно.\nСпасибо за покупку!',
+        text=NotifyPhrases.PAYMENT_SUCCESS.value.format(name=checkout.order.product.name),
     )
     message = Message.objects.save_message(
         bot_id=command.bot_id,

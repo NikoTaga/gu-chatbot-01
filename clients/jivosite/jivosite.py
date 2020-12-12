@@ -6,17 +6,18 @@ from typing import Dict, Any, Optional, TYPE_CHECKING
 from bot.models import Bot, Message
 from clients.abstract import SocialPlatformClient
 from clients.exceptions import JivoServerError
-from constants import MessageDirection, ChatType, MessageContentType, BotType
-from entities import EventCommandToSend, EventCommandReceived
+from common.constants import MessageDirection, ChatType, MessageContentType, BotType
+from common.entities import EventCommandToSend, EventCommandReceived
 from clients.jivosite.jivo_entities import JivoEvent, JivoIncomingWebhook
 from clients.jivosite.jivo_constants import JivoEventType, JivoMessageType, JIVO_WH_KEY, JIVO_TOKEN
 from bot.apps import SingletonAPS
+from common.strings import JivoStrings
 
 if TYPE_CHECKING:
     from django.http import HttpRequest
 
 
-logger = logging.getLogger('clients')
+logger = logging.getLogger('root')
 bot_scheduler = SingletonAPS().get_aps
 
 
@@ -30,8 +31,8 @@ class JivositeClient(SocialPlatformClient):
 
     headers: Dict[str, Any] = {'Content-Type': 'application/json'}
     command_cache: Dict[str, Dict[str, Optional[str]]] = {}
-    _send_link = 'https://bot.jivosite.com/webhooks/{}/{}'.format(
-        JIVO_WH_KEY, JIVO_TOKEN
+    _send_link = JivoStrings.API_LINK.value.format(
+        key=JIVO_WH_KEY, token=JIVO_TOKEN
     )
 
     @staticmethod
@@ -66,7 +67,7 @@ class JivositeClient(SocialPlatformClient):
             # todo pretty much a hack, but a good solution kinda requires passing more data in base commands tbh
             if payload.inline_buttons[0].action.payload.find('greeting'):
                 msg_data['buttons'].append({
-                    'text': 'Переключиться на оператора',
+                    'text': JivoStrings.INVITE_OPERATOR.value,
                     'id': 0,
                 })
         else:
@@ -132,7 +133,7 @@ class JivositeClient(SocialPlatformClient):
         except KeyError as err:
             logger.debug(f'nothing in command_cache: {err.args}')
 
-        if wh.message.text == 'Переключиться на оператора':
+        if wh.message.text == JivoStrings.INVITE_OPERATOR.value:
             logger.info('Agent invited: {}'.format(wh.client_id))
             self._invite_agent(wh)
             # todo more hacks
@@ -164,9 +165,6 @@ class JivositeClient(SocialPlatformClient):
         """Отправляет соответствующее используемой команде формата ECTS сообщение в Jivo."""
 
         msg = self._form_message(payload)
-        send_link = 'https://bot.jivosite.com/webhooks/{}/{}'.format(
-            JIVO_WH_KEY, JIVO_TOKEN
-        )
         data = msg.Schema().dumps(msg)
 
         logger.debug(f'Sending to JIVO: {data}')
@@ -177,6 +175,6 @@ class JivositeClient(SocialPlatformClient):
             seconds=5,
             next_run_time=datetime.now(),
             end_date=datetime.now() + timedelta(minutes=5),
-            args=[payload.message_id, send_link, data],
+            args=[payload.message_id, self._send_link, data],
             id=f'jivo_{payload.message_id}',
             )

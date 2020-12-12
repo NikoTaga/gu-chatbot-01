@@ -3,7 +3,7 @@ from typing import Optional, TYPE_CHECKING
 from django.db import models
 from django.db.models.query import QuerySet
 
-from constants import (ChatType, MessageDirection, MessageContentType, MessageStatus)
+from common.constants import (ChatType, MessageDirection, MessageContentType, MessageStatus)
 if TYPE_CHECKING:
     from bot.models import (BotUser, Chat, Message)
 
