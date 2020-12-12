@@ -65,7 +65,8 @@ class JivositeClient(SocialPlatformClient):
                } for i in range(len(payload.inline_buttons))]
             assert payload.inline_buttons[0].action.payload is not None, 'Malformed payload in ECTS.'
             # todo pretty much a hack, but a good solution kinda requires passing more data in base commands tbh
-            if payload.inline_buttons[0].action.payload.find('greeting'):
+            logger.debug(f'>>> inline jivo check {payload.inline_buttons[0].action.payload}')
+            if payload.inline_buttons[0].action.payload.find('greeting') > 0:
                 msg_data['buttons'].append({
                     'text': JivoStrings.INVITE_OPERATOR.value,
                     'id': 0,
@@ -88,7 +89,7 @@ class JivositeClient(SocialPlatformClient):
         data = {
             'event': 'INVITE_AGENT',
             # todo more magic hacks
-            'id': -int(wh.client_id),
+            'id': f'-{wh.client_id}',
             'client_id': wh.client_id,
             'chat_id': wh.chat_id,
         }
@@ -100,12 +101,13 @@ class JivositeClient(SocialPlatformClient):
             next_run_time=datetime.now(),
             end_date=datetime.now() + timedelta(minutes=5),
             args=[data['id'], self._send_link, event.Schema().dumps(event)],
-            id=f'jivo_{wh.client_id}',
+            id=f'jivo_-{wh.client_id}',
             )
 
     def parse_webhook(self, request: 'HttpRequest') -> EventCommandReceived:
         """Преобразует объект входящего вебхука в формат входящей команды бота - ECR."""
 
+        logger.debug(f'For parsing: {request.body}')
         wh = JivoIncomingWebhook.Schema().loads(request.body)
         logger.debug(wh)
         # формирование объекта с данными для ECR
@@ -145,7 +147,7 @@ class JivositeClient(SocialPlatformClient):
 
         return ecr
 
-    def _post_to_platform(self, message_id: int, send_link: str, data: str,) -> None:
+    def _post_to_platform(self, message_id: str, send_link: str, data: str,) -> None:
         print('Trying to send...')
 
         try:
@@ -156,7 +158,7 @@ class JivositeClient(SocialPlatformClient):
                 err = r.json()['error']
                 logger.error(f'OK error: {err["code"]} -> {err["message"]}')
                 raise JivoServerError(err["code"], err["message"])
-            if message_id > 0:
+            if message_id[0] != '-':
                 Message.objects.set_sent(message_id)
         except (requests.Timeout, requests.ConnectionError) as e:
             logger.error(f'JIVO unreachable{e.args}')

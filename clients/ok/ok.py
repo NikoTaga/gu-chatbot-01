@@ -38,7 +38,8 @@ class OkClient(SocialPlatformClient):
         ip_pool = [ip_network(net)
                    for net in OkStrings.IP_POOL.value.split(', ')]
         # todo might not work due to host routing
-        host_ip = ip_address(request.META.get('REMOTE_ADDR'))
+        logger.info(f'request.META: {request.META}')
+        host_ip = ip_address(request.META.get('HTTP_X_FORWARDED_FOR').split(', ')[0])
 
         for network in ip_pool:
             if host_ip in network:

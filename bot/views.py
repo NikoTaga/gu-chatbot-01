@@ -49,14 +49,14 @@ def jivo_webhook(request: HttpRequest) -> HttpResponse:
 
     logger.debug(f'"inc jivo wh from: {request.get_host()}')
     client = PlatformClientFactory.create(BotType.TYPE_JIVOSITE.value)
-    try:
-        event: EventCommandReceived = client.parse_webhook(request)
-        logger.debug(event)
-        result: Optional[EventCommandToSend] = message_handler(event)
-        if result is not None:
-            client.send_message(result)
-    except ValidationError as e:
-        logger.error(f'JIVO webhook: {e.args}')
+    # try:
+    event: EventCommandReceived = client.parse_webhook(request)
+    logger.debug(event)
+    result: Optional[EventCommandToSend] = message_handler(event)
+    if result is not None:
+        client.send_message(result)
+    # except ValidationError as e:
+        # logger.error(f'JIVO webhook: {e.args}')
 
     return HttpResponse('OK')
 

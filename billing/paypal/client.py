@@ -39,8 +39,8 @@ class PaypalClient(PaymentSystemClient):
         environment = SandboxEnvironment(client_id=PAYPAL_CLIENT_ID, client_secret=PAYPAL_CLIENT_SECRET)
         self.client = PayPalHttpClient(environment)
         self.process_notification = {  # todo should this be here?
-            PayPalStrings.WEBHOOK_APPROVED: self.capture,
-            PayPalStrings.WEBHOOK_COMPLETED: self.fulfill,
+            PayPalStrings.WEBHOOK_APPROVED.value: self.capture,
+            PayPalStrings.WEBHOOK_COMPLETED.value: self.fulfill,
         }
 
     def fulfill(self, wh_data: Dict[str, Any]) -> None:
