@@ -1,3 +1,4 @@
+import logging
 from pprint import pprint
 from typing import Dict, Any
 
@@ -17,6 +18,10 @@ from .paypal_entities import PaypalCheckout
 from billing.abstract import PaymentSystemClient
 from billing.exceptions import UpdateCompletedCheckoutError
 from billing.models import Checkout
+from common.strings import PayPalStrings
+
+
+logger = logging.getLogger('root')
 
 
 class PaypalClient(PaymentSystemClient):
@@ -24,7 +29,8 @@ class PaypalClient(PaymentSystemClient):
 
     Содержит методы для инициализации сессии и обработки платежей в виде PayPal Checkout -
     выписки, захвата, верификации и завершения Checkout."""
-    _link_pattern = 'https://www.sandbox.paypal.com/checkoutnow?token={}'
+    _link_pattern = PayPalStrings.LINK_PATTERN.value
+        # 'https://www.sandbox.paypal.com/checkoutnow?token={checkout_id}'
 
     def __init__(self) -> None:
         """Инициализирует сессию работы с системой PayPal."""
@@ -33,8 +39,8 @@ class PaypalClient(PaymentSystemClient):
         environment = SandboxEnvironment(client_id=PAYPAL_CLIENT_ID, client_secret=PAYPAL_CLIENT_SECRET)
         self.client = PayPalHttpClient(environment)
         self.process_notification = {  # todo should this be here?
-            'CHECKOUT.ORDER.APPROVED': self.capture,
-            'PAYMENT.CAPTURE.COMPLETED': self.fulfill,
+            PayPalStrings.WEBHOOK_APPROVED: self.capture,
+            PayPalStrings.WEBHOOK_COMPLETED: self.fulfill,
         }
 
     def fulfill(self, wh_data: Dict[str, Any]) -> None:
@@ -129,18 +135,18 @@ class PaypalClient(PaymentSystemClient):
             else:
                 print(response.status_code)
                 for link in response.result.links:
-                    print('\t{}: {}\tCall Type: {}'.format(link.rel, link.href, link.method))
-                    print('Total Amount: {} {}'.format(response.result.purchase_units[0].amount.currency_code,
+                    logger.debug('\t{}: {}\tCall Type: {}'.format(link.rel, link.href, link.method))
+                    logger.debug('Total Amount: {} {}'.format(response.result.purchase_units[0].amount.currency_code,
                                                        response.result.purchase_units[0].amount.value))
                     # If call returns body in response, you can get the deserialized version
                     # from the result attribute of the response
                     order = response.result
-                    print(order)
+                    logger.debug(order)
         except IOError as ioe:
-            print(ioe)
+            logger.error(f'Paypal failed Checkout creation{ioe}')
             if isinstance(ioe, HttpError):
                 # Something went wrong server-side
-                print(ioe.status_code)
+                logger.error(ioe.status_code)
 
         return tracking_id
 
@@ -186,6 +192,6 @@ class PaypalClient(PaymentSystemClient):
         checkout_id = self._initiate_payment_system_checkout(checkout_data)
         Checkout.objects.make_checkout(PaymentSystems.PAYPAL.value, checkout_id, order_id)
 
-        approve_link = self._link_pattern.format(checkout_id)
+        approve_link = self._link_pattern.format(checkout_id=checkout_id)
 
         return approve_link

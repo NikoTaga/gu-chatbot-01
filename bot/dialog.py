@@ -3,14 +3,15 @@ from json.decoder import JSONDecodeError
 import logging
 
 from billing.common import PaymentClientFactory
-from builders import MessageDirector
-from constants import CallbackType
-from entities import EventCommandReceived, Callback, EventCommandToSend
+from common.builders import MessageDirector
+from common.constants import CallbackType
+from common.entities import EventCommandReceived, Callback, EventCommandToSend
+from common.strings import DialogButtons, DialogPhrases
 
 from shop.models import Category, Product, Order
 
 
-logger = logging.getLogger('bot')
+logger = logging.getLogger('root')
 
 
 class Dialog:
@@ -56,16 +57,16 @@ class Dialog:
 
         button_data: List[Dict[str, Any]] = [
             {
-                'title': 'Начать работу',
+                'title': DialogButtons.START_SESSION.value,
                 'id': 0,
                 'type': CallbackType.GREETING,
             }]
 
-        greeting = 'Добро пожаловать{}!\nНажмите на кнопку для начала работы:'
+        greeting = DialogPhrases.SESSION_GREETING.value
         if event.user_name_in_messenger:
-            greeting = greeting.format(f', {event.user_name_in_messenger}')
+            greeting = greeting.format(alias=f', {event.user_name_in_messenger}')
         else:
-            greeting = greeting.format('')
+            greeting = greeting.format(alias='')
 
         msg = MessageDirector().create_ects(
             bot_id=event.bot_id,
@@ -73,8 +74,6 @@ class Dialog:
             text=greeting,
             button_data=button_data,
         )
-
-        logger.debug(f'"BUTTONS: {button_data}"')
 
         return msg
 
@@ -91,7 +90,7 @@ class Dialog:
         msg = MessageDirector().create_ects(
             bot_id=event.bot_id,
             chat_id_in_messenger=event.chat_id_in_messenger,
-            text='Выберите категорию товара:',
+            text=DialogPhrases.CHOOSE_CATEGORY.value,
             button_data=button_data,
         )
 
@@ -113,7 +112,9 @@ class Dialog:
         msg = MessageDirector().create_ects(
             bot_id=event.bot_id,
             chat_id_in_messenger=event.chat_id_in_messenger,
-            text='Выберите товар категории "{}"'.format(category['name']),
+            text=DialogPhrases.CHOOSE_PRODUCT.value.format(
+                category=category['name']
+            ),
             button_data=button_data,
         )
 
@@ -125,12 +126,14 @@ class Dialog:
         """Формирует данные для описания выбранного товара с кнопкой 'Заказать'."""
 
         product = Product.objects.get_product_by_id(self.callback.id)
-        text = 'Выбран товар "{}"\n\nКраткое описание: {}\n\nСтоимость: {}'.format(
-            product['name'], product['description'][:400], product['price']
+        text = DialogPhrases.ORDER_PRODUCT.value.format(
+            name=product['name'],
+            desc=product['description'][:400],
+            price=product['price'],
         )
         button_data: List[Dict[str, Any]] = [
             {
-                'title': 'Заказать',
+                'title': DialogButtons.ORDER_PRODUCT.value,
                 'id': self.callback.id,
                 'type': CallbackType.ORDER,
             }]
@@ -150,19 +153,18 @@ class Dialog:
         """Формирует данные для сообщения с предложением выбрать платёжную систему для оплаты."""
 
         product = Product.objects.get_product_by_id(self.callback.id)
-        text = 'Выбран товар \"{}\"' \
-               '\n\nОплатить заказ за {} через платёжную систему?'.format(
-                product["name"], product["price"]
+        text = DialogPhrases.ORDER_CONFIRM.value.format(
+                name=product["name"], price=product["price"]
                 )
         # todo где-то нужна метаинформация по списку систем
         button_data: List[Dict[str, Any]] = [
             {
-                'title': 'PayPal',
+                'title': DialogButtons.PAYPAL_OPTION.value,
                 'id': self.callback.id,
                 'type': CallbackType.PAYPAL,
             },
             {
-                'title': 'Stripe',
+                'title': DialogButtons.STRIPE_OPTION.value,
                 'id': self.callback.id,
                 'type': CallbackType.STRIPE,
             },
@@ -190,7 +192,7 @@ class Dialog:
         payment_client = PaymentClientFactory.create(self.callback.type.value)
         approve_link = payment_client.check_out(order.pk, self.callback.id)
 
-        text = 'Оплатите покупку по ссылке\n{}!'.format(approve_link)
+        text = DialogPhrases.PAYMENT_LINK.value.format(link=approve_link)
 
         msg = MessageDirector().create_ects(
             bot_id=event.bot_id,
