@@ -1,6 +1,8 @@
 import logging
 from django.apps import AppConfig
 from apscheduler.schedulers.background import BackgroundScheduler
+from pathlib import Path
+from dotenv import load_dotenv
 
 from patterns.singleton import Singleton
 
@@ -27,8 +29,12 @@ class BotConfig(AppConfig):
     name = 'bot'
 
     def ready(self) -> None:
-        logger.info('READY')
+        logger.info('Executing botconfig ready()')
+        project_folder = Path(__file__).parent.parent.absolute()
+        load_dotenv(project_folder.parent.joinpath('.env'))
+        logger.info('Environment ready')
         scheduler = BackgroundScheduler()
         SingletonAPS().set_aps(scheduler)
         if not scheduler.running:
             scheduler.start()
+            logger.info('Scheduler started')
