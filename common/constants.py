@@ -75,6 +75,7 @@ class CallbackType(Enum):
     PAYPAL = 'paypal'
     STRIPE = 'stripe'
     NOTIFY = 'notify'
+    INVITE_AGENT = 'invite'
 
 
 class DialogStates(Choice):

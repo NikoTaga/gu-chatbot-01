@@ -26,6 +26,7 @@ class JivoEventType(Enum):
     INVITE_AGENT = 'INVITE_AGENT'
     AGENT_JOINED = 'AGENT_JOINED'
     AGENT_UNAVAILABLE = 'AGENT_UNAVAILABLE'
+    CHAT_CLOSED = 'CHAT_CLOSED'
 
 
 class JivoMessageType(Enum):
