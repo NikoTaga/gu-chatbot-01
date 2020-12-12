@@ -1,11 +1,14 @@
 import configparser
+import logging
 from enum import Enum
 
 
+logger = logging.getLogger('root')
+
+
 config = configparser.ConfigParser()
-with open('common\\strings.ini', 'r') as conf_file:
-    config.read('common\\strings.ini')
-    print(config.sections())
+config.read('common/strings.ini')
+logger.debug(config.sections())
 
 
 class PayPalStrings(Enum):
