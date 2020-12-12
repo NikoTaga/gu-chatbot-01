@@ -14,7 +14,6 @@ from pytz import timezone
 
 # unused for now
 VPS_HOOKS = [
-    "http://194.67.90.202:8000/ok_test/",
     "http://194.67.90.202:8000/ok_webhook/",
 ]
 
