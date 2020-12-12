@@ -2,7 +2,7 @@ from django.db import models
 from djmoney.models.fields import MoneyField
 
 from bot.models import TrackableUpdateCreateModel
-from constants import OrderStatus
+from common.constants import OrderStatus
 from .managers import CategoryManager, ProductManager, OrderManager
 
 

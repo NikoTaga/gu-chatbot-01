@@ -10,7 +10,7 @@ from marshmallow_dataclass import dataclass
 
 from clients.ok.ok_constants import (OkButtonType, OkButtonIntent, OkWebhookType, OkSystemWebhookType,
                                      OkPayloadCallType, OkPayloadCallHangupType, OkAttachmentType, OkPrivacyWarningType)
-from entities import SkipNoneSchema, LinterFix
+from common.entities import SkipNoneSchema, LinterFix
 
 
 @dataclass(order=True, base_schema=SkipNoneSchema)

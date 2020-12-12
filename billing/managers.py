@@ -1,5 +1,5 @@
 """Модуль содержит менеджеры моделей платёжных систем."""
-
+import logging
 from typing import Optional, Union, TYPE_CHECKING
 
 from django.db import models
@@ -7,11 +7,14 @@ from django.db.models.query import QuerySet
 
 from billing.exceptions import UpdateCompletedCheckoutError
 from shop.models import Order
-from constants import OrderStatus
+from common.constants import OrderStatus
 from billing.constants import PaypalOrderStatus
 
 if TYPE_CHECKING:
     from billing.models import Checkout
+
+
+logger = logging.getLogger('root')
 
 
 class CheckoutManager(models.Manager):
@@ -73,8 +76,9 @@ class CheckoutManager(models.Manager):
             self.update_checkout(co_entity.tracking_id, PaypalOrderStatus.COMPLETED.value)
             Order.objects.update_order(co_entity.order.pk, OrderStatus.COMPLETE.value)
         elif not co_entity:
-            print('The order was modified in process and payment is not valid anymore.')
+            # todo raise ordermodifederror
+            logger.error(f'Invalid payment, order deleted or modified: {capture_id}')
         elif co_entity.order.status == OrderStatus.COMPLETE.value:
-            print('>>> DUPLICATE NOTIFICATION')
+            logger.warning(f'Duplicate notification: {capture_id}')
 
         return co_entity

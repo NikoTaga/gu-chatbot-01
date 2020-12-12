@@ -2,8 +2,10 @@
 
 import os
 from enum import Enum
-from constants import Choice
+from common.constants import Choice
 
+
+SITE_HTTPS_URL = os.getenv("SITE_HTTPS_URL")
 
 PAYPAL_CLIENT_ID = os.getenv("PAYPAL_CLIENT_ID")
 PAYPAL_CLIENT_SECRET = os.getenv("PAYPAL_CLIENT_SECRET")

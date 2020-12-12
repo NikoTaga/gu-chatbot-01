@@ -1,7 +1,7 @@
 from typing import Dict, Any, TYPE_CHECKING
 from abc import ABC, abstractmethod
 
-from entities import EventCommandToSend, EventCommandReceived
+from common.entities import EventCommandToSend, EventCommandReceived
 
 if TYPE_CHECKING:
     from django.http import HttpRequest

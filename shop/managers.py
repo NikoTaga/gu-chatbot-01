@@ -10,7 +10,7 @@ from django.forms.models import model_to_dict
 from django.db.models.query import QuerySet
 
 from bot.models import Chat
-from constants import OrderStatus
+from common.constants import OrderStatus
 
 if TYPE_CHECKING:
     from .models import Order

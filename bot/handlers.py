@@ -3,12 +3,12 @@ from typing import Optional
 
 from marshmallow import ValidationError
 
-from entities import EventCommandReceived, EventCommandToSend
+from common.entities import EventCommandReceived, EventCommandToSend
 from .dialog import Dialog
 from .models import Message
 
 
-logger = logging.getLogger('bot')
+logger = logging.getLogger('root')
 
 
 def message_handler(event: EventCommandReceived) -> Optional[EventCommandToSend]:
@@ -42,5 +42,5 @@ def message_handler(event: EventCommandReceived) -> Optional[EventCommandToSend]
         try:
             result.Schema().validate(result.Schema().dump(result))
         except ValidationError as err:
-            logger.error(f'Handler: {err.args}')
+            logger.error(f'Malformed ECTS in handler: {err.args}')
     return result

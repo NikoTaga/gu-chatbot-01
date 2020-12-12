@@ -7,8 +7,8 @@ import marshmallow
 import marshmallow_enum
 from marshmallow_dataclass import dataclass
 
-from constants import (ChatType, GenericTemplateActionType, MessageDirection, CallbackType,
-                       MessageContentType)
+from common.constants import (ChatType, GenericTemplateActionType, MessageDirection, CallbackType,
+                              MessageContentType)
 
 
 class LinterFix:
