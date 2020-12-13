@@ -9,7 +9,7 @@ from common.entities import EventCommandReceived, Payload, InlineButton, Generic
     Callback
 from bot.dialog import Dialog
 
-with open('tests\\dialog_content.json', 'r') as f:
+with open('tests/dialog_content.json', 'r') as f:
     string = f.readline()
     lines = json.loads(string)
 
