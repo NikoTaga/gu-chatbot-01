@@ -22,3 +22,11 @@ jobs:
           port: ${{ secrets.PORT }}
           source: .
           target: ChatBot
+
+      - name: restart gunicorn
+        uses: garygrossgarten/github-action-ssh@release
+        with:
+          command: sudo systemctl restart gunicorn
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}

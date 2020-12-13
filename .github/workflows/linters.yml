@@ -1,15 +1,10 @@
-name: Prepare
+name: Linters
 
 on:
   push:
     branches:
       - '*'
       - '**'
-
-    pull_request:
-      branches:
-        - '*'
-        - '**'
 
 jobs:
   build:
@@ -39,3 +34,6 @@ jobs:
         run: |
           python manage.py makemigrations
           python manage.py migrate
+
+      - name: Mypy, Flake8  linters
+        run: python util/git_linters.py
