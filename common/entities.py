@@ -56,6 +56,7 @@ class GenericTemplateAction(LinterFix):
     )
     payload: Optional[str] = field(
         default=None,
+        compare=False,
         metadata={
             "marshmallow_field": marshmallow.fields.String(
                 allow_none=True,

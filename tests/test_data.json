@@ -62,6 +62,20 @@
     }
 },
 {
+    "model": "bot.botuser",
+    "pk": 5,
+    "fields": {
+        "created_at": "2020-11-13T16:10:19.937Z",
+        "updated_at": "2020-11-13T16:10:19.937Z",
+        "bot": 1,
+        "messenger_user_id": "chat:C446c437d0000",
+        "messenger_user_url": null,
+        "name": "Geek Python",
+        "avatar_url": null,
+        "lang_code": "ru"
+    }
+},
+{
     "model": "bot.chat",
     "pk": 1,
     "fields": {
@@ -110,6 +124,23 @@
         "avatar_url": null,
         "last_message_time": "2020-11-13T16:13:45Z",
         "last_message_text": "Alex some last message"
+    }
+},
+{
+    "model": "bot.chat",
+    "pk": 5,
+    "fields": {
+        "created_at": "2020-11-13T16:14:07.075Z",
+        "updated_at": "2020-11-13T16:14:07.075Z",
+        "bot": 1,
+        "type": 1,
+        "bot_user": 5,
+        "id_in_messenger": "chat:C446c437d0000",
+        "url_in_messenger": null,
+        "name": null,
+        "avatar_url": null,
+        "last_message_time": "2020-11-13T16:13:45Z",
+        "last_message_text": "test_last_message"
     }
 },
 {
