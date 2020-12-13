@@ -28,9 +28,7 @@ files_in_directory = glob.glob(os.path.join(PATH_LINT, '*.*'))
 for file in files_in_directory:
     os.remove(file)
 
-print('Проверка линтером MYPY: \n')
+
 for directory in DIRS:
-    print(f'Проверяем папку {directory}:')
     subprocess.run(['mypy', directory])
-print('Проверка линтером FLAKE8: \n')
 subprocess.run(['flake8', './'])
