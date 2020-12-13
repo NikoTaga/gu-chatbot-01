@@ -128,16 +128,12 @@ def test_form_order_confirmation(input_: EventCommandReceived, expected: EventCo
         assert load(result.inline_buttons[i].action.payload) == load(expected.inline_buttons[i].action.payload)
 
 
-@pytest.mark.django_db
-@pytest.mark.parametrize(['input_', 'expected'], order_cases)
-def test_make_order(input_: EventCommandReceived, expected: EventCommandToSend):
-
-    dialog = Dialog()
-    dialog.callback = Callback.Schema().loads(input_.payload.command)
-    result = dialog.make_order(input_)
-    # assert result == expected
-    assert result.payload.text.find(
-        'https://b98b84b2aa73.ngrok.io/billing/stripe_redirect/cs_test_') >= 0
-    # assert len(result.inline_buttons) == len(expected.inline_buttons)
-    # for i in range(len(result.inline_buttons)):
-    #     assert load(result.inline_buttons[i].action.payload) == load(expected.inline_buttons[i].action.payload)
+# @pytest.mark.django_db
+# @pytest.mark.parametrize(['input_', 'expected'], order_cases)
+# def test_make_order(input_: EventCommandReceived, expected: EventCommandToSend):
+#
+#     dialog = Dialog()
+#     dialog.callback = Callback.Schema().loads(input_.payload.command)
+#     result = dialog.make_order(input_)
+#     assert result.payload.text.find(
+#         'https://b98b84b2aa73.ngrok.io/billing/stripe_redirect/cs_test_') >= 0
