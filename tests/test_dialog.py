@@ -1,18 +1,13 @@
-from pathlib import Path
-
 import pytest
+
 import json
 
 from django.core.management import call_command
-from dotenv import load_dotenv
 
 from common.constants import ChatType, MessageDirection, MessageContentType, GenericTemplateActionType
 from common.entities import EventCommandReceived, Payload, InlineButton, GenericTemplateAction, EventCommandToSend, \
     Callback
 from bot.dialog import Dialog
-
-project_folder = Path(__file__).parent.parent.absolute()
-load_dotenv(project_folder.parent.joinpath('.env'))
 
 
 with open('tests/dialog_content.json', 'r') as f:
