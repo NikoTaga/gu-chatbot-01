@@ -26,8 +26,7 @@ jobs:
       - name: restart gunicorn
         uses: garygrossgarten/github-action-ssh@release
         with:
-          command: systemctl restart gunicorn
-          command: ${{ secrets.PASSWORD }}
+          command: sudo systemctl restart gunicorn
           host: ${{ secrets.HOST }}
           username: ${{ secrets.USERNAME }}
           password: ${{ secrets.PASSWORD }}
