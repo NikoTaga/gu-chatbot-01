@@ -13,8 +13,8 @@ import os
 import shutil
 
 
-VENV_DIR_NAME = '../venv'
-REQ_FILE = '../requirements.txt'
+VENV_DIR_NAME = 'venv'
+REQ_FILE = 'requirements.txt'
 PYTHON = sys.executable
 if platform.system() == 'Windows':
     PIP_ENV = f'{VENV_DIR_NAME}/Scripts/pip3.exe'
