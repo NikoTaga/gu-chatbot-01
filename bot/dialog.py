@@ -11,9 +11,6 @@ from common.strings import DialogButtons, DialogPhrases
 from shop.models import Category, Product, Order
 
 
-logger = logging.getLogger('root')
-
-
 class Dialog:
     """Содержит логику взаимодействия бота с пользователем.
 
@@ -21,6 +18,7 @@ class Dialog:
     По итогу инициирует выставление счёта в соответствующей системе."""
 
     callback: Callback
+    logger = logging.getLogger('root')
 
     def reply(self, event: EventCommandReceived) -> Optional[EventCommandToSend]:
         """Основной метод класса, формирует словарь-ответ на базе типа и параметров запроса в формате ECR."""
@@ -41,13 +39,13 @@ class Dialog:
                 self.callback = Callback.Schema().loads(command)
                 result = variants[self.callback.type](event)
             except JSONDecodeError as err:
-                logger.error(f'Dialog GREETING formed: {err.args}')
+                self.logger.error(f'Dialog GREETING formed: {err.args}')
                 result = self._form_greeting(event)
             except KeyError as err:
-                logger.debug(f'Dialog.ready(): {err.args}')
+                self.logger.debug(f'Dialog.ready(): {err.args}')
                 # result = self.form_category_list(event)
         else:
-            logger.debug('Dialog GREETING formed.')
+            self.logger.debug('Dialog GREETING formed.')
             result = self._form_greeting(event)
 
         return result
@@ -94,7 +92,7 @@ class Dialog:
             button_data=button_data,
         )
 
-        logger.debug(f'"BUTTONS: {button_data}"')
+        self.logger.debug(f'"BUTTONS: {button_data}"')
 
         return msg
 
@@ -118,7 +116,7 @@ class Dialog:
             button_data=button_data,
         )
 
-        logger.debug(f'"BUTTONS: {button_data}"')
+        self.logger.debug(f'"BUTTONS: {button_data}"')
 
         return msg
 
@@ -145,7 +143,7 @@ class Dialog:
             button_data=button_data,
         )
 
-        logger.debug(f'"BUTTONS: {button_data}"')
+        self.logger.debug(f'"BUTTONS: {button_data}"')
 
         return msg
 
@@ -177,7 +175,7 @@ class Dialog:
             button_data=button_data,
         )
 
-        logger.debug(f'"BUTTONS: {button_data}"')
+        self.logger.debug(f'"BUTTONS: {button_data}"')
 
         return msg
 

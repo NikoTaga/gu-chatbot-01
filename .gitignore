@@ -142,3 +142,4 @@ Pipfile
 # report_linters
 report_linters
 report_linters/
+/doc/build/

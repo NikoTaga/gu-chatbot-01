@@ -1,13 +1,15 @@
 import configparser
 import logging
 from enum import Enum
+from pathlib import Path
 
 
 logger = logging.getLogger('root')
 
-
 config = configparser.ConfigParser()
-config.read('common/strings.ini')
+# config.read('common/strings.ini')
+project_folder = Path(__file__).parent.parent.absolute()
+config.read(project_folder.joinpath('common/strings.ini'))
 logger.debug(config.sections())
 
 
