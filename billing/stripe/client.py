@@ -9,7 +9,8 @@ from billing.stripe.stripe_entities import StripeCheckout
 from bot.notify import send_payment_completed
 from shop.models import Product
 from billing.constants import StripePaymentMethod, StripeCurrency, StripeMode, STRIPE_SECRET_KEY, STRIPE_WHSEC_KEY, \
-    PaymentSystems, SITE_HTTPS_URL
+    SITE_HTTPS_URL
+from common.constants import PaymentSystem
 from billing.abstract import PaymentSystemClient
 from common.strings import StripeStrings
 
@@ -55,7 +56,7 @@ class StripeClient(PaymentSystemClient):
         }
         stripe_checkout = StripeCheckout.Schema().load(checkout_data)
         checkout_session = self.client.checkout.Session.create(**stripe_checkout.Schema().dump(stripe_checkout))
-        Checkout.objects.make_checkout(PaymentSystems.STRIPE.value, checkout_session.id, order_id)
+        Checkout.objects.make_checkout(PaymentSystem.STRIPE, checkout_session.id, order_id)
 
         approve_link = self._link_pattern.format(site=SITE_HTTPS_URL, session=checkout_session.id)
 

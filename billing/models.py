@@ -3,7 +3,7 @@
 from django.db import models
 
 from bot.models import TrackableUpdateCreateModel
-from billing.constants import PaymentSystems
+from common.constants import PaymentSystem
 from .managers import CheckoutManager
 
 
@@ -19,7 +19,7 @@ class Checkout(TrackableUpdateCreateModel):
         # todo обдумать поведение
         on_delete=models.RESTRICT,
     )
-    system = models.IntegerField('Billing system', choices=PaymentSystems.choices())
+    system = models.IntegerField('Billing system', choices=PaymentSystem.choices())
     tracking_id = models.CharField('Tracking id', max_length=255)
     capture_id = models.CharField('Capture id', max_length=255, null=True, blank=True)
     status = models.CharField(

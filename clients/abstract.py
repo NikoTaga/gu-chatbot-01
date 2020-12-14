@@ -1,4 +1,4 @@
-from typing import Dict, Any, TYPE_CHECKING
+from typing import TYPE_CHECKING
 from abc import ABC, abstractmethod
 
 from common.entities import EventCommandToSend, EventCommandReceived
@@ -11,7 +11,7 @@ class SocialPlatformClient(ABC):
     """Абстрактный интерфейс, описывающий поведение социальной платформы."""
 
     @abstractmethod
-    def parse_webhook(self, wh_data: Dict[str, Any]) -> EventCommandReceived:
+    def parse_webhook(self, request: 'HttpRequest') -> EventCommandReceived:
         pass
 
     @abstractmethod

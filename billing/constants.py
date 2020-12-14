@@ -2,8 +2,6 @@
 
 import os
 from enum import Enum
-from common.constants import Choice
-
 
 SITE_HTTPS_URL = os.getenv("SITE_HTTPS_URL")
 
@@ -14,13 +12,6 @@ PAYPAL_WEBHOOK_ID = os.getenv("PAYPAL_WEBHOOK_ID")
 STRIPE_PUBLIC_KEY = os.getenv("STRIPE_PUBLIC_KEY")
 STRIPE_SECRET_KEY = os.getenv("STRIPE_SECRET_KEY")
 STRIPE_WHSEC_KEY = os.getenv("STRIPE_WHSEC_KEY")
-
-
-class PaymentSystems(Choice):
-    PAYPAL = 0
-    STRIPE = 1
-    CLICK = 2
-    PAYMO = 3
 
 
 class PaypalOrderStatus(Enum):

@@ -159,7 +159,7 @@ class JivositeClient(SocialPlatformClient):
                 logger.error(f'OK error: {err["code"]} -> {err["message"]}')
                 raise JivoServerError(err["code"], err["message"])
             if message_id[0] != '-':
-                Message.objects.set_sent(message_id)
+                Message.objects.set_sent(int(message_id))
         except (requests.Timeout, requests.ConnectionError) as e:
             logger.error(f'JIVO unreachable{e.args}')
 

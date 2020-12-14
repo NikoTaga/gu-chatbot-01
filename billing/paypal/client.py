@@ -13,7 +13,8 @@ from paypalrestsdk.notifications import WebhookEvent
 from bot.notify import send_payment_completed
 from shop.models import Product
 from billing.constants import Currency, PaypalIntent, PaypalShippingPreference, PaypalUserAction, PaypalGoodsCategory, \
-    PaypalOrderStatus, PaymentSystems, PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET, PAYPAL_WEBHOOK_ID
+    PaypalOrderStatus, PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET, PAYPAL_WEBHOOK_ID
+from common.constants import PaymentSystem
 from .paypal_entities import PaypalCheckout
 from billing.abstract import PaymentSystemClient
 from billing.exceptions import UpdateCompletedCheckoutError
@@ -30,7 +31,6 @@ class PaypalClient(PaymentSystemClient):
     Содержит методы для инициализации сессии и обработки платежей в виде PayPal Checkout -
     выписки, захвата, верификации и завершения Checkout."""
     _link_pattern = PayPalStrings.LINK_PATTERN.value
-        # 'https://www.sandbox.paypal.com/checkoutnow?token={checkout_id}'
 
     def __init__(self) -> None:
         """Инициализирует сессию работы с системой PayPal."""
@@ -137,7 +137,7 @@ class PaypalClient(PaymentSystemClient):
                 for link in response.result.links:
                     logger.debug('\t{}: {}\tCall Type: {}'.format(link.rel, link.href, link.method))
                     logger.debug('Total Amount: {} {}'.format(response.result.purchase_units[0].amount.currency_code,
-                                                       response.result.purchase_units[0].amount.value))
+                                                              response.result.purchase_units[0].amount.value))
                     # If call returns body in response, you can get the deserialized version
                     # from the result attribute of the response
                     order = response.result
@@ -190,7 +190,7 @@ class PaypalClient(PaymentSystemClient):
         }
 
         checkout_id = self._initiate_payment_system_checkout(checkout_data)
-        Checkout.objects.make_checkout(PaymentSystems.PAYPAL.value, checkout_id, order_id)
+        Checkout.objects.make_checkout(PaymentSystem.PAYPAL, checkout_id, order_id)
 
         approve_link = self._link_pattern.format(checkout_id=checkout_id)
 

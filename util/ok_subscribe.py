@@ -3,10 +3,10 @@
 Also clears outdated subscriptions.
 usage: python ok_subscribe.py <link>
 <link> is usually an ngrok (https://ngrok.com/download) tunnel link"""
+from typing import Dict, Any
 
 import requests
 import json
-from pprint import pprint
 import sys
 from datetime import timedelta, datetime
 from pytz import timezone
@@ -18,11 +18,11 @@ VPS_HOOKS = [
 ]
 
 CHAT = 'chat:C44f9f0965600'
-TOKEN = 'tkn1wILRxmauO2rhrdYCdw41cqv2aLtebSzXqTHbv6SrRzQuZ7u8hz0ZOJMc9NmRESevE2:CLOKPPJGDIHBABABA'
+TOKEN = 'tkn1Ei0m1HXCidiZV2xVDuLNbDG1tzL1CMvhbPV7XfuyvXspX5A1ySBvzoQm1gtlazUxf1:CKOLOMJGDIHBABABA'
 HEADERS = {'Content-Type': 'application/json;charset=utf-8'}
 
 
-def subscribe_webhook(url):
+def subscribe_webhook(url: str) -> None:
     link = f'https://api.ok.ru/graph/me/subscribe?access_token={TOKEN}'
     data = '''{"url":"%s"}''' % url
 
@@ -33,7 +33,7 @@ def subscribe_webhook(url):
         print(f'Subscribed "{url}"')
 
 
-def unsubscribe_webhook(url):
+def unsubscribe_webhook(url: str) -> None:
     link = f'https://api.ok.ru/graph/me/unsubscribe?access_token={TOKEN}'
     data = '''{"url":"%s"}''' % url
 
@@ -44,7 +44,7 @@ def unsubscribe_webhook(url):
         print(f'Unsubscribed "{url}"')
 
 
-def list_webhooks():
+def list_webhooks() -> Dict[str, Any]:
     link = f'https://api.ok.ru/graph/me/subscriptions?access_token={TOKEN}'
 
     r = requests.post(link, headers=HEADERS)
@@ -64,7 +64,8 @@ if __name__ == '__main__':
     msk_tz = timezone('Europe/Moscow')
     outdated_urls = [
         sub['url'] for sub in current_subs
-        if (datetime.now().astimezone() - msk_tz.localize(datetime.fromtimestamp(sub['time']/1000)) > timedelta(hours=2))
+        if (datetime.now().astimezone() - msk_tz.localize(datetime.fromtimestamp(sub['time']/1000))
+            > timedelta(hours=2))
     ]
     print('Clearing old webhooks...')
     for url in outdated_urls:

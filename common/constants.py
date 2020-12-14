@@ -118,3 +118,10 @@ ORDER_STATUS_ENUM: List[Dict[str, Union[int, str]]] = [
 class GenericTemplateActionType(Enum):
     POSTBACK = 'postback'
     URL = 'url'
+
+
+class PaymentSystem(Choice):
+    PAYPAL = 0
+    STRIPE = 1
+    CLICK = 2
+    PAYMO = 3
