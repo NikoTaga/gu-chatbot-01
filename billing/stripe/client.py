@@ -1,3 +1,4 @@
+import logging
 from typing import TYPE_CHECKING, Dict, Any
 
 import stripe
@@ -16,6 +17,9 @@ from common.strings import StripeStrings
 
 if TYPE_CHECKING:
     from django.http import HttpRequest
+
+
+logger = logging.getLogger('root')
 
 
 class StripeClient(PaymentSystemClient):
@@ -96,4 +100,4 @@ class StripeClient(PaymentSystemClient):
             checkout = Checkout.objects.fulfill_checkout(checkout_id)
             send_payment_completed(checkout)
         except UpdateCompletedCheckoutError as e:
-            print(e)
+            logger.error(e)

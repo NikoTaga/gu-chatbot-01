@@ -46,7 +46,6 @@ def stripe_webhook(request: HttpRequest) -> HttpResponse:
     if stripe_client.verify(request):
         # OK Signature
         logger.debug(f'Verified a stripe webhook: {obj}')
-        pprint(obj)
         if obj['type'] == StripeStrings.SESSION_COMPLETED.value:
 
             stripe_client.capture(obj)
