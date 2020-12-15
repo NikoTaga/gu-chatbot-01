@@ -1,5 +1,4 @@
 import logging
-from pprint import pprint
 from typing import Dict, Any
 
 from django.http import HttpRequest
@@ -51,16 +50,16 @@ class PaypalClient(PaymentSystemClient):
             checkout = Checkout.objects.fulfill_checkout(capture_id)
             send_payment_completed(checkout)
         except UpdateCompletedCheckoutError as e:
-            print(e)
+            logger.error(e)
 
     def verify(self, request: HttpRequest) -> bool:
         """Проверяет соответствие подписи вебхука на случай попытки имитации оповещения.
 
         Возвращает результат проверки."""
 
-        print('RECEIVED A PAYPAL WEBHOOK')
+        logger.debug('RECEIVED A PAYPAL WEBHOOK')
         h = request.headers
-        pprint(h)
+        logger.debug(f'paypal wh headers: {h}')
         transmission_id = h['Paypal-Transmission-Id']
         timestamp = h['Paypal-Transmission-Time']
         actual_sig = h['Paypal-Transmission-Sig']
@@ -107,16 +106,14 @@ class PaypalClient(PaymentSystemClient):
             if response.status_code == 201:
                 capture_id = response.result.purchase_units[0].payments.captures[0].id
                 Checkout.objects.update_capture(checkout_id, capture_id)
-            print(order, result)
+            logger.debug(f'{order}, {result}')
         except IOError as ioe:
             if isinstance(ioe, HttpError):
                 # Something went wrong server-side
-                print(ioe.status_code)
-                print(ioe.headers)
-                print(ioe)
+                logger.error(f'code: {ioe.status_code}\nHeaders:\n{ioe.headers}\n{ioe}')
             else:
                 # Something went wrong client side
-                print(ioe)
+                logger.error(f'client error: {ioe}')
 
     def _initiate_payment_system_checkout(self, checkout_data: Dict[str, Any]) -> str:
         """Создаёт чекаут в системе PayPal, возвращает его id."""
@@ -133,7 +130,7 @@ class PaypalClient(PaymentSystemClient):
             if response.result.status == PaypalOrderStatus.CREATED.value:
                 tracking_id = response.result.id
             else:
-                print(response.status_code)
+                logger.debug(f'paypal checkout initiated, code: {response.status_code}')
                 for link in response.result.links:
                     logger.debug('\t{}: {}\tCall Type: {}'.format(link.rel, link.href, link.method))
                     logger.debug('Total Amount: {} {}'.format(response.result.purchase_units[0].amount.currency_code,

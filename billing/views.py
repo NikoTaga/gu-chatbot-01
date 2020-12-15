@@ -2,7 +2,6 @@
 
 import json
 import logging
-from pprint import pprint
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 # чтобы разрешить кросс-сайт POST запросы
@@ -46,7 +45,6 @@ def stripe_webhook(request: HttpRequest) -> HttpResponse:
     if stripe_client.verify(request):
         # OK Signature
         logger.debug(f'Verified a stripe webhook: {obj}')
-        pprint(obj)
         if obj['type'] == StripeStrings.SESSION_COMPLETED.value:
 
             stripe_client.capture(obj)

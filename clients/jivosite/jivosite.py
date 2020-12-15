@@ -148,7 +148,7 @@ class JivositeClient(SocialPlatformClient):
         return ecr
 
     def _post_to_platform(self, message_id: str, send_link: str, data: str,) -> None:
-        print('Trying to send...')
+        logger.debug('Trying to send to jivo...')
 
         try:
             r = requests.post(send_link, headers=self.headers, data=data)
