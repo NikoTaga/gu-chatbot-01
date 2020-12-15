@@ -2,7 +2,6 @@
 
 import json
 import logging
-from pprint import pprint
 from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 # чтобы разрешить кросс-сайт POST запросы

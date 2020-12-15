@@ -1,5 +1,4 @@
 import logging
-from pprint import pprint
 from typing import Dict, Any
 
 from django.http import HttpRequest
