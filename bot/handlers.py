@@ -24,7 +24,7 @@ def message_handler(event: EventCommandReceived) -> Optional[EventCommandToSend]
         event.content_type,
         event.user_id_in_messenger,
         event.user_name_in_messenger,
-        str(event.payload.command),
+        str(event.payload.command) if event.payload.command else event.payload.text,
         event.message_id_in_messenger)
     result: Optional[EventCommandToSend] = Dialog().reply(event)
     if result:
