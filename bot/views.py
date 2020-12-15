@@ -2,6 +2,7 @@ from django.http import HttpRequest, HttpResponse
 from django.shortcuts import render
 # чтобы разрешить кросс-сайт POST запросы
 from django.views.decorators.csrf import csrf_exempt
+from django.db import IntegrityError
 from typing import List, Dict, Any, Optional
 from marshmallow.exceptions import ValidationError
 import logging
@@ -36,6 +37,8 @@ def ok_webhook(request: HttpRequest) -> HttpResponse:
             client.send_message(result)
     except ValidationError as e:
         logger.error(f'OK webhook: {e.args}')
+    except IntegrityError as e:
+        logger.error(f'DB failed: {e.args}')
 
     # скрипт обязательно должен подтверждать получение с помощью отправки 200 ОК
     return HttpResponse('OK')
@@ -51,6 +54,8 @@ def jivo_webhook(request: HttpRequest) -> HttpResponse:
     client = PlatformClientFactory.create(BotType.TYPE_JIVOSITE.value)
     try:
         event: EventCommandReceived = client.parse_webhook(request)
+        if not event:
+            return HttpResponse('OK')
         logger.debug(event)
         result: Optional[EventCommandToSend] = message_handler(event)
         if result is not None:

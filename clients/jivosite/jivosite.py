@@ -110,6 +110,8 @@ class JivositeClient(SocialPlatformClient):
         logger.debug(f'For parsing: {request.body}')
         wh = JivoIncomingWebhook.Schema().loads(request.body)
         logger.debug(wh)
+        if wh.event in [JivoEventType.CHAT_CLOSED, JivoEventType.AGENT_JOINED]:
+            return None
         # формирование объекта с данными для ECR
         ecr_data: Dict[str, Any] = {
             'bot_id': Bot.objects.get_bot_id_by_type(BotType.TYPE_JIVOSITE.value),
@@ -117,16 +119,16 @@ class JivositeClient(SocialPlatformClient):
             'content_type': MessageContentType.COMMAND,
             'payload': {
                 'direction': MessageDirection.RECEIVED,
-                'command': wh.message.button_id,  # it doesn't do anything.
-                'text': wh.message.text,
+                'command': wh.message.button_id if wh.message else None,  # it doesn't do anything.
+                'text': wh.message.text if wh.message else None,
             },
             'chat_type': ChatType.PRIVATE,
             # switched places
             'user_id_in_messenger': str(wh.chat_id),
             'user_name_in_messenger': 'Тест',
-            'message_id_in_messenger': str(wh.sender.id),
+            'message_id_in_messenger': wh.id,
             'reply_id_in_messenger': None,
-            'ts_in_messenger': str(datetime.fromtimestamp(int(wh.message.timestamp))),
+            'ts_in_messenger': str(datetime.fromtimestamp(int(wh.message.timestamp))) if wh.message else None,
         }
 
         try:
