@@ -14,7 +14,6 @@ from shop.models import Order
 from .constants import STRIPE_PUBLIC_KEY
 from common.strings import StripeStrings
 
-
 logger = logging.getLogger('root')
 
 
@@ -84,3 +83,19 @@ def stripe_payment_success(request: HttpRequest, order_id: int) -> HttpResponse:
     logger.debug(f'stripe payment success: {order_id}')
 
     return render(request, 'billing/stripe_ok.html', context=content)
+
+
+def stripe_payment_cancel(request: HttpRequest, order_id: int) -> HttpResponse:
+    """Сообщает пользователю об отмене оплаты заказа."""
+
+    # todo pass constants from ini file to template here
+    content = {
+        'title': 'Оплата заказа отменена',
+        'order': Order.objects.get_order(order_id).first(),
+    }
+
+    # Checkout.objects.cancel_checkout(order_id)
+
+    logger.debug(f'stripe payment cancelled: {order_id}')
+
+    return render(request, 'billing/stripe_cancel.html', context=content)
