@@ -8,9 +8,13 @@ https://docs.djangoproject.com/en/3.0/howto/deployment/wsgi/
 """
 
 import os
+from pathlib import Path
+from dotenv import load_dotenv
 
 from django.core.wsgi import get_wsgi_application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ecom_chatbot.settings')
+project_folder = Path(__file__).parent.parent.absolute()
+load_dotenv(project_folder.parent.joinpath('.env'))
 
 application = get_wsgi_application()
